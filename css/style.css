@@ -1,0 +1,106 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#wrap {
+  position: relative;
+  line-height: 0;
+}
+
+#screen {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background: #000;
+}
+
+#screen.chroma { filter: url(#chroma); }
+
+#crt {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: none;
+}
+
+#crt.on {
+  display: block;
+  background-image:
+    radial-gradient(ellipse at center, rgba(0,0,0,0) 62%, rgba(0,0,0,0.42) 100%),
+    linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.30) 56%, rgba(0,0,0,0.30) 100%);
+  background-repeat: no-repeat, repeat;
+  background-size: 100% 100%, 100% 4px;
+}
+
+/* ---------- touch controls ---------- */
+#touch {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  display: none;
+  z-index: 5;
+}
+#touch.on { display: block; }
+
+#touch .tb {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  border: 2px solid rgba(220, 220, 255, 0.35);
+  background: rgba(20, 22, 50, 0.35);
+  color: rgba(230, 230, 255, 0.7);
+  font: bold 16px monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  border-radius: 8px;
+}
+#touch .tb.down { background: rgba(255, 190, 110, 0.45); }
+
+#touch .dpad {
+  position: absolute;
+  left: max(16px, env(safe-area-inset-left));
+  bottom: 24px;
+  width: 132px;
+  height: 132px;
+}
+#touch .btns {
+  position: absolute;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: 24px;
+  width: 170px;
+  height: 140px;
+}
+#touch .tb.round {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  font-size: 18px;
+}
+#touch .tb.start {
+  left: 50%;
+  top: 10px;
+  transform: translateX(-50%);
+  width: 84px;
+  height: 28px;
+  font-size: 12px;
+  border-radius: 14px;
+}

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#05060f">
+<title>Teewald City</title>
+<meta name="description" content="Teewald City — um jogo de plataforma e ação em pixel art no estilo Super Nintendo, ambientado numa cidade de enxaimel no sul do Brasil.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16' fill='%2305060f'/%3E%3Crect x='9' y='2' width='4' height='4' fill='%23e8e4c0'/%3E%3Crect x='7' y='7' width='2' height='8' fill='%233a2a20'/%3E%3Crect x='3' y='6' width='10' height='2' fill='%23183020'/%3E%3Crect x='2' y='5' width='3' height='2' fill='%23183020'/%3E%3Crect x='11' y='5' width='3' height='2' fill='%23183020'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="stage">
+  <div id="wrap">
+    <canvas id="screen" width="256" height="224"></canvas>
+    <div id="crt"></div>
+  </div>
+</div>
+
+<div id="touch" aria-hidden="true">
+  <div class="dpad">
+    <div class="tb" data-act="up" style="left:44px;top:0">&#9650;</div>
+    <div class="tb" data-act="left" style="left:0;top:44px">&#9664;</div>
+    <div class="tb" data-act="right" style="left:88px;top:44px">&#9654;</div>
+    <div class="tb" data-act="down" style="left:44px;top:88px">&#9660;</div>
+  </div>
+  <div class="btns">
+    <div class="tb round" data-act="special" style="right:118px;bottom:84px">C</div>
+    <div class="tb round" data-act="attack" style="right:66px;bottom:30px">B</div>
+    <div class="tb round" data-act="jump" style="right:0;bottom:70px">A</div>
+  </div>
+  <div class="tb start" data-act="start">START</div>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="chroma" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="r"/>
+    <feOffset in="r" dx="-1.6" dy="0" result="r2"/>
+    <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="g"/>
+    <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="b"/>
+    <feOffset in="b" dx="1.6" dy="0" result="b2"/>
+    <feBlend in="r2" in2="g" mode="screen" result="rg"/>
+    <feBlend in="rg" in2="b2" mode="screen"/>
+  </filter>
+</svg>
+
+<noscript>Teewald City precisa de JavaScript. / Teewald City requires JavaScript.</noscript>
+
+<script src="js/core.js"></script>
+<script src="js/gfx.js"></script>
+<script src="js/font.js"></script>
+<script src="js/lang.js"></script>
+<script src="js/input.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/music.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/art_env.js"></script>
+<script src="js/art_chars.js"></script>
+<script src="js/art_cab.js"></script>
+<script src="js/road.js"></script>
+<script src="js/mode7.js"></script>
+<script src="js/scenes/boot.js"></script>
+<script src="js/scenes/title.js"></script>
+<script src="js/scenes/intro.js"></script>
+<script src="js/stage/entities.js"></script>
+<script src="js/stage/player.js"></script>
+<script src="js/stage/enemies.js"></script>
+<script src="js/stage/level1.js"></script>
+<script src="js/stage/stage.js"></script>
+<script src="js/scenes/ending.js"></script>
+<script src="js/scenes/debug.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
