@@ -16,7 +16,7 @@ say() {
 
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
-git add -A
+git add -A 2>/dev/null
 if ! git diff --cached --quiet; then
   files=$(git diff --cached --name-only | head -20)
   count=$(git diff --cached --name-only | wc -l | tr -d ' ')
