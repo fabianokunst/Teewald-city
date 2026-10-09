@@ -30,6 +30,7 @@
     '.kkkkkkkkkk.',
     '..bb....bb..'
   ], { k: '#120c12', p: '#5a3a6a', P: '#7a5a8a', s: '#d8a070', d: '#2a1e2a', g: '#3a2a20', G: '#4a3828', y: '#ffe080', o: '#ff9030', w: '#e8e0d0', h: '#d8a070', b: '#1a1210' });
+  A.frida = FRIDA;   // a Dona Frida também aparece no capítulo 2
 
   function EndingScene(opts) {
     this.opts = opts || {};
@@ -147,7 +148,8 @@
     this.credDone = true;
     while (!(TC.input.pressed('confirm') || TC.input.pressed('start'))) yield;
     TC.audio.stopMusic(1.5);
-    TC.game.fadeTo(function () { return new TC.TitleScene(); }, 60);
+    // a história continua direto no capítulo 2
+    TC.game.fadeTo(function () { return TC.Ch2IntroScene ? new TC.Ch2IntroScene() : new TC.TitleScene(); }, 60);
     while (true) yield;
   };
 

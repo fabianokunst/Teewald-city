@@ -9,7 +9,9 @@
   function StageScene(opts) {
     this.opts = opts || {};
     this.t = 0;
-    this.level = TC.buildLevel1();
+    // capítulo: 1 = A Cidade Adormecida, 2 = A Trilha das Fitas (o nível pode trazer ganchos próprios: L.init, L.update, L.bossSeq...)
+    this.chapter = +(this.opts.chapter || (this.opts.save && this.opts.save.ch) || 1);
+    this.level = this.chapter === 2 && TC.buildLevel2 ? TC.buildLevel2() : TC.buildLevel1();
     this.groundY = 192;
     A.crate_ = A.crate_ || A.crate();
     A.barrel_ = A.barrel_ || A.barrel();
@@ -51,6 +53,7 @@
     this.player = new TC.Player(px, this.groundAt(px));
     this.camX = TC.clamp(px - 100, 0, L.pxW - W);
     this.hudFace = TC.crop(A.arno.idle[0], 14, 12, 17, 15);
+    if (L.init) L.init(this, this.opts.save);
     var self2 = this;
     this.pauseMenu = new TC.Menu([
       { label: function () { return TC.t('pause.resume'); }, act: function () { self2.mode = 'play'; TC.input.clear(); } },
@@ -94,6 +97,7 @@
 
   /* ---------- preparação ---------- */
   StageScene.prototype.prepareBackground = function () {
+    if (this.level.prepareBg) { this.bg = this.level.prepareBg(A); return; }
     var bg = this.bg = {};
     bg.sky = A.sky(W, H, [[0, '#020309'], [0.45, '#0a0d2a'], [0.8, '#1a1e48'], [1, '#2a2e60']], 77, 0.006);
     bg.tw = A.twinkles(W, 110, 30, 31);
@@ -131,8 +135,9 @@
         var openAbove = !E.isSolid(above) && above !== 2;
         var st = L.style[tx];
         var v = (tx * 7 + ty * 3) % 2;
-        var img;
-        if (code === 1) {
+        var img = L.tileFor ? L.tileFor(code, openAbove, st, v) : null;
+        if (img === false) continue;   // o nível desenha esse bloco no cenário (ex.: pilha de toras)
+        if (img) { /* tile escolhido pelo nível */ } else if (code === 1) {
           if (openAbove) img = st === 'square' ? T.hexTop[v] : (st === 'grass' || st === 'stairs') ? T.grassTop[v] : T.walkTop[v];
           else img = (st === 'grass' || st === 'stairs') ? T.dirt[v] : st === 'square' ? T.cobble[v] : T.cobble[v];
         } else if (code === 3) img = openAbove ? T.stoneTop : T.stone;
@@ -174,7 +179,9 @@
   };
 
   StageScene.prototype.save = function () {
-    TC.store.set('save', { cp: this.cp, score: this.score, lives: this.lives });
+    var s = { cp: this.cp, score: this.score, lives: this.lives, ch: this.chapter };
+    if (this.level.saveExtra) this.level.saveExtra(this, s);
+    TC.store.set('save', s);
   };
 
   /* ---------- API usada pelas entidades ---------- */
@@ -315,7 +322,9 @@
     L.arenas.forEach(function (a) { if (!a.done) a.started = false; });
     this.camX = TC.clamp(p.x - 100, 0, L.pxW - W);
     this.combo = 0;
-    if (TC.audio.musicName() !== 'stage1') TC.audio.music('stage1');
+    var mus = L.music || 'stage1';
+    if (TC.audio.musicName() !== mus) TC.audio.music(mus);
+    if (L.onRespawn) L.onRespawn(this);
   };
 
   /* ---------- arenas ---------- */
@@ -329,7 +338,7 @@
     L.maxX = a.x0 + W - 2;
     if (a.cp != null && a.cp > this.cp) { this.cp = a.cp; this.save(); }
     if (a === L.arenas[1]) this.hint = { key: 'hint.special', t: 320 };
-    if (a.boss) this.cine = new TC.Script(this.bossSeq(a));
+    if (a.boss) this.cine = new TC.Script(L.bossSeq ? L.bossSeq(this, a) : this.bossSeq(a));
   };
   StageScene.prototype.spawnWave = function () {
     var a = this.arena, self = this;
@@ -338,6 +347,7 @@
     var tag = this.waveTag;
     w.forEach(function (s) {
       var x, y, opt = {};
+      if (s.opt) for (var ok in s.opt) opt[ok] = s.opt[ok];   // ex.: tipo de colono, o Seu Kessler
       if (s.rise != null) { x = a.x0 + s.rise; y = self.groundAt(x); opt.rise = true; }
       else {
         x = s.side === 'l' ? a.x0 - 16 : a.x0 + W + 16;
@@ -432,7 +442,7 @@
       this.dlg.open([{ who: null, text: TC.t(this.nearSign.key) }], { pos: 'top' });
     }
     // dica de quebrar caixotes
-    if (!this.breakHint && p.x > 17 * 16 && p.x < 22 * 16) { this.breakHint = true; this.hint = { key: 'hint.break', t: 260 }; }
+    if (!this.breakHint && this.chapter === 1 && p.x > 17 * 16 && p.x < 22 * 16) { this.breakHint = true; this.hint = { key: 'hint.break', t: 260 }; }
   };
 
   /* ---------- câmera ---------- */
@@ -481,6 +491,7 @@
       this.updateSpawns();
       this.updateArena();
       this.updateTriggers();
+      if (this.level.update) this.level.update(this);
     }
     for (var k = 0; k < this.texts.length; k++) this.texts[k].update();
     this.texts = this.texts.filter(function (e) { return e.alive; });
@@ -544,8 +555,9 @@
     p.setState('cine'); p.pose = 'idle';
     TC.fx.bright = 0;
     TC.fx.fadeIn(40);
-    TC.audio.music('stage1');
+    TC.audio.music(this.level.music || 'stage1');
     yield* this.stageCard();
+    if (this.level.afterCard) yield* this.level.afterCard(this);
     p.setState('normal');
     this.mode = 'play';
   };
@@ -637,7 +649,7 @@
 
   StageScene.prototype.onBossDead = function () {
     this.boss = null;
-    this.cine = new TC.Script(this.clearSeq());
+    this.cine = new TC.Script(this.level.clearSeq ? this.level.clearSeq(this) : this.clearSeq());
   };
 
   StageScene.prototype.clearSeq = function* () {
@@ -666,10 +678,12 @@
     TC.audio.sfx('coin');
     var w = 0;
     while (w++ < 420 && !(w > 60 && (TC.input.pressed('confirm') || TC.input.pressed('start')))) yield;
-    TC.store.set('save', null);
     var sc = this.score;
+    // terminou o capítulo 1: "continuar" passa a abrir o capítulo 2
+    TC.store.set('save', this.chapter === 1 ? { ch: 2, cp: 0, score: 0, lives: TC.diff().lives, fresh: true } : null);
     TC.audio.stopMusic(1);
-    TC.game.fadeTo(function () { return new TC.EndingScene({ score: sc }); }, 60);
+    var next = this.level.nextScene;
+    TC.game.fadeTo(function () { return next ? next(sc) : new TC.EndingScene({ score: sc }); }, 60);
   };
 
   /* cabeça-de-fogo decorativa cruzando o céu */
@@ -723,7 +737,7 @@
     c.drawImage(bg.moon, 206 - bg.moon.width / 2, 36 - bg.moon.height / 2);
     var o = Math.round(camX * 0.05) % 512;
     c.drawImage(bg.far, -o, 98); c.drawImage(bg.far, 512 - o, 98);
-    if (camX < 3900) {
+    if (bg.spire && camX < 3900) {
       c.globalAlpha = TC.clamp((3900 - camX) / 300, 0, 1);
       c.drawImage(bg.spire, Math.round(236 - camX * 0.045), 150 - bg.spire.height);
       c.globalAlpha = 1;
@@ -732,6 +746,7 @@
     c.drawImage(bg.mid, -o, 112); c.drawImage(bg.mid, 512 - o, 112);
     o = Math.round(camX * 0.32) % 768;
     c.drawImage(bg.trees, -o, 62); c.drawImage(bg.trees, 768 - o, 62);
+    if (bg.extra) bg.extra(c, camX, t);
     var fog = this.fogAt(camX + 128);
     o = Math.round(camX * 0.5 + t * 0.15) % 512;
     c.globalAlpha = 0.3 + fog * 0.5;
@@ -876,19 +891,21 @@
     }
     // combo
     if (this.combo >= 3) {
-      TC.font.draw(c, this.combo + ' HITS', 6, 28, (this.t >> 2) % 2 ? '#ffe060' : '#ff9030', { outline: '#000' });
+      TC.font.draw(c, this.combo + ' HITS', 6, this.level.comboY || 28, (this.t >> 2) % 2 ? '#ffe060' : '#ff9030', { outline: '#000' });
     }
-    // chefe
+    // chefe (cada chefe pode trazer as cores da própria barra)
     var bs = this.boss || (this.bossDead ? null : null);
     if (bs && this.bossBarFill > 0) {
-      TC.font.draw(c, TC.t(bs.name), 128, 196, '#c0ffc0', { align: 'center', outline: '#000' });
+      var bc = bs.bar || { name: '#c0ffc0', back: '#102010', fill: '#40d060', hi: '#a0ffb0' };
+      TC.font.draw(c, TC.t(bs.name), 128, 196, bc.name, { align: 'center', outline: '#000' });
       var bw = 190, bxx = 33;
       c.fillStyle = '#000'; c.fillRect(bxx - 1, 208, bw + 2, 8);
-      c.fillStyle = '#102010'; c.fillRect(bxx, 209, bw, 6);
+      c.fillStyle = bc.back; c.fillRect(bxx, 209, bw, 6);
       var fill = Math.round(bw * Math.min(this.bossBarFill, bs.hp / bs.maxHp));
-      c.fillStyle = '#40d060'; c.fillRect(bxx, 209, fill, 6);
-      c.fillStyle = '#a0ffb0'; c.fillRect(bxx, 209, fill, 1);
+      c.fillStyle = bc.fill; c.fillRect(bxx, 209, fill, 6);
+      c.fillStyle = bc.hi; c.fillRect(bxx, 209, fill, 1);
     }
+    if (this.level.hud) this.level.hud(this, c);
   };
 
   StageScene.prototype.drawOverlay = function (c) {
@@ -910,8 +927,9 @@
       var str = TC.t(this.hint.key);
       var w = TC.font.measure(str) + 12;
       c.fillStyle = 'rgba(4,4,16,0.7)';
-      c.fillRect(128 - w / 2, 200, w, 14);
-      TC.font.draw(c, str, 128, 202, '#f0e8c0', { align: 'center', shadow: '#000' });
+      var hy = this.boss && this.bossBarFill > 0 ? 176 : 200;   // na luta com o chefe a dica sobe para não cobrir a barra
+      c.fillRect(128 - w / 2, hy, w, 14);
+      TC.font.draw(c, str, 128, hy + 2, '#f0e8c0', { align: 'center', shadow: '#000' });
       c.globalAlpha = 1;
     }
     if (this.banner) this.drawBanner(c);
@@ -936,7 +954,7 @@
     if (b.kind === 'stage') {
       var k = TC.clamp(t / 40, 0, 1);
       var out = TC.clamp((t - 140) / 25, 0, 1);
-      var big = TC.ui.bigText(TC.t('stage1.num'), 3, '#ffffff', '#8890d0', '#06050c');
+      var big = TC.ui.bigText(TC.t(this.level.cardNum || 'stage1.num'), 3, '#ffffff', '#8890d0', '#06050c');
       var s = (1 - TC.ease.outBack(k)) * 5 + 1;
       var rot = (1 - TC.ease.outCubic(k)) * 3;
       c.save();
@@ -947,7 +965,7 @@
       c.drawImage(big, -Math.floor(big.width / 2), -Math.floor(big.height / 2));
       c.restore();
       if (t > 40) {
-        var sub = TC.ui.bigText(TC.t('stage1.name'), 1, '#ffe0a0', '#c07030', '#06050c');
+        var sub = TC.ui.bigText(TC.t(this.level.cardName || 'stage1.name'), 1, '#ffe0a0', '#c07030', '#06050c');
         var reveal = TC.clamp((t - 40) / 30, 0, 1);
         var sw = Math.round(sub.width * reveal);
         c.globalAlpha = 1 - out;
@@ -966,7 +984,7 @@
       c.scale(sc, sc);
       c.drawImage(f, -Math.floor(f.width / 2), -Math.floor(f.height / 2));
       c.restore();
-    }
+    } else if (this.level.drawBanner) this.level.drawBanner(this, c, b);
   };
 
   StageScene.prototype.drawTally = function (c) {

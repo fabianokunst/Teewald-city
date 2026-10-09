@@ -44,8 +44,8 @@
   };
 
   /* ---------- caixa de diálogo ---------- */
-  var VOICE = { arno: 520, radio: 900, voice: 300, frida: 420 };
-  var NAMECOL = { arno: '#f0c060', radio: '#7ce0a0', voice: '#c0b0ff', frida: '#e0a0c0' };
+  var VOICE = { arno: 520, radio: 900, voice: 300, frida: 420, kessler: 380, demon: 150, fita: 1100 };
+  var NAMECOL = { arno: '#f0c060', radio: '#7ce0a0', voice: '#c0b0ff', frida: '#e0a0c0', kessler: '#c8b898', demon: '#ff8070', fita: '#ffe8b0' };
 
   function Dialog() {
     this.active = false;

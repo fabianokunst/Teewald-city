@@ -1,7 +1,7 @@
 'use strict';
 /* Teewald City — entrada: teclado, controle (Gamepad API) e toque (controle virtual na tela) */
 (function () {
-  var ACTIONS = ['left', 'right', 'up', 'down', 'jump', 'attack', 'special', 'start', 'confirm', 'back'];
+  var ACTIONS = ['left', 'right', 'up', 'down', 'jump', 'attack', 'special', 'shoot', 'start', 'confirm', 'back'];
 
   var KEYMAP = {
     ArrowLeft: ['left'], KeyA: ['left'],
@@ -11,6 +11,7 @@
     KeyZ: ['jump', 'confirm'], Space: ['jump', 'confirm'], KeyK: ['jump', 'confirm'],
     KeyX: ['attack', 'back'], KeyJ: ['attack'],
     KeyC: ['special'], KeyL: ['special'],
+    KeyV: ['shoot'], KeyI: ['shoot'],
     Enter: ['start', 'confirm'], NumpadEnter: ['start', 'confirm'],
     Escape: ['start', 'back'], Backspace: ['back'], KeyP: ['start']
   };
@@ -97,6 +98,7 @@
       if (b(1)) { padState.attack = true; padState.back = true; }
       if (b(2)) padState.attack = true;
       if (b(3) || b(5) || b(7)) padState.special = true;
+      if (b(4) || b(6)) padState.shoot = true;   // LB / LT: revólver
       if (b(9)) { padState.start = true; padState.confirm = true; }
       if (b(8)) padState.back = true;
       for (var k = 0; k < p.buttons.length; k++) if (b(k)) anyPadDown = true;

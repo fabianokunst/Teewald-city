@@ -110,6 +110,8 @@
     if (jumpP) this.jumpBuf = 7; else if (this.jumpBuf > 0) this.jumpBuf--;
     if (ctl && I.pressed('attack')) this.atkBuf = 8; else if (this.atkBuf > 0) this.atkBuf--;
     var spP = ctl && I.pressed('special');
+    // revólver (capítulo 2): botão próprio ou ↑ + ataque (assim também funciona na tela de toque)
+    var shootP = ctl && !!st.gun && (I.pressed('shoot') || (I.down('up') && I.pressed('attack')));
     if (TC.params.bot && ctl) {
       var B = this.bot(st);
       left = B.left; right = B.right; jumpD = B.jump;
@@ -117,7 +119,9 @@
       this._bj = B.jump;
       if (B.atk) this.atkBuf = 8;
       spP = B.sp;
+      shootP = !!st.gun && B.shoot;
     }
+    if (shootP) this.atkBuf = 0;
     var wasGround = this.onGround, prevVy = this.vy;
     var a;
 
@@ -135,6 +139,7 @@
           } else this.jump(st);
         }
         if (!jumpD && this.vy < -2.4) this.vy = -2.4;
+        if (shootP) { this.setState('shoot'); break; }
         if (this.atkBuf) {
           this.atkBuf = 0;
           if (this.onGround) this.startAttack('punch1');
@@ -157,6 +162,7 @@
           break;
         }
         if (this.jumpBuf && this.t > a.active[1] && this.onGround) { this.setState('normal'); this.jump(st); break; }
+        if (shootP && this.t > a.active[1]) { this.setState('shoot'); break; }
         if (spP) { this.startSpin(st); break; }
         if (this.t >= a.frames) this.setState('normal');
         break;
@@ -178,6 +184,18 @@
           this.setState('normal');
           this.inv = Math.max(this.inv, 10);
         }
+        break;
+      }
+      case 'shoot': {
+        // o tiro sai no 3º quadro; dá para emendar outro depois do coice
+        var d3 = (right ? 1 : 0) - (left ? 1 : 0);
+        if (!this.onGround && d3) this.vx = TC.approach(this.vx, d3 * 1.9, 0.12);
+        else this.vx = TC.approach(this.vx, 0, this.onGround ? 0.3 : 0.04);
+        if (this.t === 3 && st.fireGun) st.fireGun(this);
+        if (shootP && this.t > 13) { this.setState('shoot'); break; }
+        if (this.atkBuf && this.t > 10 && this.onGround) { this.atkBuf = 0; this.startAttack('punch1'); break; }
+        if (this.jumpBuf && this.coyote && this.onGround && this.t > 6) { this.setState('normal'); this.jump(st); break; }
+        if (this.t >= 20) this.setState('normal');
         break;
       }
       case 'hurt':
@@ -222,7 +240,7 @@
 
   /* piloto automático para testes (?bot=1) */
   Player.prototype.bot = function (st) {
-    var o = { left: false, right: false, jump: false, atk: false, sp: false };
+    var o = { left: false, right: false, jump: false, atk: false, sp: false, shoot: false };
     var best = null, bd = 1e9, self = this;
     st.enemies.forEach(function (e) {
       if (!e.alive || e.dying || e.state === 'away' || e.state === 'intro') return;
@@ -243,6 +261,10 @@
       if (Math.abs(dx) < 34 && dy < -36 && this.onGround && st.t % 30 === 0) o.jump = true;
       if (!this.onGround && dy < -20 && Math.abs(dx) < 30 && st.t % 5 === 0) o.atk = true;
       if (this.hp > 4 && st.t % 240 === 0) o.sp = true;
+      // revólver: atira de longe, de vez em quando
+      if (st.gun && st.gun.ammo > 0 && !best.isProp && Math.abs(dx) > 50 && Math.abs(dx) < 170 && Math.abs(dy + 10) < 34 && st.t % 70 === 0) {
+        o.shoot = true; o.left = dx < 0; o.right = dx > 0;
+      }
     } else {
       o.right = true;
     }
@@ -255,6 +277,7 @@
     // pula o rasante do chefe, como um jogador faria
     var bs = st.boss;
     if (bs && bs.state === 'swoop' && this.onGround && (this.x - bs.x) * bs.face > 0 && Math.abs(this.x - bs.x) < 64) o.jump = true;
+    if (bs && bs.botJump && bs.botJump(this)) o.jump = true;
     return o;
   };
 
@@ -287,6 +310,11 @@
         if (this.t <= a.active[1] + 1) return arr[1];
         return arr[2];
       case 'airkick': return A.airkick[0];
+      case 'shoot': {
+        var G = TC.ART.ch2 && TC.ART.ch2.gun;
+        if (!G) return A.punch1[1];
+        return this.t >= 3 && this.t < 8 && !this.gunEmpty ? G.kick : G.aim;
+      }
       case 'spin': return A.spin[Math.floor(this.t / 3) % 2];
       case 'hurt': return A.hurt[0];
       case 'down': return this.onGround && this.t > 6 ? A.lie[0] : A.hurt[0];

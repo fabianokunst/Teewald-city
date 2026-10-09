@@ -247,8 +247,10 @@
       debug: function () { return new TC.DebugScene(); },
       title: function () { return new TC.TitleScene(); },
       intro: function () { return new TC.IntroScene(); },
-      stage: function () { return new TC.StageScene({ fromIntro: TC.params.wake === '1' }); },
+      stage: function () { return new TC.StageScene({ fromIntro: TC.params.wake === '1', chapter: +(TC.params.ch || 1) }); },
       ending: function () { return new TC.EndingScene(); },
+      ch2intro: function () { return new TC.Ch2IntroScene(); },
+      ending2: function () { return new TC.Ending2Scene({ score: 12345 }); },
       boot: function () { return new TC.BootScene(); }
     };
     if (sc && map[sc]) {

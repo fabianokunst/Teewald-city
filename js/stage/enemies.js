@@ -649,4 +649,6 @@
   };
 
   TC.ENEMIES = { ghost: Ghost, flame: Flame, shade: Shade, crow: Crow, boss: Boss };
+  // utilitários compartilhados com as criaturas dos outros capítulos (stage/enemies2.js)
+  TC.enemyKit = { base: base, drawSprite: drawSprite, genericHit: genericHit, contact: contact, hpFor: hpFor, frames: frames };
 })();

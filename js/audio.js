@@ -539,7 +539,64 @@
       l.start(t); l.stop(t + 1.7);
     },
     step: function (t) { noise(t, 0.04, 0.06, 'lowpass', 900, 300); },
-    gasp: function (t) { noise(t, 0.35, 0.12, 'bandpass', 1800, 900, 3); }
+    gasp: function (t) { noise(t, 0.35, 0.12, 'bandpass', 1800, 900, 3); },
+    /* ---- capítulo 2 ---- */
+    shot: function (t) {
+      noise(t, 0.09, 0.7, 'lowpass', 6000, 900, 0.7, 0.5);
+      osc('sine', 140, 40, t, 0.22, 0.6);
+      osc('square', 90, 30, t, 0.12, 0.2);
+      noise(t + 0.06, 0.9, 0.12, 'lowpass', 1500, 200, 0.5, 0.6);
+    },
+    click: function (t) { osc('square', 1800, 1200, t, 0.02, 0.08); osc('square', 1400, 900, t + 0.06, 0.02, 0.06); },
+    reload: function (t) {
+      [0, 0.09, 0.18].forEach(function (d) { osc('square', 2200, 1600, t + d, 0.02, 0.07); noise(t + d, 0.03, 0.1, 'highpass', 4000, 5000); });
+      osc('square', 900, 700, t + 0.3, 0.05, 0.1);
+    },
+    howl: function (t) {
+      var o = osc('sawtooth', 330, 330, t, 1.9, 0.07, null, 0.7);
+      o.frequency.setValueAtTime(300, t);
+      o.frequency.linearRampToValueAtTime(620, t + 0.5);
+      o.frequency.linearRampToValueAtTime(560, t + 1.3);
+      o.frequency.linearRampToValueAtTime(420, t + 1.9);
+      var l = ctx.createOscillator(); l.frequency.value = 6;
+      var lg = ctx.createGain(); lg.gain.value = 9; l.connect(lg); lg.connect(o.frequency);
+      l.start(t); l.stop(t + 2);
+      osc('sine', 600, 1240, t, 1.6, 0.05, null, 0.7);
+    },
+    growl: function (t) {
+      var o = osc('sawtooth', 80, 65, t, 0.7, 0.18);
+      var l = ctx.createOscillator(); l.frequency.value = 23;
+      var lg = ctx.createGain(); lg.gain.value = 18; l.connect(lg); lg.connect(o.frequency);
+      l.start(t); l.stop(t + 0.75);
+      noise(t, 0.6, 0.12, 'bandpass', 300, 180, 2);
+    },
+    saw: function (t) {
+      var o = osc('sawtooth', 600, 1500, t, 1.2, 0.05, null, 0.3);
+      var l = ctx.createOscillator(); l.frequency.value = 40;
+      var lg = ctx.createGain(); lg.gain.value = 40; l.connect(lg); lg.connect(o.frequency);
+      l.start(t); l.stop(t + 1.25);
+      noise(t, 1.1, 0.08, 'bandpass', 3000, 5000, 3);
+    },
+    ribbon: function (t) {
+      [1047, 1319, 1568, 2093, 2637].forEach(function (f, i) { osc('triangle', f, f, t + i * 0.07, 0.5, 0.09, null, 0.7); });
+      osc('sine', 523, 523, t, 1.2, 0.08, null, 0.6);
+    },
+    demon: function (t) {
+      var o = osc('sawtooth', 700, 160, t, 1.6, 0.18, null, 0.6);
+      var l = ctx.createOscillator(); l.frequency.value = 31;
+      var lg = ctx.createGain(); lg.gain.value = 140; l.connect(lg); lg.connect(o.frequency);
+      l.start(t); l.stop(t + 1.65);
+      osc('sawtooth', 1050, 240, t + 0.04, 1.5, 0.08, null, 0.6);
+      noise(t, 1.4, 0.3, 'bandpass', 2400, 500, 1.4, 0.4);
+    },
+    skitter: function (t) {
+      for (var i = 0; i < 6; i++) noise(t + i * 0.045 + Math.random() * 0.02, 0.025, 0.12, 'bandpass', 2600 + Math.random() * 1500, 1800, 4);
+    },
+    wood: function (t) {
+      noise(t, 0.4, 0.4, 'lowpass', 1200, 150);
+      osc('triangle', 120, 70, t, 0.3, 0.35);
+      for (var i = 0; i < 3; i++) osc('triangle', 300 + i * 90, 200, t + 0.05 + i * 0.07, 0.08, 0.12);
+    }
   };
 
   A.sfxNames = Object.keys(SFX);

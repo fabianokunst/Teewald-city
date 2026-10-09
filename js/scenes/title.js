@@ -25,14 +25,19 @@
   TitleScene.prototype.buildMenus = function () {
     var self = this;
     this.main = new TC.Menu([
-      { label: function () { return TC.t('menu.new'); }, act: function () { self.state = 'diff'; self.diffMenu.sel = TC.DIFFS.indexOf(TC.opts.diff); } },
+      { label: function () { return TC.t('menu.new'); }, act: function () { self.chapter = 1; self.state = 'diff'; self.diffMenu.sel = TC.DIFFS.indexOf(TC.opts.diff); } },
       { label: function () { return TC.t('menu.continue'); }, act: function () { self.continueGame(); }, disabled: !this.save },
+      { label: function () { return TC.t('menu.chapters'); }, act: function () { self.state = 'chapters'; self.chapMenu.sel = 0; } },
       { label: function () { return TC.t('menu.options'); }, act: function () { self.state = 'options'; self.opt.sel = 0; } },
       { label: function () { return TC.t('menu.controls'); }, act: function () { self.state = 'controls'; } }
     ], { startConfirms: true });
     // escolha da dificuldade antes de começar o novo jogo
     this.diffMenu = new TC.Menu(TC.DIFFS.map(function (k) {
       return { label: function () { return TC.t('diff.' + k); }, act: function () { TC.opts.diff = k; TC.saveOpts(); self.fromDiff = true; self.newGame(); } };
+    }), { startConfirms: true, back: function () { self.state = self.chapter > 1 ? 'chapters' : 'menu'; } });
+    // escolha do capítulo (todos liberados), depois a dificuldade
+    this.chapMenu = new TC.Menu([1, 2].map(function (n) {
+      return { label: function () { return TC.t('chap.' + n); }, act: function () { self.chapter = n; self.state = 'diff'; self.diffMenu.sel = TC.DIFFS.indexOf(TC.opts.diff); } };
     }), { startConfirms: true, back: function () { self.state = 'menu'; } });
     function toggle(key) { return function () { TC.opts[key] = !TC.opts[key]; TC.saveOpts(); TC.applyDisplay(); }; }
     function vol(key, d) { return function () { TC.opts[key] = TC.clamp(TC.opts[key] + d, 0, 10); TC.saveOpts(); TC.audio.setVolumes(); }; }
@@ -62,13 +67,16 @@
   TitleScene.prototype.newGame = function () {
     TC.store.set('save', null);
     TC.audio.stopMusic(1.2);
-    TC.game.fadeTo(function () { return new TC.IntroScene(); }, 50);
+    var ch2 = this.chapter === 2 && TC.Ch2IntroScene;
+    TC.game.fadeTo(function () { return ch2 ? new TC.Ch2IntroScene() : new TC.IntroScene(); }, 50);
     this.state = 'leaving';
   };
   TitleScene.prototype.continueGame = function () {
     var s = this.save;
     TC.audio.stopMusic(1.0);
-    TC.game.fadeTo(function () { return new TC.StageScene({ save: s }); }, 40);
+    // terminou o capítulo 1 e ainda não começou o 2: começa pelo prólogo na igreja
+    if (s && s.ch === 2 && s.fresh && TC.Ch2IntroScene) TC.game.fadeTo(function () { return new TC.Ch2IntroScene(); }, 40);
+    else TC.game.fadeTo(function () { return new TC.StageScene({ save: s }); }, 40);
     this.state = 'leaving';
   };
 
@@ -89,6 +97,8 @@
       this.main.update();
     } else if (this.state === 'diff') {
       this.diffMenu.update();
+    } else if (this.state === 'chapters') {
+      this.chapMenu.update();
     } else if (this.state === 'options') {
       this.opt.update();
     } else if (this.state === 'controls') {
@@ -183,10 +193,17 @@
           TC.font.draw(c, ln, 128, 160 + k * 11, '#c8c8e8', { align: 'center', shadow: '#000' });
         });
         TC.font.draw(c, TC.t('diff.change'), 128, 202, '#6a70a0', { align: 'center', shadow: '#000' });
+      } else if (this.state === 'chapters') {
+        TC.ui.box(c, 20, 96, 216, 102, 'menu', 0.94);
+        TC.font.draw(c, TC.t('chap.title'), 128, 104, '#ffd890', { align: 'center', shadow: '#000' });
+        this.chapMenu.draw(c, 128, 122, { align: 'center' });
+        TC.font.wrap(TC.t('chap.' + (this.chapMenu.sel + 1) + '.d'), 196).forEach(function (ln, k) {
+          TC.font.draw(c, ln, 128, 152 + k * 11, '#c8c8e8', { align: 'center', shadow: '#000' });
+        });
       } else if (this.state === 'menu' || this.state === 'leaving') {
         TC.font.draw(c, TC.t('title.sub'), 128, 82, '#c8c0e0', { align: 'center', shadow: '#000' });
-        TC.ui.box(c, 72, 132, 112, 64, 'menu', 0.85);
-        this.main.draw(c, 128, 140, { align: 'center' });
+        TC.ui.box(c, 72, 126, 112, 78, 'menu', 0.85);
+        this.main.draw(c, 128, 134, { align: 'center' });
         TC.font.draw(c, TC.t('title.copy'), 128, 210, '#6a70a0', { align: 'center', shadow: '#000' });
       } else if (this.state === 'logo') {
         if ((t >> 5) % 2 === 0) TC.font.draw(c, TC.t('boot.press'), 128, 160, '#f0e0c0', { align: 'center', shadow: '#000' });
@@ -200,13 +217,13 @@
       } else if (this.state === 'controls') {
         TC.ui.box(c, 12, 70, 232, 146, 'menu', 0.94);
         TC.font.draw(c, TC.t('ctrl.title'), 128, 78, '#ffd890', { align: 'center', shadow: '#000' });
-        var rows = [['ctrl.move', 'ctrl.keys1'], ['ctrl.jump', 'ctrl.keys2'], ['ctrl.attack', 'ctrl.keys3'], ['ctrl.special', 'ctrl.keys4'], ['ctrl.pause', 'ctrl.keys5'], ['ctrl.read', 'ctrl.keys6']];
+        var rows = [['ctrl.move', 'ctrl.keys1'], ['ctrl.jump', 'ctrl.keys2'], ['ctrl.attack', 'ctrl.keys3'], ['ctrl.special', 'ctrl.keys4'], ['ctrl.pause', 'ctrl.keys5'], ['ctrl.read', 'ctrl.keys6'], ['ctrl.shoot', 'ctrl.keys7']];
         rows.forEach(function (r2, k) {
-          TC.font.draw(c, TC.t(r2[0]), 24, 96 + k * 14, '#e0e0f0', { shadow: '#000' });
-          TC.font.draw(c, TC.t(r2[1]), 232, 96 + k * 14, '#ffc070', { shadow: '#000', align: 'right' });
+          TC.font.draw(c, TC.t(r2[0]), 24, 94 + k * 13, '#e0e0f0', { shadow: '#000' });
+          TC.font.draw(c, TC.t(r2[1]), 232, 94 + k * 13, '#ffc070', { shadow: '#000', align: 'right' });
         });
-        TC.font.draw(c, TC.t('ctrl.pad'), 128, 184, '#9098c0', { align: 'center', shadow: '#000' });
-        if (!TC.input.touchUI()) TC.font.draw(c, 'F: ' + TC.t('opt.full') + '   M: MUTE', 128, 198, '#6a70a0', { align: 'center', shadow: '#000' });
+        TC.font.draw(c, TC.t('ctrl.pad'), 128, 188, '#9098c0', { align: 'center', shadow: '#000' });
+        if (!TC.input.touchUI()) TC.font.draw(c, 'F: ' + TC.t('opt.full') + '   M: MUTE', 128, 201, '#6a70a0', { align: 'center', shadow: '#000' });
       }
     }
   };

@@ -62,6 +62,7 @@
     bolinho: { heal: 0, score: 100 },
     medalha: { heal: 0, score: 500, life: 1 }
   };
+  E.ITEM = ITEM;
   function Item(type, x, y, pop) {
     if (type === 'chimarrao' && TC.rnd() < 0.5) type = 'chopp';   // a bebida que cura é sorteada: ora chimarrão, ora chopp
     this.type = type;
@@ -91,6 +92,7 @@
     st.addScore(d.score);
     // sempre diz o que foi pego; o que ele deu vem na linha de baixo
     st.floatText(this.x, this.y - 26, TC.t('item.' + this.type), d.life ? '#ffe060' : d.heal ? '#a0ff90' : '#ffd060');
+    if (d.collect) { d.collect(st, this); return; }   // itens registrados de fora (revólver e balas do capítulo 2)
     if (d.life) { st.lives++; TC.audio.sfx('oneup'); st.floatText(this.x, this.y - 16, TC.t('item.1up'), '#ffe060'); return; }
     if (d.heal) {
       p.hp = Math.min(p.maxHp, p.hp + d.heal);

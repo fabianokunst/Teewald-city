@@ -27,8 +27,8 @@
   };
   DebugScene.prototype.update = function () {
     this.t++;
-    if (TC.input.pressed('right')) { this.page = (this.page + 1) % 6; this.enter(); }
-    if (TC.input.pressed('left')) { this.page = (this.page + 5) % 6; this.enter(); }
+    if (TC.input.pressed('right')) { this.page = (this.page + 1) % 9; this.enter(); }
+    if (TC.input.pressed('left')) { this.page = (this.page + 8) % 9; this.enter(); }
   };
   DebugScene.prototype.draw = function (c) {
     var A = TC.ART, x, y, k;
@@ -98,8 +98,37 @@
           if (x > 200) { x = 0; y += 110; }
         });
       });
+    } else if (this.page >= 5) {
+      this.drawCh2(c);
     }
     TC.font.draw(c, 'PAGE ' + this.page, 220, 214, '#ffffff', { shadow: '#000' });
+  };
+  /* capítulo 2: colonos, lobisomem, o Demônio Antigo, cenário (páginas 5 a 8) */
+  DebugScene.prototype.drawCh2 = function (c) {
+    var A = TC.ART, C = A.ch2Init(), x = 2, y = 2;
+    function row(list, step, h) { list.forEach(function (f) { if (x + f.width > 256) { x = 2; y += h; } c.drawImage(f, x, y); x += step || f.width + 2; }); }
+    if (this.page === 5) {
+      ['colono', 'colona', 'kessler'].forEach(function (k) {
+        x = 2; row([].concat(C[k].idle, C[k].walk.slice(0, 3), C[k].windup, C[k].swing, C[k].hurt, C[k].kneel, C[k].lie), 30, 58); y += 58;
+      });
+      x = 2; row([].concat(C.wolf.idle[0], C.wolf.run.slice(0, 2), C.wolf.crouch, C.wolf.leap, C.wolf.slash, C.wolf.howl, C.wolf.lie), 34, 56);
+    } else if (this.page === 6) {
+      var D = C.demon;
+      row([D.crawl[0], D.crawl[3], D.charge[0], D.crouch[0], D.leap[0], D.land[0], D.rear[0], D.swipe[0], D.swipe[1], D.scream[0], D.dizzy[0], D.hurt[0], D.dead[0]], 64, 104);
+    } else if (this.page === 7) {
+      c.drawImage(C.pavilion(256), 0, 0);
+      c.drawImage(C.stage(), 150, 80);
+      c.drawImage(C.fnm(), 0, 150);
+      c.drawImage(C.carijo(), 146, 144);
+    } else if (this.page === 8) {
+      var m = C.mill(); c.drawImage(m, 0, 0); TC.drawRot(c, C.wheelImg, m.wheelX, m.wheelY, this.t * 0.02, 96);
+      c.drawImage(C.stump(), 120, 0);
+      c.drawImage(C.logPile(6, 2, 3), 0, 140); c.drawImage(C.sawBench(), 110, 120); TC.drawRot(c, C.sawImg, 150, 128, this.t * 0.4, 24);
+      c.drawImage(C.erva(3, 46), 190, 120); c.drawImage(C.sackImg, 230, 150);
+      x = 2; y = 186; var T = C.T;
+      row([T.grimpaTop[0], T.grimpaTop[1], T.sawdustTop[0], T.deckTop[0], T.deckFill, T.taipa[0], T.taipaTop[0], A.items.revolver, A.items.balas, C.gun.aim, C.gun.kick].concat(C.ribbons.map(function (r) { return r[0]; })), 0, 40);
+      c.drawImage(A.portrait('kessler'), 2, 100); c.drawImage(A.portrait('demon'), 44, 100); c.drawImage(A.portrait('fita', 3), 86, 100);
+    }
   };
   TC.DebugScene = DebugScene;
 })();
