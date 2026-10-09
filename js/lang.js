@@ -116,7 +116,7 @@
     'mid.square': 'A praça da igreja. O sino... Tem alguém lá dentro?',
 
     'sign.welcome': 'BEM-VINDO A TEEWALD CITY\nFundada em 1852 por colonos do Reno.\n"Willkommen!"',
-    'sign.festa': 'FESTA DA BATATA — 25ª EDIÇÃO\nBaile, bandinha e a Rainha da Batata.\nJunho de 1977.',
+    'sign.festa': 'FESTA DA BATATA — 2ª EDIÇÃO\nBaile, bandinha e a Rainha da Batata.\nJunho de 1997.',
     'sign.missing': 'DESAPARECIDOS DESDE A NEBLINA:\nfamílias Schmitt, Kessler, Weber...\n(o resto do papel está rasgado)',
     'sign.bridge': 'PONTE DO ARROIO\nCuidado: tábuas soltas.',
     'sign.cemetery': 'CEMITÉRIO DA COLÔNIA\n"Aqui descansam os que vieram de longe."',
@@ -260,7 +260,7 @@
     'mid.square': 'The church square. The bell... Is someone in there?',
 
     'sign.welcome': 'WELCOME TO TEEWALD CITY\nFounded in 1852 by settlers from the Rhine.\n"Willkommen!"',
-    'sign.festa': 'POTATO FESTIVAL — 25TH EDITION\nDance, brass band and the Potato Queen.\nJune, 1977.',
+    'sign.festa': 'POTATO FESTIVAL — 2ND EDITION\nDance, brass band and the Potato Queen.\nJune, 1997.',
     'sign.missing': 'MISSING SINCE THE FOG:\nthe Schmitt, Kessler, Weber families...\n(the rest of the paper is torn)',
     'sign.bridge': 'CREEK BRIDGE\nCareful: loose planks.',
     'sign.cemetery': 'SETTLERS\' CEMETERY\n"Here rest those who came from afar."',
