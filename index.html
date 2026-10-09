@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#05060f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Teewald City">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
 <title>Teewald City</title>
 <meta name="description" content="Teewald City — um jogo de plataforma e ação em pixel art no estilo Super Nintendo, ambientado numa cidade de enxaimel no sul do Brasil.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16' fill='%2305060f'/%3E%3Crect x='9' y='2' width='4' height='4' fill='%23e8e4c0'/%3E%3Crect x='7' y='7' width='2' height='8' fill='%233a2a20'/%3E%3Crect x='3' y='6' width='10' height='2' fill='%23183020'/%3E%3Crect x='2' y='5' width='3' height='2' fill='%23183020'/%3E%3Crect x='11' y='5' width='3' height='2' fill='%23183020'/%3E%3C/svg%3E">
@@ -17,20 +23,7 @@
   </div>
 </div>
 
-<div id="touch" aria-hidden="true">
-  <div class="dpad">
-    <div class="tb" data-act="up" style="left:44px;top:0">&#9650;</div>
-    <div class="tb" data-act="left" style="left:0;top:44px">&#9664;</div>
-    <div class="tb" data-act="right" style="left:88px;top:44px">&#9654;</div>
-    <div class="tb" data-act="down" style="left:44px;top:88px">&#9660;</div>
-  </div>
-  <div class="btns">
-    <div class="tb round" data-act="special" style="right:118px;bottom:84px">C</div>
-    <div class="tb round" data-act="attack" style="right:66px;bottom:30px">B</div>
-    <div class="tb round" data-act="jump" style="right:0;bottom:70px">A</div>
-  </div>
-  <div class="tb start" data-act="start">START</div>
-</div>
+<!-- o controle virtual da tela de toque é montado por js/input.js -->
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <filter id="chroma" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">

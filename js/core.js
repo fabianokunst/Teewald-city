@@ -150,7 +150,8 @@ var TC = window.TC = window.TC || {};
     chroma: TC.store.get('chroma', false),
     aspect: TC.store.get('aspect', 'square'),
     music: TC.store.get('music', 8),
-    sfx: TC.store.get('sfx', 9)
+    sfx: TC.store.get('sfx', 9),
+    diff: TC.store.get('diff', 'normal')
   };
   TC.saveOpts = function () {
     TC.store.set('lang', TC.opts.lang);
@@ -159,5 +160,28 @@ var TC = window.TC = window.TC || {};
     TC.store.set('aspect', TC.opts.aspect);
     TC.store.set('music', TC.opts.music);
     TC.store.set('sfx', TC.opts.sfx);
+    TC.store.set('diff', TC.opts.diff);
+  };
+
+  /* ---------- dificuldade ----------
+     dmg: multiplicador do dano recebido      touch: encostar no inimigo machuca
+     attackers: quantos inimigos atacam ao mesmo tempo
+     cool / windup: multiplicadores do intervalo entre ataques e do aviso antes do golpe
+     speed: velocidade dos ataques    enemyHp / bossHp: resistência    inv: tempo piscando após apanhar
+     drop: chance de um inimigo derrotado soltar comida    orbs: orbes por rajada do chefe na 2ª metade
+     keepBoss: se o Arno cair, o chefe volta com a energia que tinha (em vez de cheia) */
+  TC.DIFFS = ['easy', 'normal', 'hard'];
+  TC.DIFF = {
+    easy: { dmg: 0.5, touch: false, attackers: 1, cool: 1.8, windup: 1.4, speed: 0.8, enemyHp: 0.7, bossHp: 32, lives: 5, inv: 1.5, drop: 0.25, orbs: 3, keepBoss: true },
+    normal: { dmg: 0.75, touch: false, attackers: 2, cool: 1.3, windup: 1.15, speed: 0.9, enemyHp: 0.85, bossHp: 45, lives: 3, inv: 1.2, drop: 0.1, orbs: 5, keepBoss: true },
+    hard: { dmg: 1, touch: true, attackers: 99, cool: 1, windup: 1, speed: 1, enemyHp: 1, bossHp: 60, lives: 3, inv: 1, drop: 0, orbs: 5, keepBoss: false }
+  };
+  if (!TC.DIFF[TC.opts.diff]) TC.opts.diff = 'normal';
+  if (TC.params.diff && TC.DIFF[TC.params.diff]) TC.opts.diff = TC.params.diff;
+  TC.diff = function () { return TC.DIFF[TC.opts.diff] || TC.DIFF.normal; };
+  TC.cycleDiff = function (d) {
+    var i = TC.DIFFS.indexOf(TC.opts.diff);
+    TC.opts.diff = TC.DIFFS[(i + d + TC.DIFFS.length) % TC.DIFFS.length];
+    TC.saveOpts();
   };
 })();

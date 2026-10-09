@@ -5,27 +5,31 @@ html, body {
   height: 100%;
   background: #000;
   overflow: hidden;
+  overscroll-behavior: none;
   touch-action: none;
   -webkit-user-select: none;
   user-select: none;
+  -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
 }
 
 #stage {
   position: fixed;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 #wrap {
-  position: relative;
+  position: absolute;
+  left: 0;
+  top: 0;
   line-height: 0;
 }
 
 #screen {
   display: block;
+  width: 100%;
+  height: 100%;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   background: #000;
@@ -49,8 +53,23 @@ html, body {
   background-size: 100% 100%, 100% 4px;
 }
 
-/* ---------- touch controls ---------- */
+/* lê as margens seguras do aparelho (entalhe, barra de gestos) */
+#safe-probe {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  visibility: hidden;
+  pointer-events: none;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+}
+
+/* ---------- controle virtual (toque) ----------
+   Tudo aqui é só visual: o toque é tratado em js/input.js por geometria,
+   com áreas de acerto maiores que os desenhos. Posições e --D vêm do JS. */
 #touch {
+  --D: 128px;
   position: fixed;
   inset: 0;
   pointer-events: none;
@@ -58,49 +77,142 @@ html, body {
   z-index: 5;
 }
 #touch.on { display: block; }
+#touch canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
 
-#touch .tb {
+/* corpo do controle (só no modo retrato, abaixo da tela) */
+#touch .t-body {
   position: absolute;
-  width: 44px;
-  height: 44px;
-  border: 2px solid rgba(220, 220, 255, 0.35);
-  background: rgba(20, 22, 50, 0.35);
-  color: rgba(230, 230, 255, 0.7);
-  font: bold 16px monospace;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  background:
+    radial-gradient(ellipse 120% 60% at 50% 0%, rgba(80, 90, 160, 0.10), rgba(0, 0, 0, 0) 70%),
+    linear-gradient(180deg, #13141d 0%, #0c0d14 55%, #08080d 100%);
+  border-top: 1px solid #232536;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+#touch.portrait .t-body { display: block; }
+#touch .t-brand {
+  position: absolute;
+  display: none;
+  transform: translate(-50%, -50%);
+}
+#touch.portrait .t-brand { display: block; }
+
+/* direcional */
+#touch .t-pad {
+  position: absolute;
+  width: var(--D);
+  height: var(--D);
+}
+#touch .t-well {
+  position: absolute;
+  inset: -4%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #06060a 0%, #0a0a11 64%, #12131c 72%, rgba(18, 19, 28, 0) 73%);
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+#touch .t-cross {
+  position: absolute;
+  inset: 9%;
+  transition: transform 40ms linear;
+}
+#touch .t-arm, #touch .t-hub {
+  position: absolute;
+  background: linear-gradient(180deg, #3a3b49 0%, #262732 100%);
+  box-shadow: 0 3px 0 #0b0b10, inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+#touch .t-u { left: 33%; width: 34%; top: 0; height: 37%; border-radius: 5px 5px 0 0; }
+#touch .t-d { left: 33%; width: 34%; bottom: 0; height: 37%; border-radius: 0 0 5px 5px; }
+#touch .t-l { top: 33%; height: 34%; left: 0; width: 37%; border-radius: 5px 0 0 5px; }
+#touch .t-r { top: 33%; height: 34%; right: 0; width: 37%; border-radius: 0 5px 5px 0; }
+#touch .t-hub { left: 32%; top: 32%; width: 36%; height: 36%; box-shadow: none; }
+#touch .t-hub::after {
+  content: '';
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, #1a1a22 0%, #2c2d39 100%);
+}
+#touch .t-arm::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border: calc(var(--D) * 0.042) solid transparent;
+  opacity: 0.85;
+}
+#touch .t-u::after { border-bottom: calc(var(--D) * 0.05) solid #6a6d86; border-top-width: 0; transform: translate(-50%, -70%); }
+#touch .t-d::after { border-top: calc(var(--D) * 0.05) solid #6a6d86; border-bottom-width: 0; transform: translate(-50%, -30%); }
+#touch .t-l::after { border-right: calc(var(--D) * 0.05) solid #6a6d86; border-left-width: 0; transform: translate(-70%, -50%); }
+#touch .t-r::after { border-left: calc(var(--D) * 0.05) solid #6a6d86; border-right-width: 0; transform: translate(-30%, -50%); }
+#touch .t-pad.u .t-u, #touch .t-pad.d .t-d, #touch .t-pad.l .t-l, #touch .t-pad.r .t-r {
+  background: linear-gradient(180deg, #55576e 0%, #3c3d52 100%);
+}
+#touch .t-pad.u .t-u::after { border-bottom-color: #ffd890; }
+#touch .t-pad.d .t-d::after { border-top-color: #ffd890; }
+#touch .t-pad.l .t-l::after { border-right-color: #ffd890; }
+#touch .t-pad.r .t-r::after { border-left-color: #ffd890; }
+
+/* botões de ação (cores do controle de 16 bits) */
+#touch .t-btn {
+  position: absolute;
+  width: calc(var(--D) * 0.44);
+  height: calc(var(--D) * 0.44);
+  --base: #888; --hi: #ccc; --lo: #444; --sh: #222;
+}
+#touch .t-btn.jump    { --base: #b8323a; --hi: #ff8a7c; --lo: #5e1018; --sh: #2c060a; }
+#touch .t-btn.attack  { --base: #d49c1e; --hi: #ffe696; --lo: #6e4806; --sh: #302004; }
+#touch .t-btn.special { --base: #2c8a4c; --hi: #92e8a8; --lo: #124226; --sh: #071c10; }
+#touch .t-btn::before {
+  content: '';
+  position: absolute;
+  inset: -9%;
+  border-radius: 50%;
+  background: #07070b;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.95), 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+#touch .t-cap {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: auto;
-  border-radius: 8px;
+  background: radial-gradient(circle at 36% 30%, var(--hi) 0%, var(--base) 42%, var(--lo) 100%);
+  box-shadow: 0 4px 0 var(--sh), 0 6px 10px rgba(0, 0, 0, 0.55), inset 0 -3px 4px rgba(0, 0, 0, 0.22);
+  transition: transform 40ms linear, box-shadow 40ms linear, filter 40ms linear;
 }
-#touch .tb.down { background: rgba(255, 190, 110, 0.45); }
-
-#touch .dpad {
+#touch .t-btn.on .t-cap {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--sh), 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 2px 5px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.25);
+}
+#touch .t-lbl {
   position: absolute;
-  left: max(16px, env(safe-area-inset-left));
-  bottom: 24px;
-  width: 132px;
-  height: 132px;
-}
-#touch .btns {
-  position: absolute;
-  right: max(16px, env(safe-area-inset-right));
-  bottom: 24px;
-  width: 170px;
-  height: 140px;
-}
-#touch .tb.round {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  font-size: 18px;
-}
-#touch .tb.start {
   left: 50%;
-  top: 10px;
-  transform: translateX(-50%);
-  width: 84px;
-  height: 28px;
-  font-size: 12px;
-  border-radius: 14px;
+  top: 100%;
+  transform: translate(-50%, calc(var(--D) * 0.05));
 }
+
+/* botões pequenos: START, som, tela cheia */
+#touch .t-pill {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #2e3040 0%, #1c1d28 100%);
+  box-shadow: 0 2px 0 #07070b, 0 3px 6px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  transition: transform 40ms linear, filter 40ms linear;
+}
+#touch .t-pill.on { transform: translateY(2px); filter: brightness(1.5); }
+#touch .t-pill.hide { display: none; }
+
+/* sobre a imagem do jogo: mais transparente e sem os rebaixos */
+#touch .over { opacity: 0.5; }
+#touch .over.on, #touch .t-pad.over.u, #touch .t-pad.over.d, #touch .t-pad.over.l, #touch .t-pad.over.r { opacity: 0.8; }
+#touch .t-pad.over .t-well, #touch .t-btn.over::before { display: none; }

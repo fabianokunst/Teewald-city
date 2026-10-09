@@ -67,7 +67,9 @@
   Player.prototype.damage = function (st, dmg, dir, heavy) {
     if (!this.alive || this.inv > 0 || this.state === 'spin' || this.state === 'down' || this.state === 'getup' || this.state === 'dead' || this.state === 'cine') return false;
     if (st.mode !== 'play') return false;
-    this.hp -= dmg;
+    var D = TC.diff();
+    // energia em quartos de segmento: no fácil e no normal os golpes tiram menos
+    this.hp = Math.round((this.hp - dmg * D.dmg) * 4) / 4;
     TC.fx.shake(dmg > 1 ? 3 : 2, 8);
     st.spark(this.x, this.y - 18, 1);
     TC.audio.sfx('hurt');
@@ -84,12 +86,12 @@
       this.setState('down');
       this.vy = -3.2; this.vx = dir * 2.4;
       this.lieT = 0;
-      this.inv = 110;
+      this.inv = Math.round(110 * D.inv);
     } else {
       this.setState('hurt');
       this.vx = dir * 2.2;
       if (this.onGround) this.vy = -1.6;
-      this.inv = 70;
+      this.inv = Math.round(70 * D.inv);
     }
     this.face = -dir;
     return true;
@@ -170,7 +172,8 @@
         if (this.t % 9 === 1) { this.atkId = attackSeq++; TC.audio.sfx('spin'); }
         if (st.playerAttack(this, ATK.spin, this.atkBox(ATK.spin.box), this.atkId)) this.spinHit = true;
         if (this.t >= 36) {
-          if (this.spinHit && this.hp > 1) this.hp -= 1;
+          var cost = TC.diff().dmg;
+          if (this.spinHit && this.hp > cost) this.hp -= cost;
           this.setState('normal');
           this.inv = Math.max(this.inv, 10);
         }
@@ -248,6 +251,9 @@
     var wall = TC.ent.isSolid(lvl.tile(Math.floor((this.x + (o.left ? -12 : 12)) / 16), Math.floor((this.y - 8) / 16)));
     if (this.onGround && (o.left || o.right) && (!TC.ent.isSolid(below) && below !== 2 || wall)) o.jump = true;
     if (!this.onGround && this.vy < 0) o.jump = true;
+    // pula o rasante do chefe, como um jogador faria
+    var bs = st.boss;
+    if (bs && bs.state === 'swoop' && this.onGround && (this.x - bs.x) * bs.face > 0 && Math.abs(this.x - bs.x) < 64) o.jump = true;
     return o;
   };
 

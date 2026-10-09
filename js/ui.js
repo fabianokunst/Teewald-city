@@ -163,6 +163,7 @@
   }
   Menu.prototype.update = function () {
     this.t++;
+    if (this.tapUpdate()) return;
     var n = this.items.length, d = 0;
     if (TC.input.pressed('down')) d = 1;
     if (TC.input.pressed('up')) d = -1;
@@ -183,10 +184,36 @@
     }
     if (TC.input.pressed('back') && this.opts.back) { TC.audio.sfx('cancel'); this.opts.back(); }
   };
+  /* toque/clique direto num item (posições guardadas no último draw).
+     Nos itens de valor, a metade esquerda do valor diminui e a direita aumenta. */
+  Menu.prototype.tapUpdate = function () {
+    var tap = TC.input.tap && TC.input.tap();
+    if (!tap) return false;
+    var rects = this._rects || [];
+    for (var i = 0; i < rects.length; i++) {
+      var r = rects[i], it = this.items[i];
+      if (!r || it.disabled || tap.x < r.x0 || tap.x >= r.x1 || tap.y < r.y0 || tap.y >= r.y1) continue;
+      if (i !== this.sel) { this.sel = i; this.t = 0; }
+      if (it.act) { TC.audio.sfx('confirm'); it.act(); }
+      else if (it.left && r.vmid != null && tap.x >= r.vx0 && tap.x < r.vmid) { it.left(); TC.audio.sfx('select'); }
+      else if (it.right) { it.right(); TC.audio.sfx('select'); }
+      else TC.audio.sfx('select');
+      break;
+    }
+    return true;   // o toque fora dos itens não confirma o item selecionado
+  };
   Menu.prototype.draw = function (ctx, x, y, opt) {
     opt = opt || {};
     var lh = opt.lineH || 14;
-    for (var i = 0; i < this.items.length; i++) {
+    var rects = this._rects = [];
+    var wide = 0, i;
+    if (opt.align === 'center') {
+      for (i = 0; i < this.items.length; i++) {
+        var lb = this.items[i].label;
+        wide = Math.max(wide, TC.font.measure(typeof lb === 'function' ? lb() : lb));
+      }
+    }
+    for (i = 0; i < this.items.length; i++) {
       var it = this.items[i];
       var label = typeof it.label === 'function' ? it.label() : it.label;
       var sel = i === this.sel;
@@ -194,9 +221,20 @@
       var lx = x;
       if (opt.align === 'center') lx = x - Math.floor(TC.font.measure(label) / 2);
       TC.font.draw(ctx, label, lx, y + i * lh, col, { shadow: '#000000' });
+      var rc = opt.align === 'center'
+        ? { x0: x - wide / 2 - 16, x1: x + wide / 2 + 16 }
+        : { x0: x - 16, x1: x + (it.value ? (opt.valueX || 120) + 14 : Math.max(TC.font.measure(label) + 16, opt.valueX || 120)) };
+      rc.y0 = y + i * lh - Math.floor((lh - 9) / 2) - 1;
+      rc.y1 = rc.y0 + lh;
+      rects.push(rc);
       if (it.value) {
         var v = it.value();
-        TC.font.draw(ctx, (sel && it.right ? '◀ ' : '') + v + (sel && it.right ? ' ▶' : ''), x + (opt.valueX || 120), y + i * lh, sel ? '#ffffff' : '#9098c0', { shadow: '#000000', align: 'right' });
+        var vs = (sel && it.right ? '◀ ' : '') + v + (sel && it.right ? ' ▶' : '');
+        var vx = x + (opt.valueX || 120);
+        TC.font.draw(ctx, vs, vx, y + i * lh, sel ? '#ffffff' : '#9098c0', { shadow: '#000000', align: 'right' });
+        var vw = Math.max(TC.font.measure(vs), 36);
+        rc.vx0 = vx - vw - 8;
+        rc.vmid = vx - vw / 2;
       }
       if (sel) {
         var bob = (this.t >> 3) % 2;

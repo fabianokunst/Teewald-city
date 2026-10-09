@@ -38,26 +38,31 @@
     if (self.hp <= 0) { self.hp = 0; self.die(st, dir); }
     return true;
   }
-  function contact(self, st, dmg, heavy) {
+  // passive: só encostar (sem estar atacando) — no fácil e no normal isso não machuca
+  function contact(self, st, dmg, heavy, passive) {
     var p = st.player;
     if (!p.alive || st.mode !== 'play') return;
+    if (passive && !TC.diff().touch) return;
     if (TC.overlap(self.hurtBox(), p.hurtBox())) p.damage(st, dmg, p.x < self.x ? -1 : 1, heavy);
   }
+  function hpFor(n) { return Math.max(1, Math.round(n * TC.diff().enemyHp)); }
+  function frames(n, k) { return Math.round(n * k); }
 
   /* ================= ASSOMBRAÇÃO ================= */
   function Ghost(x, y, opt) {
     base(this, 'ghost', x, y);
     opt = opt || {};
     this.w = 14; this.h = 18;
-    this.hp = this.maxHp = 3;
+    this.hp = this.maxHp = hpFor(3);
     this.name = 'en.ghost';
     this.score = 100;
     this.state = opt.rise ? 'rise' : 'float';
     this.alpha = opt.rise ? 0 : 1;
-    this.cool = 40 + TC.rnd.int(0, 60);
+    this.cool = frames(40 + TC.rnd.int(0, 60), TC.diff().cool);
     this.phase = TC.rnd() * 6;
     if (opt.rise) this.inv = 40;
   }
+  Ghost.prototype.attacking = function () { return this.state === 'windup' || this.state === 'lunge'; };
   Ghost.prototype.hurtBox = function () { return { x: this.x - 7, y: this.y - 20, w: 14, h: 18 }; };
   Ghost.prototype.hit = function (st, d, dir, kb, id, atk) { return genericHit(this, st, d, dir, kb, id, atk); };
   Ghost.prototype.onHit = function (st, dmg, dir, kb) {
@@ -89,6 +94,7 @@
     var p = st.player;
     var dx = p.x - this.x, dy = (p.y - 16) - this.y + 10;
     var play = st.mode === 'play';
+    var D = TC.diff();
     switch (this.state) {
       case 'rise':
         this.alpha = Math.min(1, this.alpha + 0.03);
@@ -98,21 +104,27 @@
       case 'float':
         this.face = dx < 0 ? -1 : 1;
         var ty = p.y - 10 + Math.sin(this.t * 0.06 + this.phase) * 8;
-        this.vx = TC.approach(this.vx, Math.sign(dx) * 0.7, 0.04);
+        // quando encostar não machuca, a assombração ronda a uma certa distância em vez de grudar no Arno
+        var adx = Math.abs(dx), want = Math.sign(dx) * 0.7;
+        if (!D.touch) want = adx > 30 ? this.face * 0.7 : adx < 20 ? -this.face * 0.5 : 0;
+        this.vx = TC.approach(this.vx, want, 0.04);
         this.vy = TC.approach(this.vy, TC.clamp((ty - this.y) * 0.05, -0.7, 0.7), 0.05);
         if (this.cool > 0) this.cool--;
-        if (play && this.cool <= 0 && Math.abs(dx) < 70 && Math.abs(dy) < 34) { this.state = 'windup'; this.t = 0; TC.audio.sfx('ghost'); }
+        if (play && this.cool <= 0 && Math.abs(dx) < 70 && Math.abs(dy) < 34) {
+          if (st.mayAttack(this)) { this.state = 'windup'; this.t = 0; TC.audio.sfx('ghost'); }
+          else this.cool = TC.rnd.int(20, 45);
+        }
         break;
       case 'windup':
         this.vx *= 0.85; this.vy *= 0.85;
-        if (this.t >= 26) {
+        if (this.t >= frames(26, D.windup)) {
           this.state = 'lunge'; this.t = 0;
-          this.vx = this.face * 3.1;
+          this.vx = this.face * 3.1 * D.speed;
           this.vy = TC.clamp(((p.y - 12) - this.y) / 22, -1.5, 1.5);
         }
         break;
       case 'lunge':
-        if (this.t >= 28) { this.state = 'recover'; this.t = 0; this.cool = 70 + TC.rnd.int(0, 50); }
+        if (this.t >= 28) { this.state = 'recover'; this.t = 0; this.cool = frames(70 + TC.rnd.int(0, 50), D.cool); }
         break;
       case 'recover':
         this.vx *= 0.93; this.vy *= 0.93;
@@ -126,7 +138,8 @@
     this.x += this.vx; this.y += this.vy;
     this.y = TC.clamp(this.y, 50, st.groundY + 2);
     if (st.arena) this.x = TC.clamp(this.x, st.camX - 30, st.camX + TC.W + 30);
-    if (this.state !== 'rise' && this.state !== 'hurt') contact(this, st, 1);
+    if (this.state === 'lunge') contact(this, st, 1);
+    else if (this.state !== 'rise' && this.state !== 'hurt') contact(this, st, 1, false, true);
   };
   Ghost.prototype.draw = function (c, cx, cy) {
     var img = A.ghost[Math.floor(this.t / 8) % 4];
@@ -143,14 +156,15 @@
   function Flame(x, y, opt) {
     base(this, 'flame', x, y);
     this.w = 16; this.h = 18;
-    this.hp = this.maxHp = 4;
+    this.hp = this.maxHp = hpFor(4);
     this.name = 'en.flame';
     this.score = 200;
     this.state = 'enter';
     this.side = x < (opt && opt.cx || 0) ? -1 : 1;
-    this.hoverT = TC.rnd.int(90, 150);
+    this.hoverT = frames(TC.rnd.int(90, 150), TC.diff().cool);
     this.phase = TC.rnd() * 6;
   }
+  Flame.prototype.attacking = function () { return this.state === 'aim' || this.state === 'dash'; };
   Flame.prototype.hurtBox = function () { return { x: this.x - 11, y: this.y - 25, w: 22, h: 24 }; };
   Flame.prototype.hit = function (st, d, dir, kb, id, atk) { return genericHit(this, st, d, dir, kb, id, atk); };
   Flame.prototype.onHit = function (st, dmg, dir, kb) {
@@ -179,6 +193,7 @@
     var p = st.player;
     var dx = p.x - this.x;
     var play = st.mode === 'play';
+    var D = TC.diff();
     // brasas na cauda
     if (this.t % 3 === 0) {
       var back = this.vx > 0.3 ? -1 : this.vx < -0.3 ? 1 : -this.face;
@@ -193,22 +208,25 @@
         this.vx *= 0.94; this.vy *= 0.94;
         this.face = dx < 0 ? -1 : 1;
         if (this.state === 'enter' && this.t > 60) { this.state = 'hover'; this.t = 0; }
-        if (this.state === 'hover' && play && this.t > this.hoverT) { this.state = 'aim'; this.t = 0; TC.audio.sfx('screech'); }
+        if (this.state === 'hover' && play && this.t > this.hoverT) {
+          if (st.mayAttack(this)) { this.state = 'aim'; this.t = 0; TC.audio.sfx('screech'); }
+          else this.hoverT = this.t + TC.rnd.int(20, 50);
+        }
         break;
       }
       case 'aim':
         this.vx *= 0.85; this.vy *= 0.85;
         this.face = dx < 0 ? -1 : 1;
-        if (this.t >= 34) {
+        if (this.t >= frames(34, D.windup)) {
           this.state = 'dash'; this.t = 0;
-          this.vx = this.face * 4.3;
+          this.vx = this.face * 4.3 * D.speed;
           this.vy = TC.clamp(((p.y - 14) - this.y) / 20, -2.5, 2.5);
           TC.audio.sfx('flame');
         }
         break;
       case 'dash':
         this.vy *= 0.98;
-        if (this.t >= 36) { this.state = 'hover'; this.t = 0; this.side = -this.side; this.hoverT = TC.rnd.int(80, 140); }
+        if (this.t >= 36) { this.state = 'hover'; this.t = 0; this.side = -this.side; this.hoverT = frames(TC.rnd.int(80, 140), D.cool); }
         break;
       case 'hurt':
         this.vx *= 0.9; this.vy *= 0.9;
@@ -218,7 +236,7 @@
     this.x += this.vx; this.y += this.vy;
     this.y = TC.clamp(this.y, 30, st.groundY - 2);
     if (this.state === 'dash') contact(this, st, 2, true);
-    else if (this.state !== 'hurt' && this.state !== 'enter') contact(this, st, 1);
+    else if (this.state !== 'hurt' && this.state !== 'enter') contact(this, st, 1, false, true);
   };
   Flame.prototype.draw = function (c, cx, cy) {
     var moving = Math.abs(this.vx) > 0.6 ? Math.sign(this.vx) : this.face;
@@ -244,7 +262,7 @@
   function Shade(x, y, opt) {
     base(this, 'shade', x, y);
     this.w = 14; this.h = 40;
-    this.hp = this.maxHp = 6;
+    this.hp = this.maxHp = hpFor(6);
     this.name = 'en.shade';
     this.score = 300;
     this.state = 'spawn';
@@ -254,6 +272,7 @@
     this.speed = 0.7 + TC.rnd() * 0.15;
     this.useArena = true;
   }
+  Shade.prototype.attacking = function () { return this.state === 'windup' || this.state === 'swipe'; };
   Shade.prototype.hurtBox = function () { return { x: this.x - 7, y: this.y - 40, w: 14, h: 40 }; };
   Shade.prototype.hit = function (st, d, dir, kb, id, atk) {
     if (this.state === 'down' || this.state === 'getup' || this.state === 'spawn') return false;
@@ -307,11 +326,14 @@
         if (Math.abs(dx) > 22) this.vx = TC.approach(this.vx, this.face * this.speed, 0.08);
         else this.vx = TC.approach(this.vx, 0, 0.1);
         if (this.cool > 0) this.cool--;
-        if (play && this.cool <= 0 && Math.abs(dx) < 32 && Math.abs(dy) < 20) { this.state = 'windup'; this.t = 0; }
+        if (play && this.cool <= 0 && Math.abs(dx) < 32 && Math.abs(dy) < 20) {
+          if (st.mayAttack(this)) { this.state = 'windup'; this.t = 0; }
+          else this.cool = TC.rnd.int(20, 45);
+        }
         break;
       case 'windup':
         this.vx = TC.approach(this.vx, 0, 0.2);
-        if (this.t >= 22) { this.state = 'swipe'; this.t = 0; TC.audio.sfx('swing2'); this.vx = this.face * 1.2; }
+        if (this.t >= frames(22, TC.diff().windup)) { this.state = 'swipe'; this.t = 0; TC.audio.sfx('swing2'); this.vx = this.face * 1.2; }
         break;
       case 'swipe':
         this.vx = TC.approach(this.vx, 0, 0.12);
@@ -323,7 +345,7 @@
         break;
       case 'recover':
         this.vx = TC.approach(this.vx, 0, 0.2);
-        if (this.t >= 26) { this.state = 'walk'; this.t = 0; this.cool = 40 + TC.rnd.int(0, 50); }
+        if (this.t >= 26) { this.state = 'walk'; this.t = 0; this.cool = frames(40 + TC.rnd.int(0, 50), TC.diff().cool); }
         break;
       case 'hurt':
         this.vx = TC.approach(this.vx, 0, 0.15);
@@ -381,13 +403,27 @@
     this.score = 50;
     this.state = opt && opt.fly ? 'swoop' : 'perch';
     this.homeY = y;
+    this.ay = 0.055;
     if (this.state === 'swoop') this.startSwoop(opt.fly);
   }
-  Crow.prototype.startSwoop = function (dir) {
+  Crow.prototype.startSwoop = function (dir, st) {
     this.state = 'swoop'; this.t = 0;
     this.face = dir;
     this.vx = dir * 2.6;
     this.vy = 2.0;
+    this.aimed = false;
+    if (st) this.aim(st);
+  };
+  /* parábola cujo ponto mais baixo fica na altura da cabeça do Arno, bem em cima dele */
+  Crow.prototype.aim = function (st) {
+    var p = st.player;
+    var dist = Math.max(40, Math.abs(p.x - this.x));
+    var drop = Math.max(20, (p.y - 18) - this.y);
+    var T = TC.clamp(dist / 2.6, 50, 110) / TC.diff().speed;
+    this.vx = this.face * dist / T;
+    this.vy = 2 * drop / T;
+    this.ay = 2 * drop / (T * T);
+    this.aimed = true;
   };
   Crow.prototype.hurtBox = function () { return { x: this.x - 6, y: this.y - 10, w: 12, h: 10 }; };
   Crow.prototype.hit = function (st, d, dir, kb, id, atk) { return genericHit(this, st, d, dir, kb, id, atk); };
@@ -407,19 +443,25 @@
     switch (this.state) {
       case 'perch':
         this.face = dx < 0 ? -1 : 1;
-        if (st.mode === 'play' && Math.abs(dx) < 120) { TC.audio.sfx('caw'); this.startSwoop(this.face); }
+        if (st.mode === 'play' && Math.abs(dx) < 120) { TC.audio.sfx('caw'); this.startSwoop(this.face, st); }
         break;
       case 'swoop':
-        this.vy -= 0.055;
+        if (!this.aimed) this.aim(st);
+        this.vy -= this.ay;
         this.x += this.vx; this.y += this.vy;
-        if (this.y < -20 || this.x < st.camX - 40 || this.x > st.camX + TC.W + 40) { this.state = 'away'; this.t = 0; }
+        if (this.y < -20 || this.x < st.camX - 40 || this.x > st.camX + TC.W + 40) {
+          this.state = 'away'; this.t = 0;
+          // fora das arenas o corvo desiste depois de alguns rasantes (nas arenas ele volta até ser derrotado)
+          this.passes = (this.passes || 0) + 1;
+          if (!this.wave && this.passes >= 3) this.alive = false;
+        }
         break;
       case 'away':
         if (this.t > 70) {
           var fromLeft = TC.rnd() < 0.5;
           this.x = fromLeft ? st.camX - 16 : st.camX + TC.W + 16;
           this.y = TC.rnd.range(40, 90);
-          this.startSwoop(fromLeft ? 1 : -1);
+          this.startSwoop(fromLeft ? 1 : -1, st);
           TC.audio.sfx('caw');
         }
         break;
@@ -438,7 +480,7 @@
     base(this, 'boss', x, y);
     this.arena = arena;
     this.w = 30; this.h = 58;
-    this.hp = this.maxHp = 60;
+    this.hp = this.maxHp = TC.diff().bossHp;
     this.name = 'boss.name';
     this.isBoss = true;
     this.score = 5000;
@@ -447,6 +489,7 @@
     this.attacks = 0;
     this.bob = 0;
   }
+  Boss.prototype.attacking = function () { var s = this.state; return s === 'swoopPrep' || s === 'swoop' || s === 'castPrep' || s === 'cast'; };
   Boss.prototype.L = function () { return this.arena.x0 + 30; };
   Boss.prototype.R = function () { return this.arena.x0 + TC.W - 30; };
   Boss.prototype.hurtBox = function () {
@@ -478,7 +521,8 @@
     if (this.flash > 0) this.flash--;
     var p = st.player, t = this.t;
     var G = st.groundY;
-    var spd = this.phase2() ? 1.25 : 1;
+    var D = TC.diff();
+    var spd = (this.phase2() ? 1.25 : 1) * D.speed;
     switch (this.state) {
       case 'intro':
         this.y = TC.lerp(-30, 118, TC.ease.outCubic(Math.min(1, t / 130)));
@@ -489,7 +533,7 @@
         this.x += (this.tx - this.x) * 0.03;
         this.y += (112 + Math.sin(t * 0.06) * 8 - this.y) * 0.08;
         this.face = p.x < this.x ? -1 : 1;
-        if (t > (this.phase2() ? 60 : 90) && st.mode === 'play') {
+        if (t > frames(this.phase2() ? 60 : 90, D.cool) && st.mode === 'play' && st.mayAttack(this)) {
           this.attacks++;
           if (this.phase2() && this.attacks % 3 === 0) this.set('summon');
           else if (this.attacks % 2 === 1) this.set('swoopPrep');
@@ -503,7 +547,7 @@
         this.x += (sx - this.x) * 0.06;
         this.y += (84 - this.y) * 0.06;
         this.face = -this.side;
-        if (t > 46) { this.set('swoop'); TC.audio.sfx('roar'); }
+        if (t > frames(46, D.windup)) { this.set('swoop'); TC.audio.sfx('roar'); }
         break;
       }
       case 'swoop': {
@@ -517,23 +561,23 @@
       }
       case 'tired':
         this.y += (G - this.y) * 0.2;
-        if (t > (this.phase2() ? 70 : 95)) this.set('hover');
+        if (t > frames(this.phase2() ? 70 : 95, D.cool)) this.set('hover');
         break;
       case 'castPrep':
         this.x += (this.arena.x0 + 128 - this.x) * 0.05;
         this.y += (88 - this.y) * 0.05;
         this.face = p.x < this.x ? -1 : 1;
-        if (t > 40) { this.set('cast'); this.volley = 0; }
+        if (t > frames(40, D.windup)) { this.set('cast'); this.volley = 0; }
         break;
       case 'cast': {
         this.face = p.x < this.x ? -1 : 1;
         if (t % 40 === 10) {
-          var n = this.phase2() ? 5 : 3;
+          var n = this.phase2() ? D.orbs : 3;
           var ex = this.x + this.face * 4, ey = this.y - 52;
           var base = Math.atan2((p.y - 16) - ey, p.x - ex);
           for (var i = 0; i < n; i++) {
             var a = base + (i - (n - 1) / 2) * 0.26;
-            st.orbs.push(new E.Orb(ex, ey, Math.cos(a) * 2.2, Math.sin(a) * 2.2));
+            st.orbs.push(new E.Orb(ex, ey, Math.cos(a) * 2.2 * D.speed, Math.sin(a) * 2.2 * D.speed));
           }
           TC.audio.sfx('orb');
           this.volley++;
@@ -577,7 +621,7 @@
       if (this.state === 'swoop') contact(this, st, 2, true);
       else if (this.state !== 'tired' && this.state !== 'stagger') {
         var hb = this.hurtBox();
-        if (st.mode === 'play' && TC.overlap({ x: hb.x + 6, y: hb.y + 10, w: hb.w - 12, h: hb.h - 14 }, p.hurtBox())) p.damage(st, 1, p.x < this.x ? -1 : 1);
+        if (st.mode === 'play' && D.touch && TC.overlap({ x: hb.x + 6, y: hb.y + 10, w: hb.w - 12, h: hb.h - 14 }, p.hurtBox())) p.damage(st, 1, p.x < this.x ? -1 : 1);
       }
     }
   };

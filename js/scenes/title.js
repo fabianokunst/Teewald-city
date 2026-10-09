@@ -25,17 +25,22 @@
   TitleScene.prototype.buildMenus = function () {
     var self = this;
     this.main = new TC.Menu([
-      { label: function () { return TC.t('menu.new'); }, act: function () { self.newGame(); } },
+      { label: function () { return TC.t('menu.new'); }, act: function () { self.state = 'diff'; self.diffMenu.sel = TC.DIFFS.indexOf(TC.opts.diff); } },
       { label: function () { return TC.t('menu.continue'); }, act: function () { self.continueGame(); }, disabled: !this.save },
       { label: function () { return TC.t('menu.options'); }, act: function () { self.state = 'options'; self.opt.sel = 0; } },
       { label: function () { return TC.t('menu.controls'); }, act: function () { self.state = 'controls'; } }
     ], { startConfirms: true });
+    // escolha da dificuldade antes de começar o novo jogo
+    this.diffMenu = new TC.Menu(TC.DIFFS.map(function (k) {
+      return { label: function () { return TC.t('diff.' + k); }, act: function () { TC.opts.diff = k; TC.saveOpts(); self.fromDiff = true; self.newGame(); } };
+    }), { startConfirms: true, back: function () { self.state = 'menu'; } });
     function toggle(key) { return function () { TC.opts[key] = !TC.opts[key]; TC.saveOpts(); TC.applyDisplay(); }; }
     function vol(key, d) { return function () { TC.opts[key] = TC.clamp(TC.opts[key] + d, 0, 10); TC.saveOpts(); TC.audio.setVolumes(); }; }
     function bar(v) { var s = ''; for (var i = 0; i < 10; i++) s += i < v ? '|' : '·'; return s; }
     var langT = function () { TC.opts.lang = TC.opts.lang === 'pt' ? 'en' : 'pt'; TC.saveOpts(); };
     var aspT = function () { TC.opts.aspect = TC.opts.aspect === 'tv' ? 'square' : 'tv'; TC.saveOpts(); TC.applyDisplay(); };
     this.opt = new TC.Menu([
+      { label: function () { return TC.t('opt.diff'); }, value: function () { return TC.t('diff.' + TC.opts.diff); }, left: function () { TC.cycleDiff(-1); }, right: function () { TC.cycleDiff(1); } },
       { label: function () { return TC.t('opt.lang'); }, value: function () { return TC.t('lang.name'); }, left: langT, right: langT },
       { label: function () { return TC.t('opt.crt'); }, value: function () { return TC.t(TC.opts.crt ? 'on' : 'off'); }, left: toggle('crt'), right: toggle('crt') },
       { label: function () { return TC.t('opt.chroma'); }, value: function () { return TC.t(TC.opts.chroma ? 'on' : 'off'); }, left: toggle('chroma'), right: toggle('chroma') },
@@ -81,6 +86,8 @@
       if (t > 120 || (t > 20 && (TC.input.pressed('confirm') || TC.input.pressed('start')))) { this.state = 'menu'; this.t = Math.max(this.t, 120); TC.input.clear(); }
     } else if (this.state === 'menu') {
       this.main.update();
+    } else if (this.state === 'diff') {
+      this.diffMenu.update();
     } else if (this.state === 'options') {
       this.opt.update();
     } else if (this.state === 'controls') {
@@ -166,7 +173,16 @@
     this.drawLogo(c);
 
     if (t > 110) {
-      if (this.state === 'menu' || this.state === 'leaving') {
+      if (this.state === 'diff' || (this.state === 'leaving' && this.fromDiff)) {
+        TC.ui.box(c, 20, 88, 216, 128, 'menu', 0.94);
+        TC.font.draw(c, TC.t('diff.title'), 128, 96, '#ffd890', { align: 'center', shadow: '#000' });
+        this.diffMenu.draw(c, 128, 114, { align: 'center' });
+        var key = TC.DIFFS[this.diffMenu.sel];
+        TC.font.wrap(TC.t('diff.' + key + '.d'), 196).forEach(function (ln, k) {
+          TC.font.draw(c, ln, 128, 160 + k * 11, '#c8c8e8', { align: 'center', shadow: '#000' });
+        });
+        TC.font.draw(c, TC.t('diff.change'), 128, 202, '#6a70a0', { align: 'center', shadow: '#000' });
+      } else if (this.state === 'menu' || this.state === 'leaving') {
         TC.font.draw(c, TC.t('title.sub'), 128, 82, '#c8c0e0', { align: 'center', shadow: '#000' });
         TC.ui.box(c, 72, 132, 112, 64, 'menu', 0.85);
         this.main.draw(c, 128, 140, { align: 'center' });
@@ -174,9 +190,9 @@
       } else if (this.state === 'logo') {
         if ((t >> 5) % 2 === 0) TC.font.draw(c, TC.t('boot.press'), 128, 160, '#f0e0c0', { align: 'center', shadow: '#000' });
       } else if (this.state === 'options') {
-        TC.ui.box(c, 16, 76, 224, 132, 'menu', 0.94);
-        TC.font.draw(c, TC.t('opt.title'), 128, 84, '#ffd890', { align: 'center', shadow: '#000' });
-        this.opt.draw(c, 36, 102, { valueX: 186, lineH: 13 });
+        TC.ui.box(c, 16, 70, 224, 146, 'menu', 0.94);
+        TC.font.draw(c, TC.t('opt.title'), 128, 78, '#ffd890', { align: 'center', shadow: '#000' });
+        this.opt.draw(c, 36, 94, { valueX: 186, lineH: 13 });
       } else if (this.state === 'controls') {
         TC.ui.box(c, 12, 70, 232, 146, 'menu', 0.94);
         TC.font.draw(c, TC.t('ctrl.title'), 128, 78, '#ffd890', { align: 'center', shadow: '#000' });

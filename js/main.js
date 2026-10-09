@@ -45,22 +45,34 @@
     }
   }
 
-  /* ---------- escala da tela ---------- */
+  /* ---------- escala da tela ----------
+     No celular/tablet o controle virtual reserva espaço: nas laterais (deitado)
+     ou embaixo da imagem (em pé), como num portátil. */
   function resize() {
-    var vw = window.innerWidth, vh = window.innerHeight;
+    var vw = document.documentElement.clientWidth || window.innerWidth;
+    var vh = window.innerHeight;
     var par = TC.opts.aspect === 'tv' ? 8 / 7 : 1;
-    var s = Math.min(vw / (TC.W * par), vh / TC.H);
-    if (s >= 2) {
-      var si = Math.floor(s);
-      if (s - si < 0.35) s = si;   // prefere escala inteira quando sobra pouco
+    var dpr = window.devicePixelRatio || 1;
+    var touchUI = TC.input.touchUI();
+    var L = TC.input.layout;
+    var box = touchUI ? L.box(vw, vh, par) : { x: 0, y: 0, w: vw, h: vh };
+    // escala em pixels do aparelho: prefere múltiplo inteiro quando se perde pouco
+    var sd = Math.min(box.w / (TC.W * par), box.h / TC.H) * dpr;
+    if (sd >= 2) {
+      var si = Math.floor(sd);
+      if (sd - si < 0.35 || (sd - si) / sd < 0.08) sd = si;
     }
-    s = Math.max(0.5, s);
-    var w = Math.floor(TC.W * par * s), h = Math.floor(TC.H * s);
-    screen.style.width = w + 'px';
-    screen.style.height = h + 'px';
+    var s = Math.max(0.5, sd / dpr);
+    var w = Math.floor(TC.W * par * s * dpr) / dpr, h = Math.floor(TC.H * s * dpr) / dpr;
+    var x = Math.round((box.x + (box.w - w) / 2) * dpr) / dpr;
+    var y = Math.round((box.align === 'top' ? box.y : box.y + (box.h - h) / 2) * dpr) / dpr;
     wrap.style.width = w + 'px';
     wrap.style.height = h + 'px';
+    wrap.style.left = x + 'px';
+    wrap.style.top = y + 'px';
     crt.style.backgroundSize = '100% 100%, 100% ' + (h / TC.H).toFixed(3) + 'px';
+    L.show(touchUI);
+    if (touchUI) L.place(vw, vh, { x: x, y: y, w: w, h: h });
     applyFilters();
   }
   function applyFilters() {
@@ -68,16 +80,34 @@
     screen.classList.toggle('chroma', !!TC.opts.chroma);
   }
   TC.applyDisplay = function () { resize(); };
-  window.addEventListener('resize', resize);
+  var resizeT = 0;
+  function resizeSoon() {
+    resize();
+    // girar o aparelho muda o tamanho em etapas em alguns navegadores: confere de novo
+    clearTimeout(resizeT);
+    resizeT = setTimeout(resize, 250);
+  }
+  window.addEventListener('resize', resizeSoon);
+  window.addEventListener('orientationchange', resizeSoon);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', resizeSoon);
+  document.addEventListener('fullscreenchange', resizeSoon);
+  document.addEventListener('webkitfullscreenchange', resizeSoon);
 
-  TC.toggleFullscreen = function () {
-    var d = document, el = d.documentElement;
+  function isFull() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+  TC.enterFullscreen = function () {
+    var el = document.documentElement;
+    if (isFull()) return;
     try {
-      if (!d.fullscreenElement && !d.webkitFullscreenElement) {
-        (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
-      } else {
-        (d.exitFullscreen || d.webkitExitFullscreen).call(d);
-      }
+      var p = (el.requestFullscreen || el.webkitRequestFullscreen).call(el, { navigationUI: 'hide' });
+      if (p && p.catch) p.catch(function () { /* o navegador recusou */ });
+    } catch (e) { /* sem tela cheia */ }
+  };
+  TC.toggleFullscreen = function () {
+    var d = document;
+    if (!isFull()) { TC.enterFullscreen(); return; }
+    try {
+      var p = (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+      if (p && p.catch) p.catch(function () { /* ignore */ });
     } catch (e) { /* sem tela cheia */ }
   };
 
@@ -89,7 +119,34 @@
     if (e.code === 'KeyM') TC.audio.toggleMute();
   });
   window.addEventListener('pointerdown', unlockAudio);
-  window.addEventListener('touchstart', unlockAudio, { passive: true });
+  // no iPhone o áudio só é liberado ao soltar o dedo
+  window.addEventListener('pointerup', unlockAudio);
+  window.addEventListener('touchend', unlockAudio, { passive: true });
+
+  /* app em segundo plano (trocou de app, ligação, tela bloqueada): pausa o jogo */
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden && game.scene && game.scene.onHide) game.scene.onHide();
+  });
+
+  /* ícone para "Adicionar à tela de início" do iPhone, desenhado com a arte do jogo */
+  function homeIcon() {
+    try {
+      var A = TC.ART, cv = TC.canvas(60, 60), c = cv.ctx;
+      c.drawImage(A.sky(60, 60, [[0, '#020309'], [0.6, '#0a0d2a'], [1, '#262a58']], 5, 0.01), 0, 0);
+      var moon = A.moon(9);
+      c.drawImage(moon, 40 - moon.width / 2, 17 - moon.height / 2);
+      var ar = A.araucaria(7, 44, { sil: '#05060c' });
+      c.drawImage(ar, 20 - ar.width / 2, 60 - ar.height + 3);
+      c.fillStyle = '#05060c';
+      c.fillRect(0, 56, 60, 4);
+      var big = TC.canvas(180, 180);
+      big.ctx.drawImage(cv, 0, 0, 180, 180);
+      var link = document.createElement('link');
+      link.rel = 'apple-touch-icon';
+      link.href = big.toDataURL('image/png');
+      document.head.appendChild(link);
+    } catch (e) { /* sem ícone */ }
+  }
 
   /* ---------- renderização ---------- */
   function render() {
@@ -162,6 +219,7 @@
   function start() {
     TC.input.init();
     resize();
+    homeIcon();
     if (TC.params.audio) TC.audio.init();
     if (TC.params.sfxtest) {
       setTimeout(function () {

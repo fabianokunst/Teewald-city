@@ -1,0 +1,18 @@
+{
+  "name": "Teewald City",
+  "short_name": "Teewald",
+  "description": "Jogo de plataforma e ação em pixel art no estilo Super Nintendo, numa cidade de enxaimel no sul do Brasil.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "any",
+  "background_color": "#000000",
+  "theme_color": "#05060f",
+  "categories": ["games"],
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

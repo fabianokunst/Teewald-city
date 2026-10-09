@@ -24,7 +24,7 @@
     this.parts = new TC.Particles();
     this.dlg = new TC.Dialog();
     this.enemies = []; this.items = []; this.props = []; this.orbs = []; this.texts = []; this.deco = [];
-    this.score = 0; this.lives = 3; this.time = 0;
+    this.score = 0; this.lives = TC.diff().lives; this.time = 0;
     this.cp = 0;
     this.arena = null;
     this.combo = 0; this.comboT = 0;
@@ -41,7 +41,7 @@
     var px = 64;
     if (this.opts.save) {
       var s = this.opts.save;
-      this.cp = s.cp || 0; this.score = s.score || 0; this.lives = s.lives || 3;
+      this.cp = s.cp || 0; this.score = s.score || 0; this.lives = s.lives || TC.diff().lives;
       px = L.cps[this.cp].x;
       L.arenas.forEach(function (a) { if (a.cp < self.cp || a.x0 + W < px - 40) a.done = true; });
       L.spawns.forEach(function (sp) { if (sp.x < px + 120) sp.done = true; });
@@ -54,6 +54,7 @@
     var self2 = this;
     this.pauseMenu = new TC.Menu([
       { label: function () { return TC.t('pause.resume'); }, act: function () { self2.mode = 'play'; TC.input.clear(); } },
+      { label: function () { return TC.t('opt.diff'); }, value: function () { return TC.t('diff.' + TC.opts.diff); }, left: function () { TC.cycleDiff(-1); }, right: function () { TC.cycleDiff(1); } },
       { label: function () { return TC.t('opt.lang'); }, value: function () { return TC.t('lang.name'); }, left: toggleLang, right: toggleLang },
       { label: function () { return TC.t('opt.music'); }, value: function () { return String(TC.opts.music); }, left: function () { vol('music', -1); }, right: function () { vol('music', 1); } },
       { label: function () { return TC.t('opt.crt'); }, value: function () { return TC.t(TC.opts.crt ? 'on' : 'off'); }, left: toggle('crt'), right: toggle('crt') },
@@ -189,7 +190,22 @@
     for (var i = -1; i <= 1; i += 2) this.parts.add({ x: x + i * 4, y: y - 2, vx: i * 0.5, vy: -0.2, life: 16, sprite: function (p, k) { return D[k > 0.5 ? 0 : 1]; } });
   };
   StageScene.prototype.showEnemyBar = function (e) { this.ebar = { e: e, t: 150 }; };
-  StageScene.prototype.kill = function () { this.comboT = Math.max(this.comboT, 60); };
+  StageScene.prototype.kill = function (e) {
+    this.comboT = Math.max(this.comboT, 60);
+    // no fácil e no normal, às vezes o inimigo derrotado deixa cair comida
+    if (e && !e.isBoss && !this.noDrops && e.y < this.level.pxH && TC.rnd() < TC.diff().drop) {
+      this.items.push(new E.Item(TC.rnd() < 0.5 ? 'linguica' : 'cuca', e.x, Math.min(e.y, this.groundY - 8), true));
+    }
+  };
+  /* limita quantos inimigos atacam ao mesmo tempo (no fácil, um de cada vez) */
+  StageScene.prototype.mayAttack = function (who) {
+    var busy = 0, max = TC.diff().attackers;
+    for (var i = 0; i < this.enemies.length; i++) {
+      var e = this.enemies[i];
+      if (e !== who && e.alive && !e.dying && e.attacking && e.attacking()) busy++;
+    }
+    return busy < max;
+  };
   StageScene.prototype.spawnEnemy = function (type, x, y, opt) {
     opt = opt || {};
     var C = TC.ENEMIES[type];
@@ -202,7 +218,9 @@
   };
   StageScene.prototype.killAllMinions = function () {
     var self = this;
+    this.noDrops = true;
     this.enemies.forEach(function (e) { if (e.alive && !e.isBoss && !e.dying) e.die(self, 1); });
+    this.noDrops = false;
     this.orbs.length = 0;
   };
 
@@ -238,7 +256,7 @@
   };
 
   StageScene.prototype.playerFell = function (p) {
-    p.hp -= 2;
+    p.hp -= 2 * TC.diff().dmg;
     TC.audio.sfx('hurt');
     for (var i = 0; i < 14; i++) this.parts.add({ x: p.x, y: 208, vx: TC.rnd.range(-1.5, 1.5), vy: TC.rnd.range(-3, -1), ay: 0.15, life: 30, color: TC.rnd.pick(['#8aa0c8', '#c0d0f0', '#4a5a8a']), size: 2, fade: true });
     if (p.hp <= 0) {
@@ -250,7 +268,7 @@
     var back = p.face > 0 ? -18 : 18;
     p.x = p.lastSafe.x + back * 0; p.y = p.lastSafe.y - 1;
     p.vx = 0; p.vy = 0;
-    p.inv = 100;
+    p.inv = Math.round(100 * TC.diff().inv);
     p.setState('normal');
   };
 
@@ -281,13 +299,16 @@
     p.vx = p.vy = 0;
     p.hp = p.maxHp;
     p.setState('normal');
-    p.inv = 120;
+    p.inv = Math.round(120 * TC.diff().inv);
     this.enemies = []; this.orbs = [];
     if (this.arena) {
       this.arena = null;
       L.minX = 0; L.maxX = L.pxW;
     }
-    if (this.boss) { this.boss = null; this.bossBarFill = 0; TC.audio.stopMusic(0.3); }
+    if (this.boss) {
+      if (TC.diff().keepBoss && this.boss.hp > 0) this.boss.arena.bossHpLeft = this.boss.hp;
+      this.boss = null; this.bossBarFill = 0; TC.audio.stopMusic(0.3);
+    }
     L.arenas.forEach(function (a) { if (!a.done) a.started = false; });
     this.camX = TC.clamp(p.x - 100, 0, L.pxW - W);
     this.combo = 0;
@@ -482,7 +503,7 @@
     if (I.pressed('confirm') || I.pressed('start')) {
       if (this.contT > 30) {
         TC.audio.sfx('confirm');
-        this.lives = 3;
+        this.lives = TC.diff().lives;
         this.score = 0;
         this.respawn();
         this.mode = 'play';
@@ -583,6 +604,7 @@
     TC.fx.shake(2, 40);
     var boss = this.spawnEnemy('boss', a.x0 + 170, -30, { arena: a });
     if (TC.params.bosshp) boss.hp = parseInt(TC.params.bosshp, 10);
+    if (a.bossHpLeft) boss.hp = TC.clamp(a.bossHpLeft, 1, boss.maxHp);
     this.boss = boss;
     yield* co.until(function () { return boss.t > 130; });
     TC.audio.sfx('roar');
@@ -590,9 +612,14 @@
     TC.fx.flash('#40ff70', 0.3, 0.02);
     p.pose = 'shock';
     yield* co.wait(40);
-    yield* this.say('boss.1', 'shock', 'arno', 'bottom');
+    // as falas só na primeira vez; ao tentar de novo, a luta começa logo
+    if (!a.seen) {
+      a.seen = true;
+      yield* this.say('boss.1', 'shock', 'arno', 'bottom');
+      p.pose = 'idle';
+      yield* this.say('boss.2', null, 'arno', 'bottom');
+    }
     p.pose = 'idle';
-    yield* this.say('boss.2', null, 'arno', 'bottom');
     this.bossBarFill = 0;
     TC.fx.tween('letterbox', 0, 30);
     yield* co.tween(this, 'bossBarFill', 1, 50);
@@ -623,7 +650,7 @@
     TC.audio.music('clear');
     yield* co.wait(100);
     var secs = Math.floor(this.time / 60);
-    this.tally = { score: this.score, time: Math.max(0, 900 - secs) * 10, hp: p.hp * 300, shown: 0, total: 0 };
+    this.tally = { score: this.score, time: Math.max(0, 900 - secs) * 10, hp: Math.round(p.hp * 300), shown: 0, total: 0 };
     this.tally.total = this.tally.score + this.tally.time + this.tally.hp;
     yield* co.wait(40);
     var tl = this.tally;
@@ -820,12 +847,18 @@
     var bx = 23, by = 15;
     c.fillStyle = '#000';
     c.fillRect(bx - 1, by - 1, p.maxHp * 6 + 1, 7);
+    // a energia pode ter frações (fácil e normal): o último segmento fica parcialmente cheio
+    var low = p.hp <= 3 && (this.t >> 3) % 2;
     for (var i = 0; i < p.maxHp; i++) {
-      var on = i < p.hp;
-      var low = p.hp <= 3 && (this.t >> 3) % 2;
-      c.fillStyle = on ? (low ? '#ff9060' : '#e8382c') : '#3a1418';
+      var part = TC.clamp(p.hp - i, 0, 1);
+      var pw = part > 0 ? Math.max(1, Math.round(5 * part)) : 0;
+      c.fillStyle = '#3a1418';
       c.fillRect(bx + i * 6, by, 5, 5);
-      if (on) { c.fillStyle = low ? '#ffd0a0' : '#ff8a70'; c.fillRect(bx + i * 6, by, 5, 1); }
+      if (!pw) continue;
+      c.fillStyle = low ? '#ff9060' : '#e8382c';
+      c.fillRect(bx + i * 6, by, pw, 5);
+      c.fillStyle = low ? '#ffd0a0' : '#ff8a70';
+      c.fillRect(bx + i * 6, by, pw, 1);
     }
     // pontos
     TC.font.draw(c, TC.t('hud.score'), 252, 3, '#a0a8d0', { align: 'right', shadow: '#000' });
@@ -884,9 +917,9 @@
     if (this.mode === 'paused') {
       c.fillStyle = 'rgba(0,0,8,0.6)';
       c.fillRect(0, 0, W, H);
-      TC.ui.box(c, 40, 56, 176, 112, 'menu', 0.95);
-      TC.font.draw(c, TC.t('pause'), 128, 64, '#ffd890', { align: 'center', shadow: '#000', scale: 2 });
-      this.pauseMenu.draw(c, 64, 96, { valueX: 132, lineH: 13 });
+      TC.ui.box(c, 28, 50, 200, 128, 'menu', 0.95);
+      TC.font.draw(c, TC.t('pause'), 128, 58, '#ffd890', { align: 'center', shadow: '#000', scale: 2 });
+      this.pauseMenu.draw(c, 50, 90, { valueX: 162, lineH: 13 });
     }
     if (this.mode === 'continue' || this.mode === 'gameover') this.drawContinue(c);
     if (TC.params.dbg) {

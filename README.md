@@ -21,6 +21,10 @@ Arno acorda caído numa rua de Teewald. A cidade continua linda, mas está vazia
 - **Final do capítulo**: o sino, Dona Frida na porta da igreja, as cabeças-de-fogo acendendo nas colinas e os créditos.
 - Efeitos no estilo SNES: cores de 15 bits, degradês por *scanline*, mosaico, fades de 16 passos, rotação e escala, iluminação com luz de sódio e de velas, neblina em camadas, *parallax*.
 - **Trilha e efeitos sonoros sintetizados** com Web Audio, com o eco do DSP do SNES: valsa de gaita para a estrada, tema de caixinha de música, faixa de ação, música do chefe e órgão da igreja.
+- **Três níveis de dificuldade**, escolhidos ao começar o jogo e trocáveis a qualquer momento na pausa:
+  - **Fácil**: os golpes tiram metade da energia, um inimigo ataca por vez, ataques mais lentos e com mais aviso, 5 vidas, inimigos às vezes deixam cair comida, e o chefe não recupera a energia se o Arno cair.
+  - **Normal**: só os ataques machucam (encostar não), no máximo dois inimigos atacam juntos.
+  - **Difícil**: o balanceamento original de fliperama, em que até encostar machuca.
 - Português e inglês, filtro CRT opcional, aberração cromática opcional, proporção 4:3, controle e toque.
 
 ## Controles
@@ -96,5 +100,6 @@ Acrescente à URL, por exemplo `index.html?scene=stage&x=4200`:
 
 - `scene=title|intro|stage|ending|debug` abre direto numa cena (`debug&page=0..4` mostra as artes)
 - `lang=pt|en` define o idioma
+- `diff=easy|normal|hard` define a dificuldade
 - `x=NNNN` começa a fase nessa posição; `god=1` deixa o Arno praticamente invencível
 - `wake=1` (com `scene=stage`) roda a sequência do despertar
