@@ -73,6 +73,7 @@
     TC.fx.shake(dmg > 1 ? 3 : 2, 8);
     st.spark(this.x, this.y - 18, 1);
     TC.audio.sfx('hurt');
+    TC.input.haptic(dmg > 1 || heavy ? 45 : 25);
     if (this.hp <= 0) {
       this.hp = 0;
       this.setState('dead');

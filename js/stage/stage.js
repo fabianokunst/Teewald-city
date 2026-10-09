@@ -1003,5 +1003,12 @@
     TC.font.draw(c, 'START / Z', 128, 176, '#a0a8d0', { align: 'center', shadow: '#000' });
   };
 
+  /* o app foi para segundo plano (celular): abre a pausa para não morrer sem ver */
+  StageScene.prototype.onHide = function () {
+    if (this.mode !== 'play' || TC.game.fading() || this.dlg.active) return;
+    this.mode = 'paused';
+    this.pauseMenu.sel = 0;
+  };
+
   TC.StageScene = StageScene;
 })();

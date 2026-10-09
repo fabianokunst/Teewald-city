@@ -78,6 +78,26 @@
     'hint.break': 'Quebre caixotes e barris: tem comida dentro!',
     'hint.read': '↑  LER',
 
+    /* variantes para a tela de toque (TC.t usa 'chave@touch' quando o controle virtual está na tela) */
+    'boot.hint@touch': 'TOQUE NA TELA',
+    'hint.move@touch': '◀ ▶ ANDAR    A PULAR    B ATACAR',
+    'hint.combo@touch': 'B B B  =  COMBO!   PULO + B  =  VOADORA',
+    'hint.special@touch': 'Y  =  GIRO ESPECIAL (gasta um pouco de energia)',
+    'ctrl.keys1@touch': 'DIRECIONAL',
+    'ctrl.keys2@touch': 'BOTÃO A',
+    'ctrl.keys3@touch': 'BOTÃO B',
+    'ctrl.keys4@touch': 'BOTÃO Y',
+    'ctrl.keys5@touch': 'START',
+    'ctrl.pad@touch': 'Toque nos menus ou use o direcional e o A.',
+    'tb.jump': 'PULAR',
+    'tb.attack': 'ATACAR',
+    'tb.special': 'GIRO',
+    'opt.tsize': 'BOTÕES NA TELA',
+    'tsize.0': 'PEQUENOS',
+    'tsize.1': 'MÉDIOS',
+    'tsize.2': 'GRANDES',
+    'opt.vibe': 'VIBRAÇÃO',
+
     'item.cuca': 'CUCA',
     'item.linguica': 'LINGUIÇA',
     'item.chimarrao': 'CHIMARRÃO',
@@ -125,7 +145,7 @@
     'mid.square': 'A praça da igreja. O sino... Tem alguém lá dentro?',
 
     'sign.welcome': 'BEM-VINDO A TEEWALD CITY\nFundada em 1852 por colonos do Reno.\n"Willkommen!"',
-    'sign.festa': 'FESTA DA BATATA — 2ª EDIÇÃO\nBaile, bandinha e a Rainha da Batata.\nJunho de 1997.',
+    'sign.festa': 'FESTA DA BATATA — 2ª EDIÇÃO\nBaile, bandinha e a Rainha da Batata.\nTeewald City, 1997.',
     'sign.missing': 'DESAPARECIDOS DESDE A NEBLINA:\nfamílias Schmitt, Kessler, Weber...\n(o resto do papel está rasgado)',
     'sign.bridge': 'PONTE DO ARROIO\nCuidado: tábuas soltas.',
     'sign.cemetery': 'CEMITÉRIO DA COLÔNIA\n"Aqui descansam os que vieram de longe."',
@@ -139,7 +159,7 @@
     'end.3': 'Quem tá aí? Como sabe o meu nome?',
     'end.4': 'Eu te benzi quando tu era guri. Tu tinha medo do escuro, lembra?',
     'end.5': '...Dona Frida? A benzedeira? Mas a senhora...',
-    'end.6': 'Faz vinte anos que a noite não acaba em Teewald. Eles vieram com a neblina.',
+    'end.6': 'Desde a última Festa da Batata, a noite não acaba mais em Teewald. Eles vieram com a neblina.',
     'end.7': 'E a cidade esperou. Esperou alguém que tivesse coragem de voltar.',
     'end.8': 'Entra, guri. Rápido. Eles estão vindo.',
     'end.9': '...Ah, mas que beleza.',
@@ -231,6 +251,25 @@
     'hint.break': 'Smash crates and barrels: there is food inside!',
     'hint.read': '↑  READ',
 
+    'boot.hint@touch': 'TAP THE SCREEN',
+    'hint.move@touch': '◀ ▶ WALK    A JUMP    B ATTACK',
+    'hint.combo@touch': 'B B B  =  COMBO!   JUMP + B  =  FLYING KICK',
+    'hint.special@touch': 'Y  =  SPIN SPECIAL (costs a little health)',
+    'ctrl.keys1@touch': 'D-PAD',
+    'ctrl.keys2@touch': 'A BUTTON',
+    'ctrl.keys3@touch': 'B BUTTON',
+    'ctrl.keys4@touch': 'Y BUTTON',
+    'ctrl.keys5@touch': 'START',
+    'ctrl.pad@touch': 'Tap the menus or use the D-pad and A.',
+    'tb.jump': 'JUMP',
+    'tb.attack': 'ATTACK',
+    'tb.special': 'SPIN',
+    'opt.tsize': 'TOUCH BUTTONS',
+    'tsize.0': 'SMALL',
+    'tsize.1': 'MEDIUM',
+    'tsize.2': 'LARGE',
+    'opt.vibe': 'VIBRATION',
+
     'item.cuca': 'CUCA CAKE',
     'item.linguica': 'SAUSAGE',
     'item.chimarrao': 'CHIMARRÃO',
@@ -278,7 +317,7 @@
     'mid.square': 'The church square. The bell... Is someone in there?',
 
     'sign.welcome': 'WELCOME TO TEEWALD CITY\nFounded in 1852 by settlers from the Rhine.\n"Willkommen!"',
-    'sign.festa': 'POTATO FESTIVAL — 2ND EDITION\nDance, brass band and the Potato Queen.\nJune, 1997.',
+    'sign.festa': 'POTATO FESTIVAL — 2ND EDITION\nDance, brass band and the Potato Queen.\nTeewald City, 1997.',
     'sign.missing': 'MISSING SINCE THE FOG:\nthe Schmitt, Kessler, Weber families...\n(the rest of the paper is torn)',
     'sign.bridge': 'CREEK BRIDGE\nCareful: loose planks.',
     'sign.cemetery': 'SETTLERS\' CEMETERY\n"Here rest those who came from afar."',
@@ -292,7 +331,7 @@
     'end.3': 'Who\'s there? How do you know my name?',
     'end.4': 'I blessed you when you were a boy. You were afraid of the dark, remember?',
     'end.5': '...Dona Frida? The old healer? But you...',
-    'end.6': 'For twenty years the night has never ended in Teewald. They came with the fog.',
+    'end.6': 'Ever since the last Potato Festival, the night has never ended in Teewald. They came with the fog.',
     'end.7': 'And the town waited. Waited for someone brave enough to come back.',
     'end.8': 'Come inside, boy. Quickly. They\'re coming.',
     'end.9': '...Oh, just wonderful.',
@@ -312,7 +351,13 @@
   TC.LANG = L;
   TC.t = function (key) {
     var lang = TC.opts.lang || 'pt';
-    var s = L[lang][key];
+    var s;
+    if (TC.input && TC.input.touchUI && TC.input.touchUI()) {
+      s = L[lang][key + '@touch'];
+      if (s == null) s = L.pt[key + '@touch'];
+      if (s != null) return s;
+    }
+    s = L[lang][key];
     if (s == null) s = L.pt[key];
     return s == null ? key : s;
   };

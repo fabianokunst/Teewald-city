@@ -181,7 +181,7 @@
     if (key === T.labels) return;
     T.labels = key;
     T.btns.forEach(function (b) {
-      setPix(b.el.querySelector('.t-cap'), pixText(b.letter, '#1c1018', 'rgba(255,255,255,0.35)'), k + 1);
+      setPix(b.el.querySelector('.t-cap'), pixText(b.letter, 'rgba(20,8,16,0.62)'), k + 1);
       setPix(b.el.querySelector('.t-lbl'), pixText(TC.t('tb.' + b.act), '#9ca2cc', '#000'), k);
     });
     T.pills.forEach(function (p) {
@@ -262,8 +262,9 @@
       T.brand.style.top = Math.round(top + gap * 0.3) + 'px';
       var py = Math.round(top + (gap > 90 ? gap * 0.68 : gap * 0.5) - pillH / 2);
       var pw = Math.round(pillH * 1.7), sw = Math.round(pillH * 3.2), sp = Math.round(pillH * 0.5);
-      var x0 = Math.round(vw / 2 - (pw * 2 + sw + sp * 2) / 2);
-      pills.mute = [x0, py, pw]; pills.full = [x0 + pw + sp, py, pw]; pills.start = [x0 + 2 * (pw + sp), py, sw];
+      var nfull = canFullscreen() ? 1 : 0;
+      var x0 = Math.round(vw / 2 - (pw * (1 + nfull) + sw + sp * (1 + nfull)) / 2);
+      pills.mute = [x0, py, pw]; pills.full = [x0 + pw + sp, py, pw]; pills.start = [x0 + (1 + nfull) * (pw + sp), py, sw];
     } else {
       var rowY = vh - s.b - m * 0.6 - bottomExt;
       padX = Math.round(s.l * 0.6 + m + D / 2);

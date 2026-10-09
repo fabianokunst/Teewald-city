@@ -50,6 +50,7 @@
       { label: function () { return TC.t('opt.full'); }, act: function () { TC.toggleFullscreen(); } },
       { label: function () { return TC.t('opt.back'); }, act: function () { self.state = 'menu'; } }
     ], { back: function () { self.state = 'menu'; } });
+    TC.input.touchOptions(this.opt.items);   // tamanho dos botões na tela e vibração (só em telas de toque)
   };
 
   TitleScene.prototype.enter = function () {
@@ -190,9 +191,12 @@
       } else if (this.state === 'logo') {
         if ((t >> 5) % 2 === 0) TC.font.draw(c, TC.t('boot.press'), 128, 160, '#f0e0c0', { align: 'center', shadow: '#000' });
       } else if (this.state === 'options') {
-        TC.ui.box(c, 16, 70, 224, 146, 'menu', 0.94);
-        TC.font.draw(c, TC.t('opt.title'), 128, 78, '#ffd890', { align: 'center', shadow: '#000' });
-        this.opt.draw(c, 36, 94, { valueX: 186, lineH: 13 });
+        // a caixa cresce para cima conforme o número de opções (em telas de toque há duas a mais)
+        var n = this.opt.items.length, lh = n >= 10 ? 11 : 13;
+        var bh = 26 + n * lh, by = 216 - bh;
+        TC.ui.box(c, 16, by, 224, bh, 'menu', 0.94);
+        TC.font.draw(c, TC.t('opt.title'), 128, by + 8, '#ffd890', { align: 'center', shadow: '#000' });
+        this.opt.draw(c, 36, by + 24, { valueX: 186, lineH: lh });
       } else if (this.state === 'controls') {
         TC.ui.box(c, 12, 70, 232, 146, 'menu', 0.94);
         TC.font.draw(c, TC.t('ctrl.title'), 128, 78, '#ffd890', { align: 'center', shadow: '#000' });
@@ -202,7 +206,7 @@
           TC.font.draw(c, TC.t(r2[1]), 232, 96 + k * 14, '#ffc070', { shadow: '#000', align: 'right' });
         });
         TC.font.draw(c, TC.t('ctrl.pad'), 128, 184, '#9098c0', { align: 'center', shadow: '#000' });
-        TC.font.draw(c, 'F: ' + TC.t('opt.full') + '   M: MUTE', 128, 198, '#6a70a0', { align: 'center', shadow: '#000' });
+        if (!TC.input.touchUI()) TC.font.draw(c, 'F: ' + TC.t('opt.full') + '   M: MUTE', 128, 198, '#6a70a0', { align: 'center', shadow: '#000' });
       }
     }
   };
