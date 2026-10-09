@@ -179,7 +179,10 @@
 
   /* ---------- API usada pelas entidades ---------- */
   StageScene.prototype.addScore = function (n) { this.score += n; };
-  StageScene.prototype.floatText = function (x, y, str, col) { this.texts.push(new E.FloatText(x, y, str, col)); };
+  StageScene.prototype.floatText = function (x, y, str, col) {
+    var hw = TC.font.measure(str) / 2 + 2;   // nomes compridos não saem da tela
+    this.texts.push(new E.FloatText(TC.clamp(x, this.camX + hw, this.camX + W - hw), y, str, col));
+  };
   StageScene.prototype.spark = function (x, y, big) {
     var S = A.spark;
     this.parts.add({ x: x, y: y, life: 10, layer: 1, sprite: function (p, k) { return S[k > 0.66 ? 0 : k > 0.33 ? 1 : 2]; } });

@@ -576,17 +576,32 @@
       '.kbbbbbdk.',
       '..kkkkkk..'
     ], { k: '#1a1008', m: '#d0d0d8', g: '#4a9a40', G: '#2a6a2a', b: '#8a5a30', B: '#b08050', d: '#5a3818' }),
-    pinhao: TC.sprite([
-      '..kk..',
-      '.kwwk.',
-      '.kbbk.',
-      'kbBbbk',
-      'kbBbbk',
-      'kbBbbk',
-      'kbbbbk',
-      '.kbbk.',
-      '..kk..'
-    ], { k: '#1a0c08', w: '#e8d8b0', b: '#8a3a20', B: '#c06a40' }),
+    chopp: TC.sprite([
+      '.kkkkkkkk...',
+      'kwwWwwwWwk..',
+      'kwwwwwwwwk..',
+      'kyywyyyyyk..',
+      'kyYyyyyyykkk',
+      'kyYyyyyyyk.k',
+      'kyYyoyyyyk.k',
+      'kyYyyyyoyk.k',
+      'kyYyyyyyyk.k',
+      'kyYyyoyyykkk',
+      'kyyyyyyyyk..',
+      'kddddddddk..',
+      '.kkkkkkkk...'
+    ], { k: '#1a1008', w: '#f4eedc', W: '#ffffff', y: '#e0a020', Y: '#f8d060', o: '#fff0a0', d: '#a87018' }),
+    bolinho: TC.sprite([
+      '......m...',
+      '.....m....',
+      '..kkkmkk..',
+      '.kcYcYcck.',
+      'kcYcccYcdk',
+      'kYccYcccdk',
+      'kcYccccddk',
+      '.kcddcddk.',
+      '..kkkkkk..'
+    ], { k: '#2a1406', c: '#d08a30', Y: '#f0c060', d: '#8a4a18', m: '#e8d8a8' }),
     medalha: TC.sprite([
       '...rr...',
       '...rr...',

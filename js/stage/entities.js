@@ -58,10 +58,12 @@
     cuca: { heal: 3, score: 50 },
     linguica: { heal: 2, score: 50 },
     chimarrao: { heal: 99, score: 100 },
-    pinhao: { heal: 0, score: 100 },
+    chopp: { heal: 99, score: 100 },
+    bolinho: { heal: 0, score: 100 },
     medalha: { heal: 0, score: 500, life: 1 }
   };
   function Item(type, x, y, pop) {
+    if (type === 'chimarrao' && TC.rnd() < 0.5) type = 'chopp';   // a bebida que cura é sorteada: ora chimarrão, ora chopp
     this.type = type;
     this.x = x; this.y = y;
     this.w = 12; this.h = 10;
@@ -87,15 +89,16 @@
     var d = ITEM[this.type], p = st.player;
     this.alive = false;
     st.addScore(d.score);
-    if (d.life) { st.lives++; TC.audio.sfx('oneup'); st.floatText(this.x, this.y - 18, TC.t('item.1up'), '#ffe060'); return; }
+    // sempre diz o que foi pego; o que ele deu vem na linha de baixo
+    st.floatText(this.x, this.y - 26, TC.t('item.' + this.type), d.life ? '#ffe060' : d.heal ? '#a0ff90' : '#ffd060');
+    if (d.life) { st.lives++; TC.audio.sfx('oneup'); st.floatText(this.x, this.y - 16, TC.t('item.1up'), '#ffe060'); return; }
     if (d.heal) {
       p.hp = Math.min(p.maxHp, p.hp + d.heal);
       TC.audio.sfx('heal');
-      st.floatText(this.x, this.y - 18, TC.t('item.' + this.type), '#a0ff90');
       st.parts.add({ x: p.x, y: p.y - 16, vy: -0.6, life: 30, color: '#a0ffa0', size: 2, fade: true });
     } else {
       TC.audio.sfx('coin');
-      st.floatText(this.x, this.y - 14, '+' + d.score, '#ffd060');
+      st.floatText(this.x, this.y - 16, '+' + d.score, '#ffd060');
     }
   };
   Item.prototype.draw = function (c, cx, cy) {
@@ -103,7 +106,7 @@
     var img = TC.ART.items[this.type];
     var bob = this.floating ? Math.round(Math.sin(this.t * 0.08) * 2) : 0;
     c.drawImage(img, Math.round(this.x - img.width / 2 - cx), Math.round(this.y - img.height - cy + bob));
-    if (this.type === 'pinhao' || this.type === 'medalha') {
+    if (this.type === 'bolinho' || this.type === 'medalha') {
       if ((this.t % 40) < 4) { c.fillStyle = '#ffffff'; c.fillRect(Math.round(this.x - cx + 2), Math.round(this.y - img.height - cy + bob + 1), 1, 1); }
     }
   };

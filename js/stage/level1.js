@@ -242,12 +242,12 @@
     }
 
     /* ---------- itens e caixotes ---------- */
-    [[20, 'crate', 'pinhao'], [27, 'barrel', 'cuca'], [48, 'crate', 'pinhao'], [58, 'crate', 'linguica'], [74, 'barrel', null],
-      [76, 'crate', 'pinhao'], [100, 'barrel', 'chimarrao'], [108, 'crate', 'cuca'], [124, 'crate', 'linguica'],
-      [166, 'barrel', 'cuca'], [192, 'crate', 'pinhao'], [226, 'barrel', 'chimarrao'], [252, 'crate', 'cuca'], [258, 'barrel', 'linguica']
+    [[20, 'crate', 'bolinho'], [27, 'barrel', 'cuca'], [48, 'crate', 'bolinho'], [58, 'crate', 'linguica'], [74, 'barrel', null],
+      [76, 'crate', 'bolinho'], [100, 'barrel', 'chimarrao'], [108, 'crate', 'cuca'], [124, 'crate', 'linguica'],
+      [166, 'barrel', 'cuca'], [192, 'crate', 'bolinho'], [226, 'barrel', 'chimarrao'], [252, 'crate', 'cuca'], [258, 'barrel', 'linguica']
     ].forEach(function (p) { L.props.push({ kind: p[1], x: p[0] * TS + 8, drop: p[2] }); });
     [[45, 8], [46, 8], [47, 8], [89, 9], [90, 9], [119, 9], [197, 10], [198, 10], [241, 9], [243, 9], [136, 11], [151, 11]].forEach(function (p) {
-      L.items.push({ type: 'pinhao', x: p[0] * TS + 8, y: p[1] * TS - 4 });
+      L.items.push({ type: 'bolinho', x: p[0] * TS + 8, y: p[1] * TS - 4 });
     });
     L.items.push({ type: 'medalha', x: 146 * TS + 16, y: 9 * TS - 4 });
 

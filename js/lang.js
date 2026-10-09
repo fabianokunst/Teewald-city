@@ -101,7 +101,8 @@
     'item.cuca': 'CUCA',
     'item.linguica': 'LINGUIÇA',
     'item.chimarrao': 'CHIMARRÃO',
-    'item.pinhao': 'PINHÃO',
+    'item.chopp': 'CHOPP',
+    'item.bolinho': 'BOLINHO DE BATATA',
     'item.medalha': 'MEDALHA DE SÃO CRISTÓVÃO',
     'item.1up': '1 VIDA!',
 
@@ -270,10 +271,11 @@
     'tsize.2': 'LARGE',
     'opt.vibe': 'VIBRATION',
 
-    'item.cuca': 'CUCA CAKE',
+    'item.cuca': 'STREUSEL CAKE',
     'item.linguica': 'SAUSAGE',
-    'item.chimarrao': 'CHIMARRÃO',
-    'item.pinhao': 'PINE NUT',
+    'item.chimarrao': 'YERBA MATE',
+    'item.chopp': 'DRAFT BEER',
+    'item.bolinho': 'POTATO CROQUETTE',
     'item.medalha': 'ST. CHRISTOPHER MEDAL',
     'item.1up': '1 UP!',
 
@@ -321,7 +323,7 @@
     'sign.missing': 'MISSING SINCE THE FOG:\nthe Schmitt, Kessler, Weber families...\n(the rest of the paper is torn)',
     'sign.bridge': 'CREEK BRIDGE\nCareful: loose planks.',
     'sign.cemetery': 'SETTLERS\' CEMETERY\n"Here rest those who came from afar."',
-    'sign.bakery': 'WEBER BAKERY\nGrape, banana and crumb cuca cakes.\nClosed.',
+    'sign.bakery': 'WEBER BAKERY\nStreusel cakes: grape, banana and plain crumb.\nClosed.',
 
     'boss.1': 'What in God\'s name is that...?!',
     'boss.2': 'Alright, ugly. Bring it!',
