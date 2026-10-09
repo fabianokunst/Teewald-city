@@ -127,7 +127,8 @@
   var ICONS = {
     sound: ['....#....', '...##..#.', '####.#..#', '####..#.#', '####..#.#', '####.#..#', '...##..#.', '....#....'],
     mute: ['....#....', '...##....', '####.#.#.', '####..#..', '####.#.#.', '####.....', '...##....', '....#....'],
-    full: ['###...###', '#.......#', '#.......#', '.........', '.........', '#.......#', '#.......#', '###...###']
+    full: ['###...###', '#.......#', '#.......#', '.........', '.........', '#.......#', '#.......#', '###...###'],
+    unfull: ['..#...#..', '..#...#..', '###...###', '.........', '.........', '###...###', '..#...#..', '..#...#..']
   };
   function iconCanvas(rows, color) {
     var cv = TC.canvas(rows[0].length, rows.length);
@@ -177,7 +178,7 @@
 
   /* textos em pixel art (refeitos quando muda o idioma ou o tamanho) */
   function paintLabels(k) {
-    var key = TC.opts.lang + '|' + k + '|' + (TC.audio && TC.audio.muted);
+    var key = TC.opts.lang + '|' + k + '|' + (TC.audio && TC.audio.muted) + '|' + isFull();
     if (key === T.labels) return;
     T.labels = key;
     T.btns.forEach(function (b) {
@@ -185,8 +186,8 @@
       setPix(b.el.querySelector('.t-lbl'), pixText(TC.t('tb.' + b.act), '#9ca2cc', '#000'), k);
     });
     T.pills.forEach(function (p) {
-      var cv = p.act === 'start' ? pixText('START', '#c8cce4', '#000')
-        : iconCanvas(ICONS[p.act === 'full' ? 'full' : (TC.audio && TC.audio.muted ? 'mute' : 'sound')], '#c8cce4');
+      var icon = p.act === 'full' ? (isFull() ? 'unfull' : 'full') : (TC.audio && TC.audio.muted ? 'mute' : 'sound');
+      var cv = p.act === 'start' ? pixText('START', '#c8cce4', '#000') : iconCanvas(ICONS[icon], '#c8cce4');
       setPix(p.el, cv, k);
     });
     if (TC.ui && TC.ui.bigText) {
@@ -241,7 +242,7 @@
   /* 2ª etapa: com a imagem do jogo já posicionada, distribui os controles */
   T.place = function (vw, vh, g) {
     var s = T.safe, D = T.D, m = Math.round(D * 0.16);
-    var k = Math.max(1, Math.round(D / 64));
+    var k = T.k = Math.max(1, Math.round(D / 64));
     var r = D * 0.42, br = D * 0.22;
     var pillH = Math.max(26, Math.round(D * 0.21));
     T.root.style.setProperty('--D', D + 'px');
@@ -303,9 +304,12 @@
     T.pills.forEach(function (p) { p.el.classList.toggle('over', overlaps(p.x, p.y, p.w, p.h)); });
   };
 
+  function isFull() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
   function canFullscreen() {
     var d = document, el = d.documentElement;
-    if (window.navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches)) return false;
+    var mm = function (q) { return window.matchMedia && window.matchMedia(q).matches; };
+    // instalado na tela de início: já está sem a barra do navegador
+    if (window.navigator.standalone || mm('(display-mode: standalone)') || (mm('(display-mode: fullscreen)') && !isFull())) return false;
     return !!(el.requestFullscreen || el.webkitRequestFullscreen) && (d.fullscreenEnabled !== false || d.webkitFullscreenEnabled);
   }
 
@@ -375,7 +379,7 @@
   function releaseAll() { pointers = {}; refresh(); }
 
   function pillAction(act) {
-    if (act === 'mute') { TC.audio.init(); TC.audio.toggleMute(); T.labels = ''; paintLabels(Math.max(1, Math.round(T.D / 64))); }
+    if (act === 'mute') { TC.audio.init(); TC.audio.toggleMute(); }
     else if (act === 'full') TC.toggleFullscreen();
   }
 
@@ -509,6 +513,7 @@
       hits = {};
       this._tap = tapNext;
       tapNext = null;
+      if (T.shown) paintLabels(T.k || 2);   // idioma, mudo ou tela cheia podem ter mudado
       if (TC.params.tap) this._simTap();
     },
     down: function (a) { return cur[a]; },

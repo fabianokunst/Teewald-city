@@ -111,8 +111,19 @@
     } catch (e) { /* sem tela cheia */ }
   };
 
+  /* a tela do celular não apaga durante as cenas (nem jogando com controle físico) */
+  var wakeLock = null;
+  function keepAwake() {
+    if (wakeLock || document.hidden || !navigator.wakeLock) return;
+    wakeLock = 'pending';
+    navigator.wakeLock.request('screen').then(function (w) {
+      wakeLock = w;
+      w.addEventListener('release', function () { wakeLock = null; });
+    }).catch(function () { wakeLock = null; });
+  }
+
   /* ---------- áudio só começa após gesto do usuário ---------- */
-  function unlockAudio() { TC.audio.init(); }
+  function unlockAudio() { TC.audio.init(); keepAwake(); }
   TC.input.onKey(function (e) {
     unlockAudio();
     if (e.code === 'KeyF') TC.toggleFullscreen();
@@ -126,6 +137,7 @@
   /* app em segundo plano (trocou de app, ligação, tela bloqueada): pausa o jogo */
   document.addEventListener('visibilitychange', function () {
     if (document.hidden && game.scene && game.scene.onHide) game.scene.onHide();
+    if (!document.hidden && TC.audio.ctx) keepAwake();
   });
 
   /* ícone para "Adicionar à tela de início" do iPhone, desenhado com a arte do jogo */

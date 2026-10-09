@@ -29,17 +29,29 @@ Arno acorda caído numa rua de Teewald. A cidade continua linda, mas está vazia
 
 ## Controles
 
-| Ação | Teclado | Controle |
-|---|---|---|
-| Mover | Setas / WASD | D-pad / analógico |
-| Pular | Z / Espaço / K | A |
-| Atacar (combo X X X, voadora no ar) | X / J | B / X |
-| Giro especial (gasta um pouco de energia ao acertar) | C / L | Y / RB |
-| Ler placas | ↑ perto da placa | ↑ |
-| Pausa | Enter / Esc | Start |
-| Tela cheia / mudo | F / M | — |
+| Ação | Teclado | Controle | Celular / tablet |
+|---|---|---|---|
+| Mover | Setas / WASD | D-pad / analógico | Direcional na tela |
+| Pular | Z / Espaço / K | A | Botão A (vermelho) |
+| Atacar (combo X X X, voadora no ar) | X / J | B / X | Botão B (amarelo) |
+| Giro especial (gasta um pouco de energia ao acertar) | C / L | Y / RB | Botão Y (verde) |
+| Ler placas | ↑ perto da placa | ↑ | ↑ no direcional |
+| Pausa | Enter / Esc | Start | START |
+| Tela cheia / mudo | F / M | — | Botões pequenos no topo |
+| Menus e diálogos | Setas + Z / Enter | D-pad + A | Tocar direto no item ou na tela |
 
-No celular aparecem botões na tela.
+### Versão para celular e tablet
+
+O jogo se adapta sozinho à tela de toque, sem instalar nada:
+
+- **Deitado**: a imagem fica no centro e os controles nas laterais, como num portátil. Em telas mais largas (tablets) os controles ficam semitransparentes por cima das bordas da imagem, para ela não encolher demais.
+- **Em pé**: a imagem fica em cima e embaixo aparece o corpo do controle, com direcional, botões A/B/Y e START.
+- O direcional aceita o polegar torto: a faixa horizontal é mais larga, para que andar não aperte ↑ sem querer perto das placas. Dá para deslizar o dedo de um botão a outro (do B para o A, por exemplo) sem levantar.
+- Os menus e os diálogos funcionam tocando direto na tela. Nos itens de valor, tocar na metade esquerda do valor diminui e na direita aumenta.
+- O primeiro toque coloca o jogo em tela cheia nos navegadores que permitem isso (Android). No iPhone use **Compartilhar → Adicionar à Tela de Início** para jogar sem as barras do Safari.
+- Em **Opções** aparecem dois itens a mais: o tamanho dos botões na tela (pequenos, médios ou grandes) e a vibração (só no Android).
+- Ao trocar de app ou bloquear a tela, a fase pausa sozinha e o som é suspenso. Enquanto o jogo está aberto, a tela do aparelho não apaga.
+- Se você ligar um teclado ou controle Bluetooth, os botões da tela somem. Eles voltam no próximo toque.
 
 ## Rodar localmente
 
@@ -73,12 +85,13 @@ O arquivo `.nojekyll` desativa o processamento Jekyll do Pages. A pasta `ref/` (
 
 ```
 index.html          página e ordem de carregamento dos scripts
-css/style.css       escala da tela, filtro CRT, botões de toque
+manifest.webmanifest, icon.svg   instalação na tela de início do celular
+css/style.css       posição da tela, filtro CRT, visual do controle na tela
 js/core.js          utilidades, cores 15-bit, RNG, opções salvas
 js/gfx.js           canvas, buffers de pixel, sprites, rotação, ruído
 js/font.js          fonte bitmap com acentos do português
 js/lang.js          textos em português e inglês
-js/input.js         teclado, controle e toque
+js/input.js         teclado, controle físico e controle virtual de toque (layout e áreas de acerto)
 js/audio.js         sintetizador, eco, sequenciador e efeitos
 js/music.js         trilha sonora em notação de texto
 js/fx.js            fade, mosaico, tremor, partículas, iluminação, corrotinas
@@ -92,7 +105,7 @@ js/scenes/          boot, título, abertura, final e depuração
 js/stage/           entidades, jogador, inimigos, layout da fase e cena da fase
 ```
 
-Toda a arte e todo o som são gerados por código quando o jogo carrega. Não há imagens nem arquivos de áudio.
+Toda a arte e todo o som são gerados por código quando o jogo carrega. Não há imagens nem arquivos de áudio, só o pequeno `icon.svg` do app (o ícone do iPhone também é desenhado pelo jogo).
 
 ## Parâmetros de depuração (opcionais)
 
@@ -103,3 +116,5 @@ Acrescente à URL, por exemplo `index.html?scene=stage&x=4200`:
 - `diff=easy|normal|hard` define a dificuldade
 - `x=NNNN` começa a fase nessa posição; `god=1` deixa o Arno praticamente invencível
 - `wake=1` (com `scene=stage`) roda a sequência do despertar
+- `touch=1` força o controle de toque na tela (útil para testar no computador); `touch=0` esconde
+- `tap=quadro:x:y,...` (com `ff=`) simula toques na imagem do jogo, em pixels do jogo
