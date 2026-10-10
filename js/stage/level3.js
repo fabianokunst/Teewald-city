@@ -46,7 +46,7 @@
     fill(86, 89, 10, 10, 2);
     // o Rio Escuro (duas travessias)
     fill(140, 151, 13, 13, 4); fill(140, 151, 12, 12, 0);
-    [142, 145, 148, 151].forEach(function (sx) { set(sx, 12, 3); });   // pedras com vão de 2 blocos
+    fill(143, 145, 12, 13, 3); fill(149, 151, 12, 13, 3);   // pedras largas, vãos de 3 blocos (um pulo comum)
     fill(139, 139, 12, 13, 3); fill(152, 152, 12, 13, 3);
     fill(166, 172, 13, 13, 4); fill(166, 172, 12, 12, 0);
     fill(165, 173, 10, 10, 2);     // arco de pedra por cima
@@ -208,7 +208,7 @@
       [94, 'cart', 'cuca'], [120, 'crate', 'balas'], [133, 'barrel', 'linguica'], [155, 'crate', 'chimarrao'], [178, 'crate', 'balas'],
       [186, 'barrel', 'cuca'], [202, 'barrel', 'chimarrao'], [221, 'crate', 'balas'], [240, 'barrel', 'linguica'], [258, 'crate', 'cuca'], [277, 'barrel', 'chimarrao']
     ].forEach(function (p) { L.props.push({ kind: p[1], x: p[0] * TS + 8, drop: p[2] }); });
-    [[15, 9], [16, 9], [31, 8], [32, 8], [61, 9], [62, 9], [87, 10], [88, 10], [145, 12], [148, 12], [168, 10], [170, 10], [196, 10], [199, 10]].forEach(function (p) {
+    [[15, 9], [16, 9], [31, 8], [32, 8], [61, 9], [62, 9], [87, 10], [88, 10], [144, 12], [150, 12], [168, 10], [170, 10], [196, 10], [199, 10]].forEach(function (p) {
       L.items.push({ type: 'bolinho', x: p[0] * TS + 8, y: p[1] * TS - 4 });
     });
     L.items.push({ type: 'medalha', x: 66 * TS + 8, y: 7 * TS - 6 });
