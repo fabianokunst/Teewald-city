@@ -256,6 +256,11 @@
       ending3: function () { return new TC.Ending3Scene({ score: 12345 }); },
       boot: function () { return new TC.BootScene(); }
     };
+    // capítulos 4 a 7: ?scene=chNintro e ?scene=endingN
+    [4, 5, 6, 7].forEach(function (n) {
+      if (TC['Ch' + n + 'IntroScene']) map['ch' + n + 'intro'] = function () { return new TC['Ch' + n + 'IntroScene'](); };
+      if (TC['Ending' + n + 'Scene']) map['ending' + n] = function () { return new TC['Ending' + n + 'Scene']({ score: 12345 }); };
+    });
     if (sc && map[sc]) {
       if (!TC.opts.lang) TC.opts.lang = TC.params.lang || 'pt';
       if (TC.params.lang) TC.opts.lang = TC.params.lang;

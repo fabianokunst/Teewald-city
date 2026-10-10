@@ -358,7 +358,8 @@
     for (i = 0; i < 60; i++) { this.tbcRoad = i / 60; yield; }
     w = 0;
     while (w++ < 300 && !(w > 60 && (TC.input.pressed('confirm') || TC.input.pressed('start')))) yield;
-    TC.game.fadeTo(function () { return new TC.TitleScene(); }, 60);
+    // a história continua: o caminhão desce para a baixada da fábrica (capítulo 4)
+    TC.game.fadeTo(function () { return TC.chapterReady(4) ? TC.chapterStart(4) : new TC.TitleScene(); }, 60);
     while (true) yield;
   };
 

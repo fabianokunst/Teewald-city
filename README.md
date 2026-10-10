@@ -29,6 +29,7 @@ Teewald City é um jogo de plataforma e ação 2D em pixel art no estilo Super N
 - [Capítulo 1 — A Cidade Adormecida](#capítulo-1--a-cidade-adormecida)
 - [Capítulo 2 — A Trilha das Fitas](#capítulo-2--a-trilha-das-fitas)
 - [Capítulo 3 — O Baile Debaixo da Terra](#capítulo-3--o-baile-debaixo-da-terra)
+- [Capítulo 4 — O Último Turno](#capítulo-4--o-último-turno)
 - [Bestiário e galeria de arte](#bestiário-e-galeria-de-arte)
 - [Como funciona por dentro](#como-funciona-por-dentro)
 - [Dificuldade](#dificuldade)
@@ -366,6 +367,79 @@ Derrotado, o Moço mostra o pé de bode e afunda no chão em fumaça de enxofre.
   <img src="docs/img/c3-ewald.png" width="32%" alt="Ewald Becker reconhece o filho: Arno? Mas tu tá um homem feito">
   <img src="docs/img/c3-amanhecer.png" width="32%" alt="O sol nasce sobre o toco do Pinheiro Velho: Olha, pai. O sol">
   <img src="docs/img/c3-creditos.png" width="32%" alt="Créditos do capítulo 3 no céu do amanhecer">
+</p>
+
+</details>
+
+---
+
+## Capítulo 4 — O Último Turno
+
+Na noite seguinte, o caminhão do Arno desce a serra sozinho, de faróis acesos, para a baixada do arroio. Lá de baixo vem o apito da **Calçados Morgenstern**, uma fábrica que fechou em março. Pela estrada passam as mulheres de Teewald, de camisola e de olhos fechados, andando atrás do apito. O pai do Arno lembra que buscava sapato ali toda quinta, e que a moça do pesponto dava bala de goma para o guri.
+
+<p align="center">
+  <img src="docs/img/c4-curva.png" width="49%" alt="Na curva da serra, as mulheres sonâmbulas passam de camisola entre o Arno e o pai">
+  <img src="docs/img/c4-vila.png" width="49%" alt="A vila operária, com o Bar do Zé de TV ligada, bicicletas Caloi e sapatos vermelhos andando sozinhos">
+</p>
+
+### A fábrica de calçados
+
+A **fase 4** atravessa a fábrica inteira. Os pontos de retorno são **relógios de ponto**, e "PONTO BATIDO" faz o papel da vela acesa. O caminho é este:
+
+1. a **vila operária**: casas geminadas com as portas abertas, varais, o Bar do Zé e as sonâmbulas a caminho do portão;
+2. o **portão** com a estrela de neon da Morgenstern e o comunicado de fechamento ("31/03/1997");
+3. o **curtume**, com tanques de tanino de acácia-negra, varais de couro que servem de plataforma, o fulão girando e o caminhão do Arno parado na doca, de farol aceso e sem ninguém na cabine;
+4. o **corte e a montagem**, com esteiras que empurram tudo e balancins que descem de tempos em tempos (uma luz vermelha avisa antes). Uma placa diz "HÁ 10.963 DIAS SEM ACIDENTES — DESDE 1967";
+5. o **escritório da diretoria**, onde o velho Gerhard Morgenstern, de cadeira de rodas, entrega a chave do pesponto e o Arno leva os sapatos vermelhos da vitrine;
+6. o **pesponto**, com sessenta máquinas e as mulheres de Teewald costurando de olhos fechados, e a **sala de cola**, onde as poças de cola deixam o Arno lento.
+
+<p align="center">
+  <img src="docs/img/c4-portao.png" width="49%" alt="O portão da Calçados Morgenstern, com a estrela de neon piscando">
+  <img src="docs/img/c4-curtume.png" width="49%" alt="O curtume: o caminhão do Arno na doca da expedição, de farol aceso">
+  <img src="docs/img/c4-fabrica.png" width="49%" alt="O corte e a montagem: prateleiras de caixas de exportação, o balancim e a esteira">
+  <img src="docs/img/c4-pesponto.png" width="49%" alt="O pesponto: costureiras sonâmbulas nas máquinas e carretéis de linha na parede">
+</p>
+
+<p align="center">
+  <img src="docs/img/c4-gerhard.png" width="49%" alt="O velho Gerhard Morgenstern no escritório, ao lado da vitrine com o primeiro par do Modelo Hilde">
+  <img src="docs/img/c4-couro.png" width="49%" alt="O Couro, um couro de boi com a marca da estância, voando feito arraia sobre o pátio do curtume">
+</p>
+
+- **Inimigos novos**:
+  - **Sapatos Modelo Hilde**: pares de escarpins vermelhos que andam sozinhos e pulam de bico.
+  - **Tamancos** de colono, que saltitam aos pares fazendo claque-claque.
+  - **Botina de bico de aço**, que pula e pisa; o chão treme dos dois lados.
+  - **Contramestre** fantasma, que joga fôrmas de madeira e apita "A META!"; aí todos os sapatos apressam o passo.
+- **Mini-chefe: O Couro.** É um couro de boi inteiro, com a marca da estância a fogo, que se solta do tanque de tanino (inspirado na lenda do *Cuero*, o couro vivo dos lagos do sul). Ele dá rasantes, mergulha do alto (é só sair da sombra) e enrola o Arno; aí é preciso socar várias vezes para se soltar.
+
+### O chefe: A Moça do Serão
+
+Em 1967, o patrão trancou o pesponto à noite "pra ninguém roubar sapato", para fechar a tempo um pedido de exportação. Na terceira madrugada de serão, a sala de cola pegou fogo. **Hilde Weber**, de 19 anos, a melhor pespontadeira da fábrica, ficou lá dentro. Hoje ela é um fantasma de guarda-pó queimado, com os olhos costurados com linha vermelha e a saia se desfazendo em fios. Ela não tem pés. E repete a regra do patrão: ninguém sai antes de fechar o pedido. Os golpes dela são:
+
+- **costura**: uma linha pontilhada corre pelo chão e prende os pés (pule);
+- **agulhas** em leque;
+- **fôrma de madeira**: um soco devolve a fôrma, e ela acerta em cheio na Moça;
+- **carretel**: ela sobe pela linha e cai onde estava a sombra;
+- **cola**: poças que deixam o Arno lento.
+
+Na segunda metade, o incêndio de 1967 volta. As portas batem e trancam, e o fogo protege a Moça. O Arno precisa abrir as três portas com a chave do Gerhard (↑ perto da porta). Cada porta aberta deixa entrar o luar, liberta uma costureira e apaga o fogo por um tempo.
+
+<p align="center">
+  <img src="docs/img/c4-hilde.png" width="49%" alt="A Moça do Serão flutuando entre as portas trancadas do pesponto">
+  <img src="docs/img/c4-portas.png" width="49%" alt="O incêndio de 1967: a porta do meio aberta para o luar enquanto a Moça sobe pela linha vermelha">
+</p>
+
+**Músicas novas**: o "Xote da Fábrica" na fase, com o chimbal das máquinas, e a "Valsa do Serão" no chefe, uma caixinha de música que acelera e ganha metais quando começa o incêndio.
+
+<details>
+<summary><b>Final do capítulo 4 (spoiler)</b></summary>
+
+<br>
+
+O Arno devolve à Hilde o par de sapatos vermelhos que ela costurou com retalhos para o baile de Kerb e nunca chegou a usar. Os pontos dos olhos se soltam, ela calça os sapatos, vira gente de novo e sai dançando pela porta aberta. Lá fora, o caminhão do Arno, ainda sem motorista, "come" a luz da estrela de neon da fábrica e sobe a estrada do Morro dos Bugres. De madrugada, o rádio fala de vacas que amanhecem sem os olhos na Linha Becker.
+
+<p align="center">
+  <img src="docs/img/c4-estrela.png" width="49%" alt="Na doca, a luz rosa da estrela de neon escorre para dentro do farol do caminhão">
 </p>
 
 </details>

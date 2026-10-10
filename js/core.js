@@ -179,6 +179,21 @@ var TC = window.TC = window.TC || {};
   if (!TC.DIFF[TC.opts.diff]) TC.opts.diff = 'normal';
   if (TC.params.diff && TC.DIFF[TC.params.diff]) TC.opts.diff = TC.params.diff;
   TC.diff = function () { return TC.DIFF[TC.opts.diff] || TC.DIFF.normal; };
+
+  /* ---------- capítulos ----------
+     Os capítulos 1 a 3 sempre existem; do 4 em diante cada capítulo se registra em TC.READY[n]
+     (js/scenes/chapterN.js) quando a fase, a arte e as cenas dele estão carregadas. */
+  TC.LAST_CHAPTER = 7;
+  TC.READY = TC.READY || {};
+  TC.chapterReady = function (n) {
+    if (n >= 1 && n <= 3) return true;
+    return !!(TC.READY[n] && TC['buildLevel' + n] && TC['Ch' + n + 'IntroScene']);
+  };
+  TC.chapterList = function () {
+    var out = [];
+    for (var n = 1; n <= TC.LAST_CHAPTER; n++) if (TC.chapterReady(n)) out.push(n);
+    return out;
+  };
   TC.cycleDiff = function (d) {
     var i = TC.DIFFS.indexOf(TC.opts.diff);
     TC.opts.diff = TC.DIFFS[(i + d + TC.DIFFS.length) % TC.DIFFS.length];

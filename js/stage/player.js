@@ -124,11 +124,16 @@
     if (shootP) this.atkBuf = 0;
     var wasGround = this.onGround, prevVy = this.vy;
     var a;
+    if (this.state !== 'normal') this.covering = false;
 
     switch (this.state) {
       case 'normal': {
         var dir = (right ? 1 : 0) - (left ? 1 : 0);
         var accel = this.onGround ? 0.34 : 0.24, max = 1.9;
+        // capítulo 5: segurar ↓ no chão = fechar os olhos e ficar quieto (contra o brilho da Boitatá)
+        this.covering = !!(st.level.allowCover && this.onGround && ctl && (I.down('down') || this.botDuck) && !jumpP);
+        if (this.covering) dir = 0;
+        if (st.level.speedMul) max *= st.level.speedMul(st, this);
         if (dir) { this.vx = TC.approach(this.vx, dir * max, accel); this.face = dir; }
         else this.vx = TC.approach(this.vx, 0, this.onGround ? 0.4 : 0.06);
         if (this.onGround) { this.coyote = 6; this.airAttacked = false; }
@@ -139,6 +144,7 @@
           } else this.jump(st);
         }
         if (!jumpD && this.vy < -2.4) this.vy = -2.4;
+        if (this.covering) { this.atkBuf = 0; break; }
         if (shootP) { this.setState('shoot'); break; }
         if (this.atkBuf) {
           this.atkBuf = 0;
@@ -261,6 +267,16 @@
       if (Math.abs(dx) < 34 && dy < -36 && this.onGround && st.t % 30 === 0) o.jump = true;
       if (!this.onGround && dy < -20 && Math.abs(dx) < 30 && st.t % 5 === 0) o.atk = true;
       if (this.hp > 4 && st.t % 240 === 0) o.sp = true;
+      // em cima de uma plataforma vazada com o alvo lá embaixo: anda até a beirada e desce
+      var ptx = Math.floor(this.x / 16), pty = Math.floor((this.y + 1) / 16);
+      if (this.onGround && dy > 28 && lvl.tile(ptx, pty) === 2) {
+        var el = ptx, er = ptx;
+        while (lvl.tile(el - 1, pty) === 2) el--;
+        while (lvl.tile(er + 1, pty) === 2) er++;
+        var goR = Math.abs((er + 1) * 16 - this.x) < Math.abs(this.x - el * 16) ? true : false;
+        if (dx > 40) goR = true; else if (dx < -40) goR = false;
+        o.right = goR; o.left = !goR; o.atk = false;
+      }
       // revólver: atira de longe, de vez em quando
       if (st.gun && st.gun.ammo > 0 && !best.isProp && Math.abs(dx) > 50 && Math.abs(dx) < 170 && Math.abs(dy + 10) < 34 && st.t % 70 === 0) {
         o.shoot = true; o.left = dx < 0; o.right = dx > 0;
@@ -278,6 +294,21 @@
     var bs = st.boss;
     if (bs && bs.state === 'swoop' && this.onGround && (this.x - bs.x) * bs.face > 0 && Math.abs(this.x - bs.x) < 64) o.jump = true;
     if (bs && bs.botJump && bs.botJump(this)) o.jump = true;
+    // o nível (capítulos 4 a 7) pode mandar o piloto ir até um ponto e usar algo (abrir porta, tapar os olhos...)
+    this.botUse = false; this.botDuck = false;
+    var goal = st.level.botGoal ? st.level.botGoal(st, this) : null;
+    if (goal) {
+      if (goal.x != null) {
+        var gd = goal.x - this.x;
+        o.left = gd < -6; o.right = gd > 6;
+        if (Math.abs(gd) <= 6 && !goal.keepAttack) o.atk = false;
+      }
+      if (goal.use) this.botUse = true;
+      if (goal.duck) { this.botDuck = true; o.left = o.right = false; o.atk = false; o.jump = false; }
+      if (goal.jump) o.jump = true;
+      if (goal.noAtk) o.atk = false;
+      if (goal.shoot != null) o.shoot = goal.shoot;
+    }
     return o;
   };
 
@@ -300,6 +331,7 @@
     var s = this.state, a;
     switch (s) {
       case 'normal':
+        if (this.covering && A.cover) return A.cover[0];
         if (!this.onGround) return this.vy < 0 ? A.jump[0] : A.fall[0];
         if (Math.abs(this.vx) > 0.25) return A.run[Math.floor(this.anim / 5) % 8];
         return A.idle[Math.floor(this.anim / 32) % 2];

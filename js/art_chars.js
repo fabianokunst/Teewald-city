@@ -239,6 +239,12 @@
   POSES.shock = [P({ lean: -0.2, legF: [0.3, -0.15], legB: [-0.35, -0.1], armF: [0.9, 1.6], armB: [0.7, 1.7] })];
   POSES.look = [P({ lean: 0.0, armF: [0.2, 0.3], armB: [-0.1, 0.3], headX: -1 })];
   POSES.victory = [P({ lean: -0.05, armF: [2.9, 0.2], armB: [-0.2, 0.4] })];
+  // ajoelhado, com o braço tapando os olhos (capítulo 5)
+  POSES.cover = [P({ lean: 0.35, legF: [1.35, -1.45], legB: [-0.05, -1.6], armF: [1.9, 2.5], armB: [1.6, 2.6], hurtFace: true, headY: 1 })];
+  // segurando algo à frente (a chave, os sapatos, a fita)
+  POSES.offer = [P({ lean: 0.05, armF: [1.35, 0.5], armB: [1.1, 0.6] })];
+  // carregando alguém / apontando para o alto
+  POSES.point = [P({ lean: 0.0, armF: [2.4, 0.1], armB: [-0.1, 0.35] })];
 
   ART.arno = {};
   Object.keys(POSES).forEach(function (k) {

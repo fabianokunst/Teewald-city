@@ -628,10 +628,16 @@
   };
 
   A.sfxNames = Object.keys(SFX);
+  /* os capítulos novos registram os próprios efeitos (js/music_chN.js); o 3º argumento traz os sintetizadores */
+  var SYN = { osc: osc, noise: noise, env: env, ctx: function () { return ctx; }, out: function () { return sfxBus; }, echo: function () { return echoIn; } };
+  A.addSfx = function (name, fn) {
+    SFX[name] = fn;
+    if (A.sfxNames.indexOf(name) < 0) A.sfxNames.push(name);
+  };
   A.sfx = function (name, p) {
     if (!ctx || !A.ready || ctx.state !== 'running') return;
     var fn = SFX[name];
-    if (fn) fn(ctx.currentTime + 0.005, p);
+    if (fn) fn(ctx.currentTime + 0.005, p, SYN);
   };
 
   /* estática de rádio (duração em segundos) */

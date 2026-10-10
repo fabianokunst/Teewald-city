@@ -683,7 +683,7 @@
     while (w++ < 420 && !(w > 60 && (TC.input.pressed('confirm') || TC.input.pressed('start')))) yield;
     var sc = this.score;
     // terminou um capítulo: "continuar" passa a abrir o prólogo do seguinte
-    TC.store.set('save', TC['buildLevel' + (this.chapter + 1)] ? { ch: this.chapter + 1, cp: 0, score: 0, lives: TC.diff().lives, fresh: true } : null);
+    TC.store.set('save', TC.chapterReady(this.chapter + 1) ? { ch: this.chapter + 1, cp: 0, score: 0, lives: TC.diff().lives, fresh: true } : null);
     TC.audio.stopMusic(1);
     var next = this.level.nextScene;
     TC.game.fadeTo(function () { return next ? next(sc) : new TC.EndingScene({ score: sc }); }, 60);

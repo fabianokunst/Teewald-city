@@ -36,7 +36,8 @@
       return { label: function () { return TC.t('diff.' + k); }, act: function () { TC.opts.diff = k; TC.saveOpts(); self.fromDiff = true; self.newGame(); } };
     }), { startConfirms: true, back: function () { self.state = self.chapter > 1 ? 'chapters' : 'menu'; } });
     // escolha do capítulo (todos liberados), depois a dificuldade
-    this.chapMenu = new TC.Menu([1, 2, 3].map(function (n) {
+    this.chapNums = TC.chapterList();
+    this.chapMenu = new TC.Menu(this.chapNums.map(function (n) {
       return { label: function () { return TC.t('chap.' + n); }, act: function () { self.chapter = n; self.state = 'diff'; self.diffMenu.sel = TC.DIFFS.indexOf(TC.opts.diff); } };
     }), { startConfirms: true, back: function () { self.state = 'menu'; } });
     function toggle(key) { return function () { TC.opts[key] = !TC.opts[key]; TC.saveOpts(); TC.applyDisplay(); }; }
@@ -87,8 +88,8 @@
 
   /* a cena que abre cada capítulo (o prólogo) */
   TC.chapterStart = function (n) {
-    if (n === 3 && TC.Ch3IntroScene) return new TC.Ch3IntroScene();
-    if (n === 2 && TC.Ch2IntroScene) return new TC.Ch2IntroScene();
+    var S = n > 1 && TC.chapterReady(n) ? TC['Ch' + n + 'IntroScene'] : null;
+    if (S) return new S();
     return new TC.IntroScene();
   };
 
@@ -109,7 +110,9 @@
     var s = this.save;
     TC.audio.stopMusic(1.0);
     // terminou um capítulo e ainda não começou o seguinte: começa pelo prólogo dele
-    if (s && s.ch > 1 && s.fresh) TC.game.fadeTo(function () { return TC.chapterStart(s.ch); }, 40);
+    if (s && s.ch > 1 && !TC.chapterReady(s.ch)) s = null;
+    if (!s) TC.game.fadeTo(function () { return new TC.TitleScene(); }, 40);
+    else if (s.ch > 1 && s.fresh) TC.game.fadeTo(function () { return TC.chapterStart(s.ch); }, 40);
     else TC.game.fadeTo(function () { return new TC.StageScene({ save: s }); }, 40);
     this.state = 'leaving';
   };
@@ -233,11 +236,15 @@
         });
         TC.font.draw(c, TC.t('diff.change'), 128, 202, '#6a70a0', { align: 'center', shadow: '#000' });
       } else if (this.state === 'chapters') {
-        TC.ui.box(c, 20, 86, 216, 128, 'menu', 0.94);
-        TC.font.draw(c, TC.t('chap.title'), 128, 94, '#ffd890', { align: 'center', shadow: '#000' });
-        this.chapMenu.draw(c, 128, 112, { align: 'center' });
-        TC.font.wrap(TC.t('chap.' + (this.chapMenu.sel + 1) + '.d'), 196).forEach(function (ln, k) {
-          TC.font.draw(c, ln, 128, 160 + k * 11, '#c8c8e8', { align: 'center', shadow: '#000' });
+        // com muitos capítulos a lista fica mais junta e a caixa sobe
+        var nch = this.chapNums.length, lhc = nch > 4 ? 10 : 14;
+        var listH = nch * lhc, by0 = Math.min(86, 216 - (44 + listH + 26));
+        TC.ui.box(c, 20, by0, 216, 216 - by0 - 2, 'menu', 0.94);
+        TC.font.draw(c, TC.t('chap.title'), 128, by0 + 8, '#ffd890', { align: 'center', shadow: '#000' });
+        this.chapMenu.draw(c, 128, by0 + 24, { align: 'center', lineH: lhc });
+        var dy0 = by0 + 24 + listH + 6;
+        TC.font.wrap(TC.t('chap.' + this.chapNums[this.chapMenu.sel] + '.d'), 196).forEach(function (ln, k) {
+          TC.font.draw(c, ln, 128, dy0 + k * 11, '#c8c8e8', { align: 'center', shadow: '#000' });
         });
       } else if (this.state === 'menu' || this.state === 'leaving') {
         TC.ui.box(c, 72, 126, 112, 78, 'menu', 0.85);
