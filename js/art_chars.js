@@ -745,16 +745,16 @@
     pb.rect(3, 10, 34, 20, u32('#1a1a1e'));
     pb.rect(4, 11, 32, 1, u32('#3a3a44'));
     pb.rect(6, 14, 20, 9, u32('#0a2a14'));
-    // dígitos 88.7 (LCD)
+    // dígitos 104.5 (LCD)
     var digits = TC.sprite([
-      '###.###.....###',
-      '#.#.#.#.......#',
-      '###.###......#.',
-      '#.#.#.#.....#..',
-      '###.###..#..#..'
+      '.#..###.#.#...###',
+      '##..#.#.#.#...#..',
+      '.#..#.#.###...###',
+      '.#..#.#...#.....#',
+      '###.###...#.#.###'
     ], { '#': f % 2 ? '#60f090' : '#40c070' });
     var c = pb.toCanvas();
-    c.ctx.drawImage(digits, 8, 16);
+    c.ctx.drawImage(digits, 7, 17);
     pb = TC.bufFrom(c);
     for (var i = 0; i < 2; i++) ellipseFill(pb, 30, 18 + i * 0, 4, 4, function (x, y, dx, dy) { return u32(dx * dx + dy * dy < 0.3 ? '#5a5a66' : '#2e2e36'); });
     for (var x = 6; x < 34; x += 3) pb.rect(x, 25, 2, 3, u32('#2a2a30'));

@@ -435,12 +435,15 @@
       rc.globalAlpha = 1 - self.fogAmt * 0.8;
       rc.drawImage(k.moon, mx - k.moon.width / 2, Math.round(34 + dy * 0.3) - k.moon.height / 2);
       rc.globalAlpha = 1;
-      var fo = Math.round(skyX * 25) % 512; if (fo < 0) fo += 512;
-      rc.drawImage(k.far, -fo, Math.round(38 + dy * 0.6)); rc.drawImage(k.far, 512 - fo, Math.round(38 + dy * 0.6));
-      var no = Math.round(skyX * 60) % 512; if (no < 0) no += 512;
-      rc.drawImage(k.near, -no, Math.round(32 + dy)); rc.drawImage(k.near, 512 - no, Math.round(32 + dy));
+      // serra e mata do fundo: estão longe, então giram devagar (pouco mais que a lua) nas curvas
+      var fo = Math.round(skyX * 3) % 512; if (fo < 0) fo += 512;
+      var fy = Math.round(38 + dy * 0.4);
+      rc.drawImage(k.far, -fo, fy); rc.drawImage(k.far, 512 - fo, fy);
+      var no = Math.round(skyX * 5) % 512; if (no < 0) no += 512;
+      var ny = Math.round(32 + dy * 0.6);
+      rc.drawImage(k.near, -no, ny); rc.drawImage(k.near, 512 - no, ny);
       rc.fillStyle = TC.col('#0c0e22');
-      rc.fillRect(0, Math.round(32 + dy) + 52, TC.W, 150);
+      rc.fillRect(0, ny + 52, TC.W, 150);
       if (self.fogAmt > 0) {
         rc.globalAlpha = self.fogAmt * 0.85;
         rc.fillStyle = TC.col('#3e3e5e');
@@ -476,8 +479,7 @@
     // painel aceso
     TC.Lighting.glow(c, 108, 167, 12, '#c08030', 0.12);
     TC.Lighting.glow(c, 148, 167, 12, '#c08030', 0.12);
-    var lcd = this.radioStatic ? String(80 + Math.floor(Math.random() * 20)) + '.' + Math.floor(Math.random() * 10) : '88.7';
-    TC.font.draw(c, lcd, 204, 162, this.radioStatic && t % 4 < 2 ? '#a0ffc0' : '#40d070', { align: 'center' });
+    TC.font.draw(c, '104.5', 204, 162, this.radioStatic && t % 4 < 2 ? '#a0ffc0' : '#40d070', { align: 'center' });
     if (this.chaos > 0.2 && t % 8 < 4) { c.fillStyle = '#ff2010'; c.fillRect(128, 176, 2, 2); }
     A.drawArms(c, 128, 236, this.wheelAng);
     TC.drawRot(c, k.wheel, 128, 236, this.wheelAng, 128);
