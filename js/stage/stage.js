@@ -11,7 +11,8 @@
     this.t = 0;
     // capítulo: 1 = A Cidade Adormecida, 2 = A Trilha das Fitas (o nível pode trazer ganchos próprios: L.init, L.update, L.bossSeq...)
     this.chapter = +(this.opts.chapter || (this.opts.save && this.opts.save.ch) || 1);
-    this.level = this.chapter === 2 && TC.buildLevel2 ? TC.buildLevel2() : TC.buildLevel1();
+    var build = TC['buildLevel' + this.chapter];
+    this.level = build ? build() : TC.buildLevel1();
     this.groundY = 192;
     A.crate_ = A.crate_ || A.crate();
     A.barrel_ = A.barrel_ || A.barrel();
@@ -59,7 +60,7 @@
       { label: function () { return TC.t('pause.resume'); }, act: function () { self2.mode = 'play'; TC.input.clear(); } },
       { label: function () { return TC.t('opt.diff'); }, value: function () { return TC.t('diff.' + TC.opts.diff); }, left: function () { TC.cycleDiff(-1); }, right: function () { TC.cycleDiff(1); } },
       { label: function () { return TC.t('opt.lang'); }, value: function () { return TC.t('lang.name'); }, left: toggleLang, right: toggleLang },
-      { label: function () { return TC.t('opt.music'); }, value: function () { return String(TC.opts.music); }, left: function () { vol('music', -1); }, right: function () { vol('music', 1); } },
+      { label: function () { return TC.t('opt.music'); }, value: function () { return String(TC.opts.music); }, left: function () { vol('music', -1); }, right: function () { vol('music', 1); }, repeat: true },
       { label: function () { return TC.t('opt.crt'); }, value: function () { return TC.t(TC.opts.crt ? 'on' : 'off'); }, left: toggle('crt'), right: toggle('crt') },
       { label: function () { return TC.t('pause.quit'); }, act: function () { self2.quit(); } }
     ], { back: function () { self2.mode = 'play'; TC.input.clear(); } });
@@ -348,7 +349,8 @@
     w.forEach(function (s) {
       var x, y, opt = {};
       if (s.opt) for (var ok in s.opt) opt[ok] = s.opt[ok];   // ex.: tipo de colono, o Seu Kessler
-      if (s.rise != null) { x = a.x0 + s.rise; y = self.groundAt(x); opt.rise = true; }
+      if (s.drop != null) { x = a.x0 + s.drop; y = -30; }   // cai do alto (elevador da mina, capítulo 3)
+      else if (s.rise != null) { x = a.x0 + s.rise; y = self.groundAt(x); opt.rise = true; }
       else {
         x = s.side === 'l' ? a.x0 - 16 : a.x0 + W + 16;
         y = s.t === 'shade' ? self.groundAt(TC.clamp(x, a.x0 + 4, a.x0 + W - 4)) : s.y;
@@ -503,8 +505,9 @@
     if (this.comboT > 0 && --this.comboT === 0) this.combo = 0;
     if (this.banner) this.banner.t++;
     if (this.flashLight && --this.flashLight.t <= 0) this.flashLight = null;
-    // folhas de outono
-    if (this.t % 14 === 0) {
+    // folhas de outono (o nível pode trocar por outras partículas, ex.: poeira e gotas debaixo da terra)
+    if (this.level.particles) this.level.particles(this);
+    else if (this.t % 14 === 0) {
       var ls = A.leaves()[TC.rnd.int(0, 2)];
       this.parts.add({ x: this.camX + TC.rnd.range(-10, W + 40), y: -6, vx: TC.rnd.range(-0.6, -0.1), vy: TC.rnd.range(0.35, 0.7), life: 420, wobble: 0.05, phase: TC.rnd() * 6, layer: 2,
         sprite: function (p) { return ls[Math.floor((p.max - p.life) / 12) % 2]; } });
@@ -679,8 +682,8 @@
     var w = 0;
     while (w++ < 420 && !(w > 60 && (TC.input.pressed('confirm') || TC.input.pressed('start')))) yield;
     var sc = this.score;
-    // terminou o capítulo 1: "continuar" passa a abrir o capítulo 2
-    TC.store.set('save', this.chapter === 1 ? { ch: 2, cp: 0, score: 0, lives: TC.diff().lives, fresh: true } : null);
+    // terminou um capítulo: "continuar" passa a abrir o prólogo do seguinte
+    TC.store.set('save', TC['buildLevel' + (this.chapter + 1)] ? { ch: this.chapter + 1, cp: 0, score: 0, lives: TC.diff().lives, fresh: true } : null);
     TC.audio.stopMusic(1);
     var next = this.level.nextScene;
     TC.game.fadeTo(function () { return next ? next(sc) : new TC.EndingScene({ score: sc }); }, 60);
@@ -734,7 +737,7 @@
     // ----- fundo -----
     c.drawImage(bg.sky, 0, 0);
     A.drawTwinkles(c, bg.tw, t, 0, 0);
-    c.drawImage(bg.moon, 206 - bg.moon.width / 2, 36 - bg.moon.height / 2);
+    if (bg.moon) c.drawImage(bg.moon, 206 - bg.moon.width / 2, 36 - bg.moon.height / 2);
     var o = Math.round(camX * 0.05) % 512;
     c.drawImage(bg.far, -o, 98); c.drawImage(bg.far, 512 - o, 98);
     if (bg.spire && camX < 3900) {
@@ -811,7 +814,8 @@
     for (i = 0; i < this.deco.length; i++) if (this.deco[i].light) this.deco[i].light(Lt, camX, 0);
     for (i = 0; i < this.orbs.length; i++) Lt.add(this.orbs[i].x - camX, this.orbs[i].y, 20, '#60ff80', 0.7);
     var p = this.player;
-    Lt.add(p.x - camX, p.y - 16, 42, '#7a7aa8', 0.55);
+    var pl = this.level.playerLight;   // debaixo da terra o Arno leva uma lamparina
+    Lt.add(p.x - camX, p.y - 16, pl ? pl.r : 42, pl ? pl.col : '#7a7aa8', pl ? pl.a : 0.55);
     if (this.flashLight) Lt.add(this.flashLight.x - camX, this.flashLight.y, 90, '#ffa050', this.flashLight.t / 10);
     this.maskCv.ctx.clearRect(0, 0, W, H);
     this.maskCv.ctx.drawImage(this.pf, 0, 0);
@@ -1021,7 +1025,7 @@
     c.scale(s, s);
     c.drawImage(num, -Math.floor(num.width / 2), -Math.floor(num.height / 2));
     c.restore();
-    TC.font.draw(c, 'START / Z', 128, 176, '#a0a8d0', { align: 'center', shadow: '#000' });
+    TC.font.draw(c, TC.t('cont.hint'), 128, 176, '#a0a8d0', { align: 'center', shadow: '#000' });
   };
 
   /* o app foi para segundo plano (celular): abre a pausa para não morrer sem ver */

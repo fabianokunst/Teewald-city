@@ -50,12 +50,39 @@
       { label: function () { return TC.t('opt.crt'); }, value: function () { return TC.t(TC.opts.crt ? 'on' : 'off'); }, left: toggle('crt'), right: toggle('crt') },
       { label: function () { return TC.t('opt.chroma'); }, value: function () { return TC.t(TC.opts.chroma ? 'on' : 'off'); }, left: toggle('chroma'), right: toggle('chroma') },
       { label: function () { return TC.t('opt.aspect'); }, value: function () { return TC.t('aspect.' + TC.opts.aspect); }, left: aspT, right: aspT },
-      { label: function () { return TC.t('opt.music'); }, value: function () { return bar(TC.opts.music); }, left: vol('music', -1), right: vol('music', 1) },
-      { label: function () { return TC.t('opt.sfx'); }, value: function () { return bar(TC.opts.sfx); }, left: vol('sfx', -1), right: vol('sfx', 1) },
+      { label: function () { return TC.t('opt.music'); }, value: function () { return bar(TC.opts.music); }, left: vol('music', -1), right: vol('music', 1), repeat: true },
+      { label: function () { return TC.t('opt.sfx'); }, value: function () { return bar(TC.opts.sfx); }, left: vol('sfx', -1), right: vol('sfx', 1), repeat: true },
       { label: function () { return TC.t('opt.full'); }, act: function () { TC.toggleFullscreen(); } },
       { label: function () { return TC.t('opt.back'); }, act: function () { self.state = 'menu'; } }
     ], { back: function () { self.state = 'menu'; } });
     TC.input.touchOptions(this.opt.items);   // tamanho dos botões na tela e vibração (só em telas de toque)
+    // controle físico: logo antes de "TELA CHEIA"
+    var items = this.opt.items, fi = items.length - 2;
+    for (var i = 0; i < items.length; i++) if (items[i].label() === TC.t('opt.full')) { fi = i; break; }
+    items.splice(fi, 0, { label: function () { return TC.t('opt.pad'); }, act: function () { self.state = 'pad'; self.padMenu.sel = 0; } });
+    var vibeT = function () {
+      TC.opts.vibe = !TC.opts.vibe;
+      TC.store.set('vibe', TC.opts.vibe);
+      if (TC.opts.vibe) TC.input.rumble(0.7, 0.7, 220);
+    };
+    this.padMenu = new TC.Menu([
+      { label: function () { return TC.t('pad.map'); }, act: function () { self.startPadMap(); } },
+      { label: function () { return TC.t('opt.vibe'); }, value: function () { return TC.t(TC.opts.vibe ? 'on' : 'off'); }, left: vibeT, right: vibeT },
+      { label: function () { return TC.t('pad.reset'); }, act: function () { TC.ui.toast([TC.t(TC.input.padReset() ? 'pad.reseted' : 'pad.none')]); } },
+      { label: function () { return TC.t('opt.back'); }, act: function () { self.state = 'options'; } }
+    ], { back: function () { self.state = 'options'; } });
+  };
+
+  /* configuração dos botões: o jogo pede cada ação e grava o que for apertado */
+  TitleScene.prototype.startPadMap = function () {
+    var self = this;
+    var ok = TC.input.padConfig.start(function (saved) {
+      self.state = 'pad';
+      TC.ui.toast([TC.t(saved ? 'pad.saved' : 'pad.cancel')]);
+      if (saved) TC.audio.sfx('confirm');
+    });
+    if (ok) this.state = 'padmap';
+    else TC.ui.toast([TC.t('pad.none'), TC.t('pad.none2')], 3000);
   };
 
   /* a cena que abre cada capítulo (o prólogo) */
@@ -108,6 +135,11 @@
       this.chapMenu.update();
     } else if (this.state === 'options') {
       this.opt.update();
+    } else if (this.state === 'pad') {
+      this.padMenu.update();
+    } else if (this.state === 'padmap') {
+      // o controle está sendo lido pela configuração: cancela pelo teclado (ESC) ou tocando na tela
+      if (TC.input.pressed('back') || TC.input.tap()) TC.input.padConfig.cancel();
     } else if (this.state === 'controls') {
       if (TC.input.pressed('confirm') || TC.input.pressed('back') || TC.input.pressed('start')) { TC.audio.sfx('cancel'); this.state = 'menu'; }
     }
@@ -201,11 +233,11 @@
         });
         TC.font.draw(c, TC.t('diff.change'), 128, 202, '#6a70a0', { align: 'center', shadow: '#000' });
       } else if (this.state === 'chapters') {
-        TC.ui.box(c, 20, 96, 216, 102, 'menu', 0.94);
-        TC.font.draw(c, TC.t('chap.title'), 128, 104, '#ffd890', { align: 'center', shadow: '#000' });
-        this.chapMenu.draw(c, 128, 122, { align: 'center' });
+        TC.ui.box(c, 20, 86, 216, 128, 'menu', 0.94);
+        TC.font.draw(c, TC.t('chap.title'), 128, 94, '#ffd890', { align: 'center', shadow: '#000' });
+        this.chapMenu.draw(c, 128, 112, { align: 'center' });
         TC.font.wrap(TC.t('chap.' + (this.chapMenu.sel + 1) + '.d'), 196).forEach(function (ln, k) {
-          TC.font.draw(c, ln, 128, 152 + k * 11, '#c8c8e8', { align: 'center', shadow: '#000' });
+          TC.font.draw(c, ln, 128, 160 + k * 11, '#c8c8e8', { align: 'center', shadow: '#000' });
         });
       } else if (this.state === 'menu' || this.state === 'leaving') {
         TC.ui.box(c, 72, 126, 112, 78, 'menu', 0.85);
@@ -215,7 +247,7 @@
         if ((t >> 5) % 2 === 0) TC.font.draw(c, TC.t('boot.press'), 128, 160, '#f0e0c0', { align: 'center', shadow: '#000' });
       } else if (this.state === 'options') {
         // a caixa cresce para cima conforme o número de opções (em telas de toque há duas a mais)
-        var n = this.opt.items.length, lh = n >= 10 ? 11 : 13;
+        var n = this.opt.items.length, lh = n >= 12 ? 10 : n >= 10 ? 11 : 13;
         var bh = 26 + n * lh, by = 216 - bh;
         TC.ui.box(c, 16, by, 224, bh, 'menu', 0.94);
         TC.font.draw(c, TC.t('opt.title'), 128, by + 8, '#ffd890', { align: 'center', shadow: '#000' });
@@ -229,9 +261,59 @@
           TC.font.draw(c, TC.t(r2[1]), 232, 94 + k * 13, '#ffc070', { shadow: '#000', align: 'right' });
         });
         TC.font.draw(c, TC.t('ctrl.pad'), 128, 188, '#9098c0', { align: 'center', shadow: '#000' });
-        if (!TC.input.touchUI()) TC.font.draw(c, 'F: ' + TC.t('opt.full') + '   M: MUTE', 128, 201, '#6a70a0', { align: 'center', shadow: '#000' });
+        if (!TC.input.touchUI() && TC.input.device() !== 'pad') TC.font.draw(c, 'F: ' + TC.t('opt.full') + '   M: MUTE', 128, 201, '#6a70a0', { align: 'center', shadow: '#000' });
+      } else if (this.state === 'pad') {
+        this.drawPad(c);
+      } else if (this.state === 'padmap') {
+        this.drawPadMap(c);
       }
     }
+  };
+
+  var CENTER = { align: 'center', shadow: '#000' };
+  /* tela do controle: modelo detectado, opções e um teste ao vivo dos botões */
+  TitleScene.prototype.drawPad = function (c) {
+    TC.ui.box(c, 12, 70, 232, 146, 'menu', 0.94);
+    TC.font.draw(c, TC.t('pad.title'), 128, 78, '#ffd890', CENTER);
+    var info = TC.input.pad();
+    if (info) {
+      var bad = info.fam === 'gen' && !info.custom;
+      TC.font.draw(c, TC.t('pad.fam.' + info.fam), 128, 92, '#ffffff', CENTER);
+      TC.font.draw(c, TC.t(info.custom ? 'pad.custom' : bad ? 'pad.gen' : 'pad.std'), 128, 103, bad ? '#ff9070' : '#9098c0', CENTER);
+    } else {
+      TC.font.draw(c, TC.t('pad.none'), 128, 92, '#ff9070', CENTER);
+      TC.font.draw(c, TC.t('pad.none2'), 128, 103, '#9098c0', CENTER);
+    }
+    this.padMenu.draw(c, 40, 118, { valueX: 176, lineH: 13 });
+    // cada ação acende enquanto o botão dela está apertado
+    var rows = [
+      [['', TC.t('pad.test') + ':'], ['up', '↑'], ['down', '↓'], ['left', '◀'], ['right', '▶']],
+      [['jump', TC.t('tb.jump')], ['attack', TC.t('tb.attack')], ['special', TC.t('tb.special')], ['shoot', TC.t('pad.shoot')], ['start', 'START']]
+    ];
+    rows.forEach(function (row, r) {
+      var w = 0, gap = 8;
+      row.forEach(function (it) { w += TC.font.measure(it[1]) + gap; });
+      var x = Math.round(128 - (w - gap) / 2);
+      row.forEach(function (it) {
+        var on = it[0] && TC.input.down(it[0]);
+        TC.font.draw(c, it[1], x, 176 + r * 12, !it[0] ? '#9098c0' : on ? '#ffe090' : '#4a5078', { shadow: '#000' });
+        x += TC.font.measure(it[1]) + gap;
+      });
+    });
+  };
+
+  TitleScene.prototype.drawPadMap = function (c) {
+    TC.ui.box(c, 12, 70, 232, 146, 'menu', 0.94);
+    TC.font.draw(c, TC.t('padmap.title'), 128, 78, '#ffd890', CENTER);
+    var s = TC.input.padConfig.state();
+    if (!s) return;
+    TC.font.draw(c, (s.step + 1) + ' / ' + s.n, 128, 92, '#9098c0', CENTER);
+    TC.font.draw(c, TC.t(s.wait ? 'padmap.release' : 'padmap.press'), 128, 112, '#c8c8e0', CENTER);
+    var col = s.wait ? '#6a70a0' : (this.t >> 4) % 2 ? '#ffffff' : '#ffe090';
+    TC.font.draw(c, TC.t('padmap.' + s.act), 128, 128, col, { align: 'center', shadow: '#000', scale: 2 });
+    if (s.err) TC.font.draw(c, TC.t('padmap.used'), 128, 160, '#ff7060', CENTER);
+    else if (s.optional && !s.wait) TC.font.draw(c, TC.t('padmap.skip') + s.left + 's', 128, 160, '#9098c0', CENTER);
+    TC.font.draw(c, TC.t('padmap.cancel'), 128, 200, '#6a70a0', CENTER);
   };
   TC.TitleScene = TitleScene;
 })();

@@ -165,8 +165,8 @@
     this.t++;
     if (this.tapUpdate()) return;
     var n = this.items.length, d = 0;
-    if (TC.input.pressed('down')) d = 1;
-    if (TC.input.pressed('up')) d = -1;
+    if (TC.input.repeat('down')) d = 1;
+    if (TC.input.repeat('up')) d = -1;
     if (d) {
       var s = this.sel;
       for (var i = 0; i < n; i++) {
@@ -176,8 +176,10 @@
       if (s !== this.sel) { this.sel = s; TC.audio.sfx('select'); }
     }
     var it = this.items[this.sel];
-    if (it.left && TC.input.pressed('left')) { it.left(); TC.audio.sfx('select'); }
-    if (it.right && TC.input.pressed('right')) { it.right(); TC.audio.sfx('select'); }
+    // segurar repete nos valores com escala (volume); nos de liga/desliga só o primeiro toque conta
+    var rep = it.repeat ? 'repeat' : 'pressed';
+    if (it.left && TC.input[rep]('left')) { it.left(); TC.audio.sfx('select'); }
+    if (it.right && TC.input[rep]('right')) { it.right(); TC.audio.sfx('select'); }
     if (TC.input.pressed('confirm') || (this.opts.startConfirms && TC.input.pressed('start'))) {
       if (it.act) { TC.audio.sfx('confirm'); it.act(); }
       else if (it.right) { it.right(); TC.audio.sfx('select'); }
@@ -243,6 +245,30 @@
     }
   };
   TC.Menu = Menu;
+
+  /* ---------- aviso rápido no alto da tela (controle conectado, configuração salva...) ---------- */
+  var toast = null;
+  ui.toast = function (lines, ms) {
+    toast = { lines: lines, t0: performance.now(), ms: ms || 2500 };
+  };
+  /* desenhado por cima de tudo, depois dos fades (o aviso aparece até numa tela escura) */
+  ui.drawToast = function (ctx) {
+    if (!toast) return;
+    var age = performance.now() - toast.t0;
+    if (age > toast.ms) { toast = null; return; }
+    var w = 0;
+    toast.lines.forEach(function (s) { w = Math.max(w, TC.font.measure(s)); });
+    w = Math.min(TC.W - 8, w + 20);
+    var h = 10 + toast.lines.length * 11;
+    // entra descendo e sai subindo
+    var k = Math.min(1, age / 160, (toast.ms - age) / 220);
+    var y = Math.round(-h + (h + 6) * TC.ease.outCubic(Math.max(0, k)));
+    var x = Math.round((TC.W - w) / 2);
+    ui.box(ctx, x, y, w, h, 'menu', 0.95);
+    toast.lines.forEach(function (s, i) {
+      TC.font.draw(ctx, s, TC.W / 2, y + 6 + i * 11, i ? '#c8c8e0' : '#ffd890', { align: 'center', shadow: '#000' });
+    });
+  };
 
   /* texto grande com contorno e degradê vertical (títulos) */
   var bigCache = {};

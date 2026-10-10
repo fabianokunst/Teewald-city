@@ -443,7 +443,7 @@
     switch (this.state) {
       case 'perch':
         this.face = dx < 0 ? -1 : 1;
-        if (st.mode === 'play' && Math.abs(dx) < 120) { TC.audio.sfx('caw'); this.startSwoop(this.face, st); }
+        if (st.mode === 'play' && Math.abs(dx) < 120) { TC.audio.sfx(this.cry || 'caw'); this.startSwoop(this.face, st); }
         break;
       case 'swoop':
         if (!this.aimed) this.aim(st);
@@ -462,7 +462,7 @@
           this.x = fromLeft ? st.camX - 16 : st.camX + TC.W + 16;
           this.y = TC.rnd.range(40, 90);
           this.startSwoop(fromLeft ? 1 : -1, st);
-          TC.audio.sfx('caw');
+          TC.audio.sfx(this.cry || 'caw');
         }
         break;
     }

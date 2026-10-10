@@ -202,6 +202,7 @@
       sctx.fillRect(0, 0, TC.W, TC.H);
       sctx.globalAlpha = 1;
     }
+    TC.ui.drawToast(sctx);
   }
 
   /* ---------- laço com passo fixo de 60 Hz ---------- */
@@ -251,6 +252,8 @@
       ending: function () { return new TC.EndingScene(); },
       ch2intro: function () { return new TC.Ch2IntroScene(); },
       ending2: function () { return new TC.Ending2Scene({ score: 12345 }); },
+      ch3intro: function () { return new TC.Ch3IntroScene(); },
+      ending3: function () { return new TC.Ending3Scene({ score: 12345 }); },
       boot: function () { return new TC.BootScene(); }
     };
     if (sc && map[sc]) {

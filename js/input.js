@@ -24,6 +24,7 @@
   var hits = {};       // ações acionadas desde o último update (para toques rápidos)
   var touch = {};      // ações ativas via toque
   var cur = {}, prev = {};
+  var held = {};       // há quantos quadros cada ação está apertada (repetição nos menus)
   var anyHit = false;
   var listeners = [];
   var tapNext = null;  // toque/clique na imagem do jogo, em pixels do jogo
@@ -52,6 +53,7 @@
   var SIZE = [0.84, 1, 1.18];
 
   function buzz(ms) {
+    if (device === 'pad') { rumble(Math.min(1, ms / 50), Math.min(1, ms / 35), ms * 4); return; }
     if (!TC.opts.vibe || !navigator.vibrate) return;
     try { navigator.vibrate(ms); } catch (e) { /* sem vibração */ }
   }
@@ -79,33 +81,294 @@
     return false;
   }
 
-  /* ---------- gamepad ---------- */
+  /* ---------- controle físico (Gamepad API) ----------
+     Com mapping 'standard' o navegador já entrega os botões nas posições do
+     layout Xbox (0 embaixo, 1 direita, 2 esquerda, 3 em cima, 12-15 direcional).
+     Controles genéricos chegam crus: vale um palpite (o padrão mais comum dos
+     controles USB baratos) até o jogador configurar, e o mapa fica salvo por modelo. */
+  var DIRS = ['up', 'down', 'left', 'right'];
+  var PAD_STEPS = ['up', 'down', 'left', 'right', 'jump', 'attack', 'special', 'shoot', 'start'];
+  var OPTIONAL = { special: true, shoot: true };
+  function B(i) { return { t: 'b', i: i }; }
+  var MAP_STD = {
+    up: [B(12)], down: [B(13)], left: [B(14)], right: [B(15)],
+    jump: [B(0)], attack: [B(2), B(1)], special: [B(3), B(5), B(7)], shoot: [B(4), B(6)],
+    start: [B(9)], confirm: [B(0), B(9)], back: [B(1), B(8)]
+  };
+  // genéricos: 1 em cima, 2 direita, 3 embaixo, 4 esquerda (sentido horário), 9 select, 10 start
+  var MAP_GEN = {
+    up: [B(12)], down: [B(13)], left: [B(14)], right: [B(15)],
+    jump: [B(2)], attack: [B(3), B(1)], special: [B(0), B(5), B(7)], shoot: [B(4), B(6)],
+    start: [B(9)], confirm: [B(2), B(9)], back: [B(1), B(8)]
+  };
+  /* nome impresso em cada botão (mapping standard: o índice é a posição) */
+  var LABELS = {
+    xbox: ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'SELECT', 'START'],
+    ps: ['✕', '○', '□', '△', 'L1', 'R1', 'L2', 'R2', 'SHARE', 'OPTIONS'],
+    nin: ['B', 'A', 'Y', 'X', 'L', 'R', 'ZL', 'ZR', '-', '+']
+  };
+  function padFamily(p) {
+    var id = (p.id || '').toLowerCase();
+    if (/xbox|xinput|045e/.test(id)) return 'xbox';
+    if (/054c|playstation|dualshock|dualsense|wireless controller/.test(id)) return 'ps';
+    if (/057e|nintendo|pro controller|joy-con|switch/.test(id)) return 'nin';
+    return p.mapping === 'standard' ? 'xbox' : 'gen';
+  }
+
+  var padMaps = TC.store.get('padmaps', null) || {};   // id do controle -> botões escolhidos pelo jogador
+  var padInfo = {};      // índice -> {id, fam, std, map, custom, stick, hats, was}
+  var activePad = -1;    // último controle usado (nomes dos botões e vibração)
   var padState = {};
   var anyPadDown = false, anyPadPrev = false;
+  var cfg = null;        // configuração de botões em andamento
+
+  function infoFor(p) {
+    var f = padInfo[p.index];
+    if (f && f.id === p.id) return f;
+    f = padInfo[p.index] = { id: p.id, fam: padFamily(p), std: p.mapping === 'standard', hats: {}, was: false };
+    compileMap(f);
+    return f;
+  }
+  function compileMap(f) {
+    var m = padMaps[f.id];
+    f.custom = !!m;
+    f.stick = true;
+    if (!m) { f.map = f.std ? MAP_STD : MAP_GEN; return; }
+    var o = {};
+    PAD_STEPS.forEach(function (a) { o[a] = m[a] || []; });
+    o.confirm = o.jump.concat(o.start);
+    o.back = o.attack.slice();
+    f.map = o;
+    // o analógico esquerdo continua andando, a não ser que os eixos 0/1 tenham virado botão de ação
+    PAD_STEPS.forEach(function (a) {
+      if (DIRS.indexOf(a) < 0 && o[a].some(function (b) { return b.t !== 'b' && b.i < 2; })) f.stick = false;
+    });
+  }
+
+  /* direcional "hat": um eixo só, que fica em ~1.29 solto e vai de -1 a 1 em 8 passos (0 = cima, sentido horário) */
+  function hatPos(v) { return v == null || v < -1.05 || v > 1.05 ? -1 : (Math.round((v + 1) * 3.5) + 8) % 8; }
+  var HAT = { up: [7, 0, 1], right: [1, 2, 3], down: [3, 4, 5], left: [5, 6, 7] };
+
+  function btnOn(p, i) { var x = p.buttons[i]; return !!x && (x.pressed || x.value > 0.5); }
+  function bindOn(p, b) {
+    if (b.t === 'b') return btnOn(p, b.i);
+    var v = p.axes[b.i];
+    if (v == null) return false;
+    if (b.t === 'a') return v * b.s > 0.5;
+    var k = hatPos(v);
+    return k >= 0 && (k === b.k || (k + 1) % 8 === b.k || (k + 7) % 8 === b.k);
+  }
+  /* analógico: zona morta redonda; ↑/↓ só perto da vertical, para que andar com o
+     direcional meio torto não leia placa nem dispare o revólver (↑ + ataque) sem querer */
+  function stickDirs(ax, ay, o) {
+    var aX = Math.abs(ax), aY = Math.abs(ay);
+    if (aX * aX + aY * aY < 0.16) return;
+    if (aX > 0.3 && aX > aY * 0.45) o[ax < 0 ? 'left' : 'right'] = true;
+    if (aY > 0.5 && aY > aX * 0.75) o[ay < 0 ? 'up' : 'down'] = true;
+  }
+
   function pollPad() {
     ACTIONS.forEach(function (a) { padState[a] = false; });
-    var pads = navigator.getGamepads ? navigator.getGamepads() : [];
+    var pads = navigator.getGamepads ? navigator.getGamepads() : [], picked = false;
     for (var i = 0; i < pads.length; i++) {
       var p = pads[i];
       if (!p || !p.connected) continue;
-      var b = function (n) { return p.buttons[n] && p.buttons[n].pressed; };
-      var ax = p.axes[0] || 0, ay = p.axes[1] || 0;
-      if (b(14) || ax < -0.45) padState.left = true;
-      if (b(15) || ax > 0.45) padState.right = true;
-      if (b(12) || ay < -0.5) padState.up = true;
-      if (b(13) || ay > 0.5) padState.down = true;
-      if (b(0)) { padState.jump = true; padState.confirm = true; }
-      if (b(1)) { padState.attack = true; padState.back = true; }
-      if (b(2)) padState.attack = true;
-      if (b(3) || b(5) || b(7)) padState.special = true;
-      if (b(4) || b(6)) padState.shoot = true;   // LB / LT: revólver
-      if (b(9)) { padState.start = true; padState.confirm = true; }
-      if (b(8)) padState.back = true;
-      for (var k = 0; k < p.buttons.length; k++) if (b(k)) anyPadDown = true;
-      if (Math.abs(ax) > 0.6 || Math.abs(ay) > 0.6) anyPadDown = true;
+      var f = infoFor(p), j, k;
+      for (j = 2; j < p.axes.length; j++) if (Math.abs(p.axes[j]) > 1.05) f.hats[j] = true;
+      if (cfg) { if (cfg.idx === p.index) capture(p, f); continue; }   // configurando: o controle não comanda o jogo
+      var o = {}, used = false;
+      for (var a in f.map) {
+        var bs = f.map[a];
+        for (k = 0; k < bs.length; k++) if (bindOn(p, bs[k])) { o[a] = true; break; }
+      }
+      if (f.stick) stickDirs(p.axes[0] || 0, p.axes[1] || 0, o);
+      if (!f.custom) {
+        for (j in f.hats) {
+          var hp = hatPos(p.axes[j]);
+          if (hp >= 0) DIRS.forEach(function (d) { if (HAT[d].indexOf(hp) >= 0) o[d] = true; });
+        }
+      }
+      for (a in o) used = true;
+      if (!used) for (k = 0; k < p.buttons.length; k++) if (btnOn(p, k)) { used = true; break; }
+      // logo depois de configurar, o controle fica mudo até soltar tudo (o último botão não confirma o menu)
+      if (f.mute && !used) f.mute = false;
+      if (!f.mute) for (a in o) padState[a] = true;
+      // só a mudança de solto para apertado troca o tipo de entrada (um botão "preso" não trava o teclado).
+      // Dois controles acordando juntos é um só visto duas vezes (DS4Windows: o de PlayStation + um Xbox
+      // virtual): fica o primeiro da lista, que é o físico, e os nomes dos botões não ficam trocando.
+      if (used && !f.was && !picked) { activePad = p.index; picked = true; setDevice('pad'); }
+      if (used) anyPadDown = true;
+      f.was = used;
     }
-    if (anyPadDown) setDevice('pad');
   }
+  function connectedPads() {
+    var pads = navigator.getGamepads ? navigator.getGamepads() : [], out = [];
+    for (var i = 0; i < pads.length; i++) if (pads[i] && pads[i].connected) out.push(pads[i]);
+    return out;
+  }
+  function curPad() {
+    var pads = connectedPads();
+    for (var i = 0; i < pads.length; i++) if (pads[i].index === activePad) return pads[i];
+    return pads[0] || null;
+  }
+
+  /* ---------- configuração dos botões: aperta o que o jogo pede, um por vez ---------- */
+  function snapshot(p) {
+    return {
+      a: Array.prototype.slice.call(p.axes),
+      b: Array.prototype.map.call(p.buttons, function (x) { return !!(x && x.pressed); })
+    };
+  }
+  function neutral(p, base) {
+    for (var i = 0; i < p.buttons.length; i++) if (btnOn(p, i) && !base.b[i]) return false;
+    for (var j = 0; j < p.axes.length; j++) if (Math.abs(p.axes[j] - (base.a[j] || 0)) > 0.3) return false;
+    return true;
+  }
+  function detect(p, base, f) {
+    for (var i = 0; i < p.buttons.length; i++) if (btnOn(p, i) && !base.b[i]) return B(i);
+    var best = null, bd = 0;
+    for (var j = 0; j < p.axes.length; j++) {
+      var v = p.axes[j], r = base.a[j] || 0;
+      if (f.hats[j]) {
+        var k = hatPos(v);
+        if (k >= 0 && hatPos(r) < 0) return { t: 'h', i: j, k: k };
+        continue;
+      }
+      var d = Math.abs(v - r);
+      if (d > 0.6 && Math.abs(v) > 0.5 && d > bd) { bd = d; best = { t: 'a', i: j, s: v < 0 ? -1 : 1 }; }
+    }
+    return best;
+  }
+  function sameBind(a, b) { return a.t === b.t && a.i === b.i && a.s === b.s && a.k === b.k; }
+  function capture(p, f) {
+    var c = cfg;
+    c.t++;
+    if (c.err) c.err--;
+    if (c.ok) c.ok--;
+    if (c.wait) {
+      c.waitT++;
+      // espera soltar tudo; um botão ou eixo que não volta ao repouso vira o novo repouso
+      if (neutral(p, c.base) || c.waitT > 90) {
+        c.base = snapshot(p);
+        c.wait = false;
+        c.t = 0;
+      }
+      return;
+    }
+    var act = PAD_STEPS[c.step];
+    if (c.t > (OPTIONAL[act] ? 360 : 1200)) {
+      if (OPTIONAL[act]) nextStep();
+      else endConfig(false);   // 20 s parado num botão obrigatório: desiste
+      return;
+    }
+    var b = detect(p, c.base, f);
+    if (!b) return;
+    if (b.t === 'h' && b.k % 2) return;   // diagonal do hat: espera a direção reta
+    for (var a in c.binds) {
+      if (c.binds[a].some(function (x) { return sameBind(x, b); })) { c.err = 70; c.wait = true; c.waitT = 0; TC.audio.sfx('cancel'); return; }
+    }
+    c.binds[act] = [b];
+    c.ok = 24;
+    TC.audio.sfx('select');
+    if (DIRS.indexOf(act) >= 0) {
+      if (b.t === 'h') {
+        // o hat dá as quatro direções de uma vez
+        var off = { up: 0, right: 2, down: 4, left: 6 }, k0 = b.k - off[act];
+        DIRS.forEach(function (d) { c.binds[d] = [{ t: 'h', i: b.i, k: (k0 + off[d] + 16) % 8 }]; });
+      } else if (b.t === 'a') {
+        var opp = { up: 'down', down: 'up', left: 'right', right: 'left' }[act];
+        if (!c.binds[opp]) c.binds[opp] = [{ t: 'a', i: b.i, s: -b.s }];
+      }
+    }
+    nextStep();
+  }
+  function nextStep() {
+    var c = cfg;
+    do c.step++; while (c.step < PAD_STEPS.length && c.binds[PAD_STEPS[c.step]]);
+    c.wait = true;
+    c.waitT = 0;
+    c.t = 0;
+    if (c.step >= PAD_STEPS.length) endConfig(true);
+  }
+  function endConfig(ok) {
+    var c = cfg;
+    if (!c) return;
+    cfg = null;
+    var f = padInfo[c.idx];
+    if (f && f.id === c.id) {
+      if (ok) {
+        padMaps[c.id] = c.binds;
+        TC.store.set('padmaps', padMaps);
+        compileMap(f);
+      }
+      f.mute = true;
+    }
+    TC.input.clear();   // e o ESC do teclado também não
+    if (c.done) c.done(ok);
+  }
+
+  /* ---------- vibração do controle ---------- */
+  var rumbleEnd = 0, rumbleLvl = 0;
+  function rumble(strong, weak, ms) {
+    if (!TC.opts.vibe || device !== 'pad' || cfg) return;
+    var p = curPad();
+    if (!p) return;
+    var now = performance.now(), lvl = strong + weak;
+    if (now < rumbleEnd && lvl <= rumbleLvl) return;   // não corta um tremor mais forte
+    rumbleEnd = now + ms;
+    rumbleLvl = lvl;
+    try {
+      var va = p.vibrationActuator;
+      if (va && va.playEffect) {
+        var pr = va.playEffect('dual-rumble', { duration: ms, strongMagnitude: strong, weakMagnitude: weak });
+        if (pr && pr.catch) pr.catch(function () { /* sem vibração */ });
+      } else if (p.hapticActuators && p.hapticActuators[0]) {
+        p.hapticActuators[0].pulse(Math.max(strong, weak), ms);
+      }
+    } catch (e) { /* sem vibração */ }
+  }
+  /* tremor de tela vira tremor no controle (só os fortes: o motor do caminhão não vibra o tempo todo) */
+  function shakeRumble(amt, frames) {
+    if (amt < 2) return;
+    rumble(Math.min(1, (amt - 1) / 4), Math.min(1, amt / 4), Math.min(700, frames * 17));
+  }
+
+  /* nomes dos botões para os textos de ajuda */
+  function bindName(f, b) {
+    if (b.t === 'h') return TC.t('pad.dpad');
+    if (b.t === 'a') return TC.t('pad.axis') + ' ' + (b.i + 1) + (b.s < 0 ? '-' : '+');
+    if (f.std && b.i >= 12 && b.i <= 15) return ['↑', '↓', '◀', '▶'][b.i - 12];
+    var L = f.std && LABELS[f.fam];
+    return (L && L[b.i]) || '[' + (b.i + 1) + ']';
+  }
+  function padLabel(act, all) {
+    var p = curPad(), f = p ? infoFor(p) : { std: true, fam: 'xbox', map: MAP_STD };
+    var bs = f.map[act] || [];
+    if (!bs.length) return '—';
+    return (all ? bs : bs.slice(0, 1)).map(function (b) { return bindName(f, b); }).join(' / ');
+  }
+
+  var lastConn = -1e9;
+  window.addEventListener('gamepadconnected', function (e) {
+    var f = infoFor(e.gamepad), now = performance.now();
+    if (now - lastConn < 1500) return;   // o mesmo controle visto duas vezes: o primeiro aviso basta
+    lastConn = now;
+    var lines = [TC.t('pad.on') + ': ' + TC.t('pad.fam.' + f.fam)];
+    if (f.fam === 'gen' && !f.custom) lines.push(TC.t('pad.setup'));
+    if (TC.ui && TC.ui.toast) TC.ui.toast(lines, 3500);
+  });
+  window.addEventListener('gamepaddisconnected', function (e) {
+    var idx = e.gamepad.index;
+    if (cfg && cfg.idx === idx) endConfig(false);
+    delete padInfo[idx];
+    if (TC.ui && TC.ui.toast) TC.ui.toast([TC.t('pad.off')], 3000);
+    // o controle que estava jogando caiu (pilha, cabo): pausa para não morrer sem ver
+    if (idx === activePad && device === 'pad') {
+      activePad = -1;
+      var sc = TC.game && TC.game.scene;
+      if (sc && sc.onHide) sc.onHide();
+    }
+  });
 
   /* ---------- controle virtual na tela ----------
      Os elementos são só desenho; o toque é decidido por geometria, com áreas
@@ -506,6 +769,7 @@
         cur[a] = d || !!hits[a];
         // um toque muito rápido ainda gera um "pressed"
         if (hits[a] && prev[a] && !d) prev[a] = false;
+        held[a] = cur[a] ? (held[a] || 0) + 1 : 0;
       });
       this._any = anyHit || (anyPadDown && !anyPadPrev);
       anyPadPrev = anyPadDown;
@@ -520,6 +784,8 @@
     },
     down: function (a) { return cur[a]; },
     pressed: function (a) { return cur[a] && !prev[a]; },
+    /* como pressed, mas segurando repete (para andar nos menus e mudar volumes) */
+    repeat: function (a) { return (cur[a] && !prev[a]) || (cur[a] && held[a] > 24 && (held[a] - 24) % 6 === 0); },
     released: function (a) { return !cur[a] && prev[a]; },
     any: function () { return !!this._any; },
     /* toque/clique na imagem do jogo neste quadro: {x, y} em pixels do jogo, ou null */
@@ -531,6 +797,48 @@
     haptic: buzz,
     touchOptions: touchOptions,
     layout: T,
+    /* último tipo de entrada usado: 'key', 'pad' ou 'touch' (escolhe os textos de ajuda) */
+    device: function () { return device; },
+    rumble: rumble,
+    shake: shakeRumble,
+    padLabel: padLabel,
+    /* controle físico em uso (ou o primeiro conectado), ou null */
+    pad: function () {
+      var p = curPad();
+      if (!p) return null;
+      var f = infoFor(p);
+      return { fam: f.fam, std: f.std, custom: f.custom, id: f.id };
+    },
+    padReset: function () {
+      var p = curPad();
+      if (!p) return false;
+      delete padMaps[p.id];
+      TC.store.set('padmaps', padMaps);
+      compileMap(infoFor(p));
+      return true;
+    },
+    padConfig: {
+      start: function (done) {
+        var p = curPad();
+        if (!p) return false;
+        infoFor(p);
+        // repouso dos eixos agora; botões só contam depois de soltar o que confirmou o menu
+        cfg = { idx: p.index, id: p.id, step: 0, binds: {}, base: { a: Array.prototype.slice.call(p.axes), b: [] },
+          wait: true, waitT: 0, t: 0, err: 0, ok: 0, done: done };
+        return true;
+      },
+      cancel: function () { endConfig(false); },
+      /* para a tela: qual ação está sendo pedida e em que pé está */
+      state: function () {
+        if (!cfg) return null;
+        var act = PAD_STEPS[cfg.step];
+        return {
+          act: act, step: cfg.step, n: PAD_STEPS.length, optional: !!OPTIONAL[act],
+          wait: cfg.wait && cfg.waitT > 20, err: cfg.err > 0, ok: cfg.ok > 0,
+          left: cfg.wait ? 6 : Math.max(0, Math.ceil((360 - cfg.t) / 60))
+        };
+      }
+    },
     // depuração: ?tap=quadro:x:y,... simula toques na imagem do jogo (com ?ff=)
     _frame: 0,
     _simTap: function () {

@@ -27,8 +27,8 @@
   };
   DebugScene.prototype.update = function () {
     this.t++;
-    if (TC.input.pressed('right')) { this.page = (this.page + 1) % 9; this.enter(); }
-    if (TC.input.pressed('left')) { this.page = (this.page + 8) % 9; this.enter(); }
+    if (TC.input.pressed('right')) { this.page = (this.page + 1) % 11; this.enter(); }
+    if (TC.input.pressed('left')) { this.page = (this.page + 10) % 11; this.enter(); }
   };
   DebugScene.prototype.draw = function (c) {
     var A = TC.ART, x, y, k;
@@ -98,6 +98,8 @@
           if (x > 200) { x = 0; y += 110; }
         });
       });
+    } else if (this.page >= 9) {
+      this.drawCh3(c);
     } else if (this.page >= 5) {
       this.drawCh2(c);
     }
@@ -128,6 +130,27 @@
       x = 2; y = 186; var T = C.T;
       row([T.grimpaTop[0], T.grimpaTop[1], T.sawdustTop[0], T.deckTop[0], T.deckFill, T.taipa[0], T.taipaTop[0], A.items.revolver, A.items.balas, C.gun.aim, C.gun.kick].concat(C.ribbons.map(function (r) { return r[0]; })), 0, 40);
       c.drawImage(A.portrait('kessler'), 2, 100); c.drawImage(A.portrait('demon'), 44, 100); c.drawImage(A.portrait('fita', 3), 86, 100);
+    }
+  };
+  /* capítulo 3: mineiro, morcego, dançarinos, o Moço do Baile, Ewald, Ingrid (página 9) e cenário (página 10) */
+  DebugScene.prototype.drawCh3 = function (c) {
+    var A = TC.ART, C = A.ch3Init(), x = 2, y = 2;
+    function row(list, step, h) { list.forEach(function (f) { if (x + f.width > 256) { x = 2; y += h; } c.drawImage(f, x, y); x += step || f.width + 2; }); }
+    if (this.page === 9) {
+      row([].concat(C.miner.idle[0], C.miner.windup, C.miner.swing, C.bat.fly, C.bat.perch, C.couple.waltz[0], C.couple.bow, C.couple.spin[0]), 0, 62);
+      x = 2; y += 62;
+      row([C.moco.idle[0], C.moco.twirl[0], C.moco.throw[0], C.moco.spin[0], C.moco.stomp[0], C.moco.gaita[0], C.moco.reveal[0]], 36, 88);
+      x = 2; y += 88;
+      row([C.ewald.idle[0], C.ewald.watch[0], C.ingrid.idle[0], C.ingrid.dance[0], C.ingrid.scared[0], A.portrait('ewald'), A.portrait('moco'), A.portrait('moco', 'reveal'), A.portrait('ingrid')], 0, 44);
+    } else {
+      c.drawImage(C.stairs(), 0, 0);
+      c.drawImage(C.liftFrame(), 120, 0);
+      c.drawImage(C.band[(this.t >> 4) % 2], 120, 120);
+      c.drawImage(C.chandelier(), 0, 150);
+      c.drawImage(C.cartImg, 130, 190); c.drawImage(C.crystal(3), 160, 190); c.drawImage(C.mushroom(2), 190, 196);
+      c.drawImage(C.banner('FESTA 1977'), 140, 100);
+      x = 2; y = 206; var T = C.T;
+      row([T.rootTop[0], T.railTop[0], T.grate[0], T.caveTop[0], T.parquetTop[0], T.coal[0]], 18, 18);
     }
   };
   TC.DebugScene = DebugScene;

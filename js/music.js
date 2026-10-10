@@ -201,4 +201,68 @@
       { d: true, vel: 0.6, n: '(T~-4 r-12 T~-4 r-4 T~-4 r-4)*4' }
     ]
   };
+
+  /* ======================= CAPÍTULO 3 ======================= */
+
+  /* Fase 3: "Polca do Porão" — uma polca sombria em ré menor (bumbo e baixo no tempo, metais no contratempo) */
+  (function () {
+    var CH = {
+      Dm: ['D2', 'A1', 'D3+F3+A3'], A: ['A1', 'E2', 'C#3+E3+A3'], Gm: ['G1', 'D2', 'G3+Bb3+D4'],
+      F: ['F2', 'C2', 'F3+A3+C4'], C: ['C2', 'G1', 'E3+G3+C4'], Bb: ['Bb1', 'F2', 'D3+F3+Bb3']
+    };
+    var prog = 'Dm Dm A A A A Dm Dm Dm Dm Gm Gm Dm A Dm Dm F F C C C C F F Bb Bb F F Gm A Dm Dm'.split(' ');
+    S.stage3 = {
+      bpm: 128, spb: 4,
+      tracks: [
+        { d: true, n: '((k-2 s-2 k-1 k-1 s-2)*7 k-2 s-1 s-1 S-2 s-1 s-1)*4' },
+        { i: 'bass', n: prog.map(function (k) { return CH[k][0] + '-4 ' + CH[k][1] + '-4'; }).join(' ') },
+        { i: 'brass', vel: 0.7, n: prog.map(function (k) { return 'r-2 ' + CH[k][2] + '-2 r-2 ' + CH[k][2] + '-2'; }).join(' ') },
+        { i: 'accordion', n:
+          'A4-2 D5-2 F5-2 D5-2 A5-3 G5-1 F5-2 E5-2 E5-2 C#5-2 A4-2 C#5-2 E5-3 F5-1 E5-2 C#5-2 ' +
+          'G5-2 E5-2 C#5-2 E5-2 A5-4 G5-2 E5-2 F5-2 E5-1 D5-1 A4-2 F4-2 D5-6 r-2 ' +
+          'A4-2 D5-2 F5-2 A5-2 D6-3 C6-1 A5-2 F5-2 G5-2 Bb5-2 D6-2 Bb5-2 G5-4 D5-2 G5-2 ' +
+          'F5-2 A5-2 D6-2 A5-2 G5-2 F5-1 E5-1 C#5-2 E5-2 D5-2 F5-2 A5-2 F5-2 D5-4 r-4 ' +
+          'C5-2 F5-2 A5-2 F5-2 C6-3 Bb5-1 A5-2 F5-2 G5-2 E5-2 C5-2 E5-2 G5-3 A5-1 G5-2 E5-2 ' +
+          'Bb5-2 G5-2 E5-2 G5-2 C6-4 Bb5-2 G5-2 A5-2 G5-1 F5-1 C5-2 A4-2 F5-6 r-2 ' +
+          'D5-2 F5-2 Bb5-2 F5-2 D6-3 C6-1 Bb5-2 F5-2 C6-2 A5-2 F5-2 A5-2 C6-4 A5-2 F5-2 ' +
+          'Bb5-2 A5-1 G5-1 D5-2 G5-2 A5-2 G5-1 F5-1 E5-2 C#5-2 D5-2 A4-2 F5-2 A5-2 D6-4 A5-2 r-2' },
+        { i: 'lead2', vel: 0.5, n: 'r-128 (D5-8 F5-8 A5-8 F5-8)*2 (C5-8 E5-8 G5-8 E5-8)*2' }
+      ]
+    };
+  })();
+
+  /* Chefe do capítulo 3: "Chamamé do Diabo" — mi menor, compasso composto, a gaita do Moço na frente */
+  (function () {
+    var CH = {
+      Em: ['E2', 'B1', 'E3+G3+B3'], B7: ['B1', 'F#2', 'D#3+F#3+A3'], Am: ['A1', 'E2', 'A3+C4+E4'],
+      C: ['C2', 'G2', 'E3+G3+C4'], G: ['G1', 'D2', 'G3+B3+D4']
+    };
+    var prog = 'Em Em B7 B7 Em Em Am B7 C C G G Am Am B7 B7'.split(' ');
+    var tracks = [
+      { d: true, n: '((k-3 h-1 s-2 k-2 h-1 h-1 s-2)*3 k-2 s-1 s-1 T-2 T-2 t-2 c-2)*4' },
+      { i: 'bass', n: prog.map(function (k) { return CH[k][0] + '-6 ' + CH[k][1] + '-6'; }).join(' ') },
+      { i: 'guitar', vel: 0.8, n: prog.map(function (k) { var c = CH[k][2]; return 'r-2 ' + c + '-2 ' + c + '-2 r-2 ' + c + '-2 ' + c + '-2'; }).join(' ') },
+      { i: 'accordion', n:
+        'B4-2 E5-2 G5-2 F#5-2 E5-2 B4-2 G5-3 F#5-1 E5-2 D#5-4 B4-2 F#5-2 A5-2 D#5-2 F#5-2 B5-4 A5-2 G5-2 F#5-2 E5-2 D#5-4 ' +
+        'E5-2 G5-2 B5-2 E6-4 D#6-2 E6-2 B5-2 G5-2 E5-6 C6-2 B5-2 A5-2 E5-2 A5-4 B5-2 A5-2 G5-2 F#5-2 D#5-4 ' +
+        'E5-2 G5-2 C6-2 B5-2 G5-4 E5-3 F#5-1 G5-2 E5-6 D5-2 G5-2 B5-2 A5-2 G5-4 B5-3 A5-1 G5-2 D5-6 ' +
+        'C5-2 E5-2 A5-2 G5-2 E5-4 A5-2 C6-2 E6-2 C6-6 B5-2 A5-2 G5-2 F#5-2 E5-2 D#5-2 F#5-4 B4-4 D#5-4' },
+      { i: 'choir', vel: 0.7, n: 'E4+B4-48 F#4+B4-48 E4+C5-48 F#4+B4-48' }
+    ];
+    S.boss3 = { bpm: 148, spb: 4, tracks: tracks };
+    S.boss3b = { bpm: 178, spb: 4, tracks: tracks.map(function (t) { var o = {}; for (var k in t) if (k !== '_p') o[k] = t[k]; return o; }) };
+  })();
+
+  /* Amanhecer: a valsa do pai em ré maior, com flauta, cordas e caixinha de música */
+  S.dawn = {
+    bpm: 80, spb: 4,
+    tracks: [
+      { i: 'bass', vel: 0.7, n: S.drive.tracks[0].n },
+      { i: 'pluck', vel: 0.6, n: S.drive.tracks[1].n },
+      { i: 'flute', vel: 0.9, n: S.drive.tracks[2].n },
+      { i: 'strings', vel: 0.6, n: '(D3+F#3+A3-48 G3+B3+D4-48 A3+C#4+E4-48 D3+F#3+A3-48)*1' },
+      { i: 'musicbox', vel: 0.5, n: S.drive.tracks[3].n },
+      { i: 'bell', vel: 0.3, n: 'D6-48 r-48 A5-48 r-48' }
+    ]
+  };
 })();

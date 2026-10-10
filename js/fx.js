@@ -29,6 +29,7 @@
   fx.shake = function (amt, frames) {
     fx.shakeAmt = Math.max(fx.shakeAmt, amt);
     fx.shakeT = Math.max(fx.shakeT, frames || 10);
+    if (TC.input && TC.input.shake) TC.input.shake(amt, frames || 10);   // e o controle treme junto
   };
   fx.flash = function (col, a, decay) {
     fx.flashCol = col || '#ffffff';

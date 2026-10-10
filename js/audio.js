@@ -596,6 +596,34 @@
       noise(t, 0.4, 0.4, 'lowpass', 1200, 150);
       osc('triangle', 120, 70, t, 0.3, 0.35);
       for (var i = 0; i < 3; i++) osc('triangle', 300 + i * 90, 200, t + 0.05 + i * 0.07, 0.08, 0.12);
+    },
+    /* ---- capítulo 3 ---- */
+    bat: function (t) {
+      [0, 0.07, 0.15].forEach(function (d) { osc('sine', 3200 + Math.random() * 800, 2600, t + d, 0.04, 0.05); });
+      noise(t, 0.2, 0.05, 'highpass', 5000, 6000);
+    },
+    lift: function (t) {
+      for (var i = 0; i < 4; i++) { osc('square', 90 - i * 8, 70, t + i * 0.12, 0.08, 0.12); noise(t + i * 0.12, 0.06, 0.15, 'bandpass', 900, 500, 3); }
+      var o = osc('sawtooth', 70, 60, t, 1.2, 0.05);
+      var l = ctx.createOscillator(); l.frequency.value = 7;
+      var lg = ctx.createGain(); lg.gain.value = 8; l.connect(lg); lg.connect(o.frequency);
+      l.start(t); l.stop(t + 1.25);
+    },
+    lasso: function (t) { noise(t, 0.18, 0.12, 'bandpass', 700, 1800, 2); noise(t + 0.2, 0.18, 0.1, 'bandpass', 700, 1800, 2); },
+    bola: function (t) { for (var i = 0; i < 5; i++) noise(t + i * 0.07, 0.06, 0.12, 'bandpass', 500 + i * 120, 900, 3); },
+    hoof: function (t) {
+      osc('sine', 110, 40, t, 0.25, 0.6);
+      noise(t, 0.08, 0.4, 'bandpass', 1800, 900, 2);
+      osc('square', 240, 120, t + 0.02, 0.05, 0.12);
+      noise(t + 0.05, 0.5, 0.25, 'lowpass', 800, 100, 0.6, 0.4);
+    },
+    sulfur: function (t) { noise(t, 0.9, 0.2, 'highpass', 2000, 5000, 0.7, 0.4); noise(t, 0.6, 0.12, 'lowpass', 600, 200); },
+    drip: function (t) { osc('sine', 1400, 2200, t, 0.06, 0.06, null, 0.8); },
+    tick: function (t) { osc('square', 3000, 3000, t, 0.01, 0.05); osc('square', 2400, 2400, t + 0.5, 0.01, 0.04); },
+    bird: function (t) {
+      // sabiá ao amanhecer
+      var notes = [[1760, 0], [1980, 0.12], [1760, 0.24], [2350, 0.4], [2090, 0.55]];
+      notes.forEach(function (n) { osc('sine', n[0], n[0] * 1.06, t + n[1], 0.09, 0.05, null, 0.5); });
     }
   };
 

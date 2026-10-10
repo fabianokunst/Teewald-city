@@ -516,7 +516,8 @@
     this.credDone = true;
     while (!(TC.input.pressed('confirm') || TC.input.pressed('start'))) yield;
     TC.audio.stopMusic(1.5);
-    TC.game.fadeTo(function () { return new TC.TitleScene(); }, 60);
+    // a história continua: o Arno desce a escada do toco (capítulo 3)
+    TC.game.fadeTo(function () { return TC.Ch3IntroScene ? new TC.Ch3IntroScene() : new TC.TitleScene(); }, 60);
     while (true) yield;
   };
 
