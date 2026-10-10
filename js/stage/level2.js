@@ -1,7 +1,7 @@
 'use strict';
 /* Teewald City — Fase 2: "A Trilha das Fitas"
    Da praça da igreja, pela rua da cervejaria, o pavilhão novo da Festa da Batata, a atafona dos Weber,
-   a serraria Kessler e o erval dos Becker, até o toco do Pinheiro Velho, onde o Mão-Comprida volta para dormir. */
+   a serraria Kessler e a ervateira dos Becker, até o toco do Pinheiro Velho, onde o Mão-Comprida volta para dormir. */
 (function () {
   var TS = 16;
   var GY = 192;
@@ -47,7 +47,7 @@
     fill(160, 165, 10, 10, 2);
     fill(161, 164, 8, 8, 2);
     fill(184, 187, 10, 10, 2);
-    // taipas no erval
+    // taipas na ervateira
     fill(222, 225, 11, 11, 3);
     fill(240, 242, 10, 11, 3);
     fill(243, 244, 11, 11, 3);
@@ -199,8 +199,8 @@
     lamp(178, true);
     for (x = 190 * TS; x < 197 * TS; x += 40) back(C2.logPile(2, 1, x), x, GY + 2 - 20, 1);
 
-    // --- o erval dos Becker ---
-    sign(200, 'sign2.erval', C2.sign(124, 22, [['ERVAL DOS BECKER', '#f0e0b0'], ['ERVA SAPECADA NO CARIJÓ', '#c8d8a0']], { legs: 12, bg: '#2a3a24', trim: '#5a7a4a' }));
+    // --- a ervateira dos Becker ---
+    sign(200, 'sign2.ervateira', C2.sign(124, 22, [['ERVATEIRA BECKER', '#f0e0b0'], ['ERVA SAPECADA NO CARIJÓ', '#c8d8a0']], { legs: 12, bg: '#2a3a24', trim: '#5a7a4a' }));
     var carijo = C2.carijo();
     var cj = back(carijo, 210 * TS, GY + 2 - carijo.height, 1);
     L._fire = { x: cj.x + carijo.fireX, y: GY - 1 };
@@ -305,7 +305,7 @@
       { x: 105 * TS, key: 'b2.mill' },
       { x: 147 * TS + 8, key: 'b2.sawmill' },
       { x: 151 * TS, key: 'b2.fnm' },
-      { x: 201 * TS, key: 'b2.erval' },
+      { x: 201 * TS, key: 'b2.ervateira' },
       { x: 258 * TS, key: 'b2.clearing', face: 'shock' }
     ];
 

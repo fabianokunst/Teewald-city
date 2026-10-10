@@ -217,7 +217,7 @@
     'p2.l1': 'Em 1852 os nossos avós atravessaram o mar num veleiro. Vinham do Hunsrück, lá na Renânia, com a Bíblia, a enxada e um saco de batata-semente.',
     'p2.l2': 'Mas no porão vinha mais alguém. Lá na Alemanha chamavam de der Alte, o Antigo: um bicho que anda de quatro pela estrada do mato, em noite de cerração, e leva quem anda sozinho.',
     'p2.l3': 'Aqui na serra ele achou o que queria: mato fechado, cerração e gente sozinha. Até que a minha bisavó Hedwig, a primeira benzedeira de Teewald, amarrou ele nas raízes do Pinheiro Velho.',
-    'p2.l4': 'A araucária mais antiga do erval. Sete fitas bentas e uma reza. Os ervateiros, que tinham visto o bicho no meio da erva, deram outro nome pra ele: o Mão-Comprida.',
+    'p2.l4': 'A araucária mais antiga de Teewald. Sete fitas bentas e uma reza. Os ervateiros, que tinham visto o bicho no meio da erva, deram outro nome pra ele: o Mão-Comprida.',
     'p2.l5': 'Pra amarração não afrouxar, todo mês de maio as moças dançavam o pau-de-fita em volta do Pinheiro Velho. Cada volta trançava as fitas. Cada fita, um nó.',
     'p2.l6': 'Com os anos, ninguém mais lembrava por quê. Virou festa, com bandinha, chopp e rainha. Só as benzedeiras guardaram o segredo.',
     'p2.l7': 'Esse ano o Kessler da serraria derrubou o Pinheiro Velho pra fazer as tábuas do pavilhão novo da Festa da Batata. Madeira de lei, dava um dinheirão.',
@@ -225,7 +225,7 @@
     'p2.l9': 'Naquela mesma noite veio a cerração. O Antigo saiu do toco de quatro, com as fitas ainda enroscadas no couro. E a noite nunca mais acabou.',
     'p2.4': 'E a reza? A senhora sabe a reza da sua bisavó?',
     'p2.5': 'A Oma Hedwig levou a reza pro túmulo. Mas ela bordou cada verso numa das fitas, em ponto de cruz, pra não esquecer.',
-    'p2.6': 'O bicho anda ferido pelo erval, perdendo fita pelo caminho. Segue as fitas, Arno. Elas te levam até ele, e te dão a reza inteira.',
+    'p2.6': 'O bicho anda ferido por Teewald, perdendo fita pelo caminho. Segue as fitas, Arno. Elas te levam até ele, e te dão a reza inteira.',
     'p2.7': 'Caçar um demônio com um terço e uma cuia de chimarrão... O meu pai ia rir da minha cara.',
     'p2.8': 'Não só com isso. Achei na curva da serra, jogado no meio do mato. Tava no porta-luvas do teu caminhão.',
     'p2.9': 'O meu 38! ...E o caminhão, Dona Frida?',
@@ -237,7 +237,7 @@
     'b2.mill': 'A atafona dos Weber. A roda ainda gira... sozinha. Ninguém mais pra moer o milho.',
     'b2.sawmill': 'A serraria do Kessler. O pai descarregava tora aqui, e eu ficava brincando no monte de serragem.',
     'b2.fnm': 'Um Fenemê carregado de pinheiro... Igualzinho ao do pai. Ele chamava o dele de Velho Vermelho.',
-    'b2.erval': 'O erval dos Becker. Era do meu avô. Alguém acendeu o carijó... Sente o cheiro de erva sapecada?',
+    'b2.ervateira': 'A ervateira dos Becker. Era do meu avô. Alguém acendeu o carijó... Sente o cheiro de erva sapecada?',
     'b2.clearing': 'Lá no fundo, no meio da clareira... o toco do Pinheiro Velho. As fitas tão tremendo no meu bolso.',
     'tz.1': 'Ali, em cima das toras! O Mão-Comprida...!',
     'tz.2': 'Pode correr, bicho. As tuas fitas tão ficando todas comigo.',
@@ -261,7 +261,7 @@
     'k.5': 'Escuta: ele corre de quatro feito boi brabo. Pula por cima e bate quando ele der com a cabeça no tronco. E quando ele se agachar, sai de baixo, que ele salta!',
     'k.6': 'Toma. Isso caiu do couro dele quando passou por aqui. Ficou enroscado na serragem.',
     'k.7': 'Vai pra igreja, Seu Kessler. A Dona Frida tá lá, com o chimarrão quente.',
-    'k.8': 'Arno... o teu pai. Em 77, numa noite de cerração, o caminhão dele apareceu parado na beira do erval. Vazio. Com o motor ligado.',
+    'k.8': 'Arno... o teu pai. Em 77, numa noite de cerração, o caminhão dele apareceu parado na porteira da ervateira. Vazio. Com o motor ligado.',
     'k.9': '...Disseram que ele caiu na ribanceira.',
     'k.10': 'Disseram.',
 
@@ -295,7 +295,7 @@
     'sign2.pavilion': 'PAVILHÃO DA FESTA DA BATATA\nObra da Serraria Kessler.\nMadeira de lei: 100% pinheiro.',
     'sign2.mill': 'ATAFONA DOS WEBER\nFubá, farinha de milho e de mandioca.\nMoída com a água do arroio.',
     'sign2.sawmill': 'SERRARIA KESSLER\nCompra-se pinheiro em pé.\nPaga-se à vista.',
-    'sign2.erval': 'ERVAL DOS BECKER — DESDE 1889\nErva sapecada no carijó\ne cancheada à moda antiga.',
+    'sign2.ervateira': 'ERVATEIRA BECKER — DESDE 1889\nErva sapecada no carijó\ne cancheada à moda antiga.',
     'sign2.stump': 'Tábua velha, entalhada a canivete:\n"HIER WIRD NICHT GEHAUEN — 1852"\n(Aqui não se corta.)'
   };
 
@@ -512,7 +512,7 @@
     'p2.l1': 'In 1852 our grandparents crossed the ocean on a sailing ship. They came from the Hunsrück, in the Rhineland, with a Bible, a hoe and a sack of seed potatoes.',
     'p2.l2': 'But someone else rode in the hold. Back in Germany they called it der Alte, the Old One: a thing that crawls on all fours down forest roads on foggy nights and takes whoever walks alone.',
     'p2.l3': 'Up here in the highlands it found everything it wanted: thick woods, fog and lonely people. Until my great-grandmother Hedwig, Teewald\'s first healer, bound it to the roots of the Old Pine.',
-    'p2.l4': 'The oldest araucaria in the yerba grove. Seven blessed ribbons and a prayer. The mate pickers, who had seen the thing among the yerba, gave it another name: Long-Hands.',
+    'p2.l4': 'The oldest araucaria in Teewald. Seven blessed ribbons and a prayer. The mate pickers, who had seen the thing among the yerba, gave it another name: Long-Hands.',
     'p2.l5': 'To keep the binding tight, every May the girls danced the pau-de-fita, the ribbon dance, around the Old Pine. Every turn braided the ribbons. Every ribbon, a knot.',
     'p2.l6': 'Over the years nobody remembered why. It became a festival, with a brass band, beer and a queen. Only the healers kept the secret.',
     'p2.l7': 'This year old Kessler from the sawmill felled the Old Pine for the planks of the new Potato Festival hall. Hardwood. Worth a fortune.',
@@ -520,7 +520,7 @@
     'p2.l9': 'That very night the fog rolled in. The Old One crawled out of the stump, the ribbons still tangled in its hide. And the night never ended.',
     'p2.4': 'And the prayer? Do you know your great-grandmother\'s prayer?',
     'p2.5': 'Oma Hedwig took the prayer to her grave. But she embroidered each verse on one of the ribbons, in cross-stitch, so she wouldn\'t forget.',
-    'p2.6': 'The thing is wounded, roaming the yerba grove, shedding ribbons as it goes. Follow the ribbons, Arno. They\'ll lead you to it, and give you the whole prayer.',
+    'p2.6': 'The thing is wounded, roaming Teewald, shedding ribbons as it goes. Follow the ribbons, Arno. They\'ll lead you to it, and give you the whole prayer.',
     'p2.7': 'Hunting a demon with a rosary and a gourd of mate... My father would laugh in my face.',
     'p2.8': 'Not just with that. I found this at the bend on the mountain road, thrown in the bushes. It was in your truck\'s glovebox.',
     'p2.9': 'My .38! ...And the truck, Dona Frida?',
@@ -532,7 +532,7 @@
     'b2.mill': 'The Webers\' old mill. The wheel still turns... by itself. Nobody left to grind the corn.',
     'b2.sawmill': 'Kessler\'s sawmill. Dad used to unload logs here, and I\'d play in the sawdust piles.',
     'b2.fnm': 'An FNM loaded with pine... Just like Dad\'s. He called his the Old Red.',
-    'b2.erval': 'The Becker yerba grove. It was my grandfather\'s. Someone lit the carijó... Smell that toasted yerba?',
+    'b2.ervateira': 'The Becker yerba grove. It was my grandfather\'s. Someone lit the carijó... Smell that toasted yerba?',
     'b2.clearing': 'Way back, in the middle of the clearing... the Old Pine\'s stump. The ribbons are trembling in my pocket.',
     'tz.1': 'There, on the log pile! Long-Hands...!',
     'tz.2': 'Run all you want. Your ribbons are all ending up with me.',
@@ -556,7 +556,7 @@
     'k.5': 'Listen: it charges on all fours like a mad bull. Jump over it and hit it when it rams its head into a trunk. And when it crouches, get out from under, because it\'s going to leap!',
     'k.6': 'Here. This fell off its hide when it came through. Got caught in the sawdust.',
     'k.7': 'Go to the church, Mr. Kessler. Dona Frida is there, with hot mate.',
-    'k.8': 'Arno... your father. In \'77, on a foggy night, his truck turned up parked at the edge of the yerba grove. Empty. Engine running.',
+    'k.8': 'Arno... your father. In \'77, on a foggy night, his truck turned up parked at the gate of the yerba grove. Empty. Engine running.',
     'k.9': '...They said he went off the cliff.',
     'k.10': 'They said.',
 
@@ -590,7 +590,7 @@
     'sign2.pavilion': 'POTATO FESTIVAL HALL\nBuilt by Kessler Sawmill.\nHardwood: 100% pine.',
     'sign2.mill': 'WEBER FAMILY MILL\nCornmeal, corn flour and manioc flour.\nGround by the creek\'s water.',
     'sign2.sawmill': 'KESSLER SAWMILL\nBuying standing pine trees.\nCash on the spot.',
-    'sign2.erval': 'BECKER YERBA GROVE — SINCE 1889\nYerba flame-dried in the carijó\nand ground the old way.',
+    'sign2.ervateira': 'BECKER YERBA GROVE — SINCE 1889\nYerba flame-dried in the carijó\nand ground the old way.',
     'sign2.stump': 'An old board, carved with a pocketknife:\n"HIER WIRD NICHT GEHAUEN — 1852"\n(Here nothing is cut.)'
   };
 

@@ -36,7 +36,7 @@
       return { label: function () { return TC.t('diff.' + k); }, act: function () { TC.opts.diff = k; TC.saveOpts(); self.fromDiff = true; self.newGame(); } };
     }), { startConfirms: true, back: function () { self.state = self.chapter > 1 ? 'chapters' : 'menu'; } });
     // escolha do capítulo (todos liberados), depois a dificuldade
-    this.chapMenu = new TC.Menu([1, 2].map(function (n) {
+    this.chapMenu = new TC.Menu([1, 2, 3].map(function (n) {
       return { label: function () { return TC.t('chap.' + n); }, act: function () { self.chapter = n; self.state = 'diff'; self.diffMenu.sel = TC.DIFFS.indexOf(TC.opts.diff); } };
     }), { startConfirms: true, back: function () { self.state = 'menu'; } });
     function toggle(key) { return function () { TC.opts[key] = !TC.opts[key]; TC.saveOpts(); TC.applyDisplay(); }; }
@@ -58,6 +58,13 @@
     TC.input.touchOptions(this.opt.items);   // tamanho dos botões na tela e vibração (só em telas de toque)
   };
 
+  /* a cena que abre cada capítulo (o prólogo) */
+  TC.chapterStart = function (n) {
+    if (n === 3 && TC.Ch3IntroScene) return new TC.Ch3IntroScene();
+    if (n === 2 && TC.Ch2IntroScene) return new TC.Ch2IntroScene();
+    return new TC.IntroScene();
+  };
+
   TitleScene.prototype.enter = function () {
     TC.audio.music('title');
     TC.audio.ambience('night');
@@ -67,15 +74,15 @@
   TitleScene.prototype.newGame = function () {
     TC.store.set('save', null);
     TC.audio.stopMusic(1.2);
-    var ch2 = this.chapter === 2 && TC.Ch2IntroScene;
-    TC.game.fadeTo(function () { return ch2 ? new TC.Ch2IntroScene() : new TC.IntroScene(); }, 50);
+    var n = this.chapter || 1;
+    TC.game.fadeTo(function () { return TC.chapterStart(n); }, 50);
     this.state = 'leaving';
   };
   TitleScene.prototype.continueGame = function () {
     var s = this.save;
     TC.audio.stopMusic(1.0);
-    // terminou o capítulo 1 e ainda não começou o 2: começa pelo prólogo na igreja
-    if (s && s.ch === 2 && s.fresh && TC.Ch2IntroScene) TC.game.fadeTo(function () { return new TC.Ch2IntroScene(); }, 40);
+    // terminou um capítulo e ainda não começou o seguinte: começa pelo prólogo dele
+    if (s && s.ch > 1 && s.fresh) TC.game.fadeTo(function () { return TC.chapterStart(s.ch); }, 40);
     else TC.game.fadeTo(function () { return new TC.StageScene({ save: s }); }, 40);
     this.state = 'leaving';
   };
@@ -201,7 +208,6 @@
           TC.font.draw(c, ln, 128, 152 + k * 11, '#c8c8e8', { align: 'center', shadow: '#000' });
         });
       } else if (this.state === 'menu' || this.state === 'leaving') {
-        TC.font.draw(c, TC.t('title.sub'), 128, 82, '#c8c0e0', { align: 'center', shadow: '#000' });
         TC.ui.box(c, 72, 126, 112, 78, 'menu', 0.85);
         this.main.draw(c, 128, 134, { align: 'center' });
         TC.font.draw(c, TC.t('title.copy'), 128, 210, '#6a70a0', { align: 'center', shadow: '#000' });

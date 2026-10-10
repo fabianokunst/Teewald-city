@@ -122,7 +122,7 @@
 
   /* ======================= CAPÍTULO 2 ======================= */
 
-  /* Fase 2: "Vanerão do Erval" — ação em lá menor no ritmo da vaneira gaúcha, com a gaita na frente */
+  /* Fase 2: "Vanerão de Teewald" — ação em lá menor no ritmo da vaneira gaúcha, com a gaita na frente */
   (function () {
     var CH = {
       Am: ['A2', 'E2', 'A3+C4+E4', ['A4', 'C5', 'E5', 'C5']], Dm: ['D2', 'A1', 'D3+F3+A3', ['D4', 'F4', 'A4', 'F4']],

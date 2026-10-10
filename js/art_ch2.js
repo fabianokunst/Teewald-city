@@ -1,6 +1,6 @@
 'use strict';
 /* Teewald City — Capítulo 2: arte procedural (colonos possuídos, lobisomem, o Demônio Antigo, o revólver,
-   fitas bentas, pavilhão da Festa da Batata, atafona, serraria, Fenemê, erval, carijó, toco do Pinheiro Velho) */
+   fitas bentas, pavilhão da Festa da Batata, atafona, serraria, Fenemê, ervateira, carijó, toco do Pinheiro Velho) */
 (function () {
   var ART = TC.ART;
   var u32 = TC.u32;
