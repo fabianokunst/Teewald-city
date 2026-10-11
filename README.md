@@ -20,6 +20,10 @@ Teewald City é um jogo de plataforma e ação 2D em pixel art no estilo Super N
   <img src="docs/img/c1-rua-principal.png" width="49%" alt="Arno lutando contra cabeças-de-fogo na rua principal, entre casas de enxaimel iluminadas">
   <img src="docs/img/c2-serraria.png" width="49%" alt="A Serraria Kessler à noite, com pilhas de toras e um caminhão Fenemê vermelho">
   <img src="docs/img/c3-salao.png" width="49%" alt="O salão do baile debaixo da terra, com lanterninhas coloridas e pares de dançarinos fantasmas">
+  <img src="docs/img/c4-vila.png" width="49%" alt="A vila operária da fábrica de calçados, com o Bar do Zé e as sonâmbulas de camisola">
+  <img src="docs/img/c5-boitata.png" width="49%" alt="A Boitatá, cobra de fogo feita de olhos, persegue o caminhão serra abaixo ao amanhecer">
+  <img src="docs/img/c6-bolao.png" width="49%" alt="A cancha de bolão da Linha Esperança, com flâmulas e o placar GUT HOLZ!">
+  <img src="docs/img/c7-navio.png" width="49%" alt="A batalha final: a igreja vira o porão do veleiro de 1852">
 </p>
 
 ## Sumário
@@ -30,6 +34,9 @@ Teewald City é um jogo de plataforma e ação 2D em pixel art no estilo Super N
 - [Capítulo 2 — A Trilha das Fitas](#capítulo-2--a-trilha-das-fitas)
 - [Capítulo 3 — O Baile Debaixo da Terra](#capítulo-3--o-baile-debaixo-da-terra)
 - [Capítulo 4 — O Último Turno](#capítulo-4--o-último-turno)
+- [Capítulo 5 — A Noite Grande](#capítulo-5--a-noite-grande)
+- [Capítulo 6 — A Noite do Pelznickel](#capítulo-6--a-noite-do-pelznickel)
+- [Capítulo 7 — A Última Fita](#capítulo-7--a-última-fita)
 - [Bestiário e galeria de arte](#bestiário-e-galeria-de-arte)
 - [Como funciona por dentro](#como-funciona-por-dentro)
 - [Dificuldade](#dificuldade)
@@ -71,6 +78,7 @@ O ponto de partida foi uma pasta de capturas de tela de um jogo 3D (`ref/`, que 
 | 8/10, noite | Três níveis de dificuldade, depois que o autor achou o capítulo 1 difícil demais. Versão para celular e tablet com controle na tela. |
 | 9/10, madrugada | Capítulo 2, com a lenda do Mão-Comprida, as sete fitas e o revólver. |
 | 9/10, noite | Capítulo 3, suporte completo a joystick e este README com os prints, feitos em sessões paralelas no mesmo repositório. |
+| 10/10 | Capítulos 4 a 7, até o fim da história. O capítulo 4 foi feito na sessão principal, e os capítulos 5, 6 e 7 por três agentes em paralelo, seguindo um roteiro técnico comum. Depois a sessão principal revisou e testou o jogo inteiro em sequência. |
 
 ### Ouvindo quem joga
 
@@ -425,6 +433,10 @@ Em 1967, o patrão trancou o pesponto à noite "pra ninguém roubar sapato", par
 Na segunda metade, o incêndio de 1967 volta. As portas batem e trancam, e o fogo protege a Moça. O Arno precisa abrir as três portas com a chave do Gerhard (↑ perto da porta). Cada porta aberta deixa entrar o luar, liberta uma costureira e apaga o fogo por um tempo.
 
 <p align="center">
+  <img src="docs/img/anim-hilde.gif" width="512" alt="Animação: a luta contra A Moça do Serão no pesponto em chamas, com as portas sendo abertas">
+</p>
+
+<p align="center">
   <img src="docs/img/c4-hilde.png" width="49%" alt="A Moça do Serão flutuando entre as portas trancadas do pesponto">
   <img src="docs/img/c4-portas.png" width="49%" alt="O incêndio de 1967: a porta do meio aberta para o luar enquanto a Moça sobe pela linha vermelha">
 </p>
@@ -440,6 +452,255 @@ O Arno devolve à Hilde o par de sapatos vermelhos que ela costurou com retalhos
 
 <p align="center">
   <img src="docs/img/c4-estrela.png" width="49%" alt="Na doca, a luz rosa da estrela de neon escorre para dentro do farol do caminhão">
+</p>
+
+</details>
+
+---
+
+## Capítulo 5 — A Noite Grande
+
+No fim da tarde, na praça da Matriz, a **Dona Rosa**, uma velha kujà (rezadora e curandeira) kaingang que vende balaios na praça, conta o que a cidade esqueceu. A história vem em quatro quadros ilustrados:
+
+1. Antes do navio dos colonos, o morro era dos Kaingang, e na boca da caverna eles mantinham um fogo de nó-de-pinho aceso nas noites compridas.
+2. Lá dentro dorme a **Boiguaçu**. Numa noite que não acabou, ela comeu os olhos dos bichos mortos e, de tanto comer luz, virou a **boitatá**, a cobra de fogo (como no conto de Simões Lopes Neto).
+3. Em 1852, quem amarrou o Antigo no Pinheiro Velho foi a avó da Rosa junto com a Oma Hedwig.
+4. Em 1888, um Becker pagou bugreiros para "limpar" o morro, e o fogo apagou. No ano seguinte abriram a ervateira em cima daquela terra.
+
+Os colonos chamavam o lugar de "Caverna dos Bugres", e "bugre" era o nome feio que davam aos Kaingang. No jogo, o horror da caverna é o que os colonos fizeram ali.
+
+O Arno lembra da noite em que chegou: dois faróis vinham na mão dele, no meio da cerração, e não havia carro nenhum. Eram os olhos dela. A Rosa ensina a regra: *"Se tu ver a boitatá, não corre e não olha. Fecha os olhos e fica quieto."*
+
+<p align="center">
+  <img src="docs/img/c5-praca.png" width="49%" alt="A praça da Matriz ao entardecer, com a banca de balaios da Dona Rosa">
+  <img src="docs/img/c5-lenda.png" width="49%" alt="Quadro da lenda: na Noite Grande, a cobra que comeu os olhos dos bichos e ficou acesa">
+</p>
+
+### O Morro dos Bugres
+
+A **fase 5** sobe o morro atrás dos faróis do caminhão. O caminho é este:
+
+1. o **potreiro da Linha Becker**, com cerca de arame farpado e o gado parado, sem os olhos;
+2. as **ruínas da ervateira Becker**, com a placa "DESDE 1889" caída e o carijó desabado;
+3. a **mata de araucária**, com pinhas caindo, gralhas-azuis e **pinhão cozido** para recuperar energia;
+4. as **casas subterrâneas kaingang**, um trecho calmo, sem inimigos: "Isso aqui era uma aldeia";
+5. a **boca da caverna**, onde espera o fantasma do bugreiro;
+6. a **caverna dos olhos**, com paredes cheias de olhos que piscam e seguem o Arno. Aqui os pontos de retorno são lampiões, e no fundo fica o tesouro de luz roubado pela cobra (até a estrela de neon da Morgenstern).
+
+Na caverna, de tempos em tempos, os olhos se abrem todos de uma vez. Quem **segura ↓** fecha os olhos e fica ileso. Quem não segura fica ofuscado: a tela fica branca e o Arno anda devagar por um instante.
+
+<p align="center">
+  <img src="docs/img/c5-potreiro.png" width="49%" alt="O potreiro da Linha Becker à noite, com o gado sem olhos atrás da cerca">
+  <img src="docs/img/c5-ervateira.png" width="49%" alt="As ruínas da ervateira Becker, com ervateiros possuídos">
+  <img src="docs/img/c5-araucarias.png" width="49%" alt="A mata de araucária subindo o morro: pinhas caindo e uma gralha-azul">
+  <img src="docs/img/c5-caverna.png" width="49%" alt="A caverna dos olhos: OS OLHOS! Segure para baixo e feche os olhos">
+</p>
+
+- **Inimigos novos**:
+  - **Boi sem olho**, que anda às cegas e investe.
+  - **Cães do bugreiro**, fantasmas que rodeiam e mordem.
+  - **Ervateiros possuídos**, de facão.
+  - **Olhos voadores**, que soltam um feixe de luz.
+- **Mini-chefe: O Bugreiro.** É o fantasma de Jacob Becker, bisavô do Arno. Usa espingarda com linha de mira, tocha, assobio para chamar os cães e baioneta. *"Terra de ninguém. Eu só limpei o mato."* / *"Tinha gente nesse mato."* Depois da luta, a Rosa e a Frida reacendem o fogo na boca da caverna.
+
+<p align="center">
+  <img src="docs/img/c5-aldeia.png" width="49%" alt="As casas subterrâneas kaingang entre as araucárias, sob a lua">
+  <img src="docs/img/c5-bugreiro.png" width="49%" alt="A luta contra O Bugreiro na boca da caverna">
+</p>
+
+### O chefe: A Boiguaçu e A Boitatá
+
+A luta tem duas fases:
+
+- **A Boiguaçu**, na caverna: uma cobra escura e cega, enrolada no caminhão do Arno e no tesouro de luz. Ela dá o bote e crava a cabeça no chão, e essa é a hora de bater. Também varre a arena com o corpo, cospe olhos teleguiados e abre os mil olhos. Na metade da luta, ela engole todas as luzes do tesouro, pega fogo e fura o teto da caverna.
+- **A Boitatá**, na estrada: o Ewald dirige o caminhão serra abaixo e o Arno luta na carroceria, enquanto a serra, as araucárias e as luzes de Teewald passam lá embaixo. A cobra de fogo morde a carroceria, deixa rastro de fogo, derruba pinhas e abre os mil olhos. O Ewald grita "CURVA!" e, de vez em quando, dá **luz alta**: ela engole o farol, incha e fica tonta perto da cabine. O céu vai clareando conforme a energia dela acaba.
+
+<p align="center">
+  <img src="docs/img/anim-boitata.gif" width="512" alt="Animação: a Boitatá ataca a carroceria enquanto o Ewald dirige serra abaixo, e engole a luz alta">
+</p>
+
+<p align="center">
+  <img src="docs/img/c5-boiguacu.png" width="49%" alt="A Boiguaçu, cobra escura e cega enrolada no tesouro de luz da caverna">
+  <img src="docs/img/c5-boitata.png" width="49%" alt="A Boitatá, cobra de fogo feita de olhos, voando sobre as araucárias enquanto o Ewald dirige">
+</p>
+
+<details>
+<summary><b>Final do capítulo 5 (spoiler)</b></summary>
+
+<br>
+
+Ao amanhecer, a Boitatá sobe para engolir o sol e estoura em mil luzes, que descem como vaga-lumes sobre as araucárias, e os postes de Teewald acendem um por um. Na curva da serra, a Rosa diz que o fogo agora é de todos, todo inverno. Mas a cerração não vai embora: desce a serra feito rio, para as linhas do interior. No rádio, três crianças sumiram na Linha Esperança, levadas por um vulto coberto de barba-de-velho.
+
+<p align="center">
+  <img src="docs/img/c5-vagalumes.png" width="49%" alt="Vaga-lumes descendo sobre as araucárias ao amanhecer">
+</p>
+
+</details>
+
+---
+
+## Capítulo 6 — A Noite do Pelznickel
+
+Na igreja, o Seu Arnoldo, vendeiro da Linha Esperança, chega com a notícia: um bicho todo de barba-de-velho, de corrente e saco nas costas, levou três crianças. É o **Pelznickel**, uma tradição real do Hunsrück que veio com as colônias do Sul: o vulto que visitava as casas antes do Natal e perguntava às crianças se tinham rezado (*"Hast du gebetet?"*). O de verdade não vem no Natal, vem cobrar.
+
+O Ewald pega a chave do caminhão: "Dessa vez eu dirijo". Na cabine, ele recita o *Erlkönig* de Goethe, que lia para o Arno guri. O verso diz *"Mein Sohn, es ist ein Nebelstreif"*: "guri, é só cerração".
+
+<p align="center">
+  <img src="docs/img/c6-igreja.png" width="49%" alt="Dentro da Matriz: a Frida, a Rosa, o Ewald e o Arno quando o Seu Arnoldo chega">
+  <img src="docs/img/c6-cabine.png" width="49%" alt="A cabine vista do banco do carona: o Ewald dirige rumo à Linha Esperança">
+</p>
+
+### A Linha Esperança
+
+A **fase 6** é a primeira picada dos colonos de 1852, a *Hoffnungsschneiss*. O caminho é este:
+
+1. a **estrada de chão**, com a porteira, as **estufas de fumo** com a fornalha acesa e árvores cheias de barba-de-velho;
+2. o **milharal na cerração**, com espantalhos;
+3. a **venda de secos e molhados** ("FIADO SÓ AMANHÃ") e a **cancha de bolão** ("GUT HOLZ!"). Ali o Arno pega **bolas de bolão** e as arremessa com o botão do revólver; derrubar os nove pinos dá "ALLE NEUNE!";
+4. o **cemitério de família**, com cruzes de ferro, e a **casa de pedra da Oma Hedwig**. O diário dela abre um **flashback em sépia**: o veleiro *Hoffnung* parado quarenta dias na calmaria, as crianças com febre no porão, o mestre-escola com o lampião, a mão comprida e pálida oferecendo a pena, as famílias assinando com um X... e a Hedwig cuspindo no livro;
+5. a **escola da linha**, onde as crianças rezam o *Vater unser* enquanto um vulto escreve no quadro: SCHMITT 1898, WEBER 1931, BECKER 1977, KESSLER 1997... e BECKER 1997.
+
+<p align="center">
+  <img src="docs/img/c6-estufas.png" width="49%" alt="A estrada de chão da Linha Esperança: carroça, barba-de-velho e estufas de fumo">
+  <img src="docs/img/c6-milharal.png" width="49%" alt="O milharal na cerração, com espantalhos">
+  <img src="docs/img/c6-bolao.png" width="49%" alt="A cancha de bolão com flâmulas e o placar GUT HOLZ!">
+  <img src="docs/img/c6-cemiterio.png" width="49%" alt="O cemitério de família com cruzes de ferro">
+</p>
+
+<p align="center">
+  <img src="docs/img/c6-diario.png" width="49%" alt="O diário da Oma Hedwig: o porão do veleiro, onde as crianças ardiam em febre">
+  <img src="docs/img/c6-escola.png" width="49%" alt="A escola da linha: a lista no quadro-negro termina em BECKER 1997">
+</p>
+
+- **Inimigos novos**:
+  - **Espantalhos**, com braço de pau.
+  - **Tufos de barba-de-velho**, que caem dos galhos e agarram a cabeça do Arno.
+  - **Jogadores de bolão** possuídos, que rolam bolas pelo chão.
+
+### O chefe: O Pelznickel
+
+No pátio da escola, ao lado da estufa de fumo, o Pelznickel ataca com:
+
+- a corrente;
+- o saco: se pegar o Arno, é apertar ataque sem parar para sair;
+- a vara de marmelo;
+- a bola de musgo rolando;
+- o *"Tu rezou?"*, que risca X de giz no chão onde os golpes vão cair.
+
+Se ele bater rolando na fornalha, o musgo pega fogo. Na metade da luta, o musgo queima e por baixo aparece **Johann Vogt**, o mestre-escola do navio, que luta com palmatória, giz e "A CHAMADA!" (os nomes caem do alto).
+
+<p align="center">
+  <img src="docs/img/anim-pelznickel.gif" width="512" alt="Animação: a luta contra O Pelznickel no pátio da escola, ao lado da estufa de fumo">
+</p>
+
+<p align="center">
+  <img src="docs/img/c6-pelznickel.png" width="49%" alt="O Pelznickel, coberto de barba-de-velho, com o saco nas costas, ao lado da fornalha da estufa">
+  <img src="docs/img/c6-vogt.png" width="49%" alt="Sem o musgo: Johann Vogt, o mestre-escola">
+</p>
+
+**Músicas novas**: um xote sombrio com gaita e caixinha na fase, o galope do *Erlkönig* na cabine, uma marcha com sininhos e corrente no chefe (com a cantiga *Hänschen klein* desafinada na flauta na segunda metade) e o xote em maior quando as crianças voltam para casa.
+
+<details>
+<summary><b>Final do capítulo 6 (spoiler)</b></summary>
+
+<br>
+
+Ajoelhado, o Vogt confessa: *"As crianças tavam morrendo no navio. Eu só queria vento."* O trato de 1852 era um de cada família, a cada geração, e ele só cobrava. Quando o cobrador falha, o credor vem buscar pessoalmente. As crianças saem do saco, e a Lena corre para o avô, o Seu Arnoldo. Lá longe, o sino da Matriz bate **sete vezes** sozinho, a cerração de todas as linhas escorre para a cidade e a lua fica vermelha.
+
+<p align="center">
+  <img src="docs/img/c6-badaladas.png" width="49%" alt="O vale sob a lua vermelha, com a cerração escorrendo para a cidade">
+</p>
+
+</details>
+
+---
+
+## Capítulo 7 — A Última Fita
+
+O último capítulo é a **batalha final**, na Matriz de São Miguel Arcanjo. A cidade inteira passa a noite na igreja: os Kessler, os Weber, a Ingrid, a bandinha do Erwin, as crianças da linha, o Seu Gerhard, o Seu Arnoldo, o Seu Helmut, a Dona Rosa, a Dona Frida e o Ewald.
+
+A Frida explica que o último verso da reza da Oma Hedwig nunca foi bordado. Ele se diz em voz alta, com a cidade inteira junta, e por isso o pau-de-fita era de todo mundo. O Arno recebe **sete fitas**, uma de cada capítulo:
+
+1. a do batizado dele, guardada pela Frida;
+2. a última fita bordada da Hedwig;
+3. a faixa de Rainha da Batata da Ingrid;
+4. a linha vermelha do sapato da Hilde;
+5. uma tira de taquara do balaio da Rosa;
+6. a fita de Kerb das crianças da linha;
+7. a fitinha que o Ewald pendurou no retrovisor em 1977.
+
+O Erwin entrega o laço do Moço do Baile, e a Frida benze: *"Bala acaba, laço não."* O **laço bento** substitui o revólver, tem alcance médio e não gasta munição.
+
+<p align="center">
+  <img src="docs/img/c7-fitas.png" width="49%" alt="A cidade inteira na igreja, e as sete fitas coloridas na barra">
+  <img src="docs/img/c7-praca.png" width="49%" alt="O cerco na praça da Matriz, com luz saindo pelos vitrais">
+</p>
+
+### A Matriz de São Miguel
+
+A **fase 7** é toda em volta da igreja e dentro dela. O caminho é este:
+
+1. o **cerco na praça**, com inimigos de todos os capítulos, enquanto o Seu Helmut, o Rei do Tiro, ajuda da janela;
+2. o **cemitério da colônia**;
+3. a **cripta**, com a pedra fundamental e o **Livro de Bordo do veleiro Hoffnung**, onde estão as assinaturas em X de 1852;
+4. a **torre do sino**, com escadas, a máquina do relógio e pombos.
+
+Na torre, dois chefes antigos voltam como ecos, o **Ciclope Gigante** e o **Moço do Baile**. Quem o Arno libertou nos capítulos anteriores ajuda: a Hilde costura uma passarela sobre o vão, e os vaga-lumes da Boitatá iluminam o trecho escuro.
+
+<p align="center">
+  <img src="docs/img/c7-cripta.png" width="32%" alt="A cripta da Matriz, com os túmulos dos padres">
+  <img src="docs/img/c7-hilde.png" width="32%" alt="Na torre do sino, a Hilde volta para costurar o caminho do Arno">
+  <img src="docs/img/c7-vagalumes.png" width="32%" alt="Os vaga-lumes da Boitatá iluminando o trecho escuro da torre">
+</p>
+
+### O chefe final: der Alte, o Antigo
+
+O demônio que veio no porão do navio, agora na forma verdadeira. A luta tem três fases e um ponto de retorno entre elas:
+
+1. **A nave**: ele rasteja pelas paredes e pelo teto, põe as mãos compridas pelos vitrais, sopra cerração (só os olhos aparecem) e tenta agarrar gente nos bancos.
+2. **O porão do Hoffnung**: ele toca o sino e a igreja vira o navio de 1852 parado na calmaria, com escotilhas, redes e lampiões balançando. Mãos saem das tábuas, as assinaturas em X voam, e a Hedwig jovem aparece com o lampião.
+3. **O pau-de-fita**: a cidade dança em volta da coluna enquanto a bandinha toca e o Arno defende os dançarinos. Cada volta completa amarra uma das sete fitas no Antigo.
+
+No fim, toda a cidade diz junta o último verso, e o Arno puxa a corda do sino.
+
+<p align="center">
+  <img src="docs/img/anim-alte.gif" width="512" alt="Animação: o pau-de-fita na nave da Matriz, com as fitas amarrando der Alte enquanto o Arno defende os dançarinos">
+</p>
+
+<p align="center">
+  <img src="docs/img/c7-nave.png" width="32%" alt="Der Alte rastejando pela nave da igreja, na cerração">
+  <img src="docs/img/c7-navio.png" width="32%" alt="A igreja vira o porão do veleiro Hoffnung de 1852, e a Hedwig jovem aparece com o lampião">
+  <img src="docs/img/c7-paudefita.png" width="32%" alt="O pau-de-fita: a cidade dança em volta da coluna e as fitas amarram o Antigo">
+</p>
+
+<details>
+<summary><b>Final do jogo (spoiler)</b></summary>
+
+<br>
+
+Com as sete fitas amarradas, o Antigo cai de joelhos e cobra: *"Falta um Becker."* O Ewald dá um passo à frente, e o Arno responde: *"Ninguém mais paga nada. Nem tu, pai."* A cidade diz o último verso:
+
+> *Was zusammen gepflanzt ist, wird zusammen gebunden.*
+> O que foi plantado junto, junto se amarra. / O que se esqueceu, hoje se lembra. / E a noite que veio no navio / volta pro mar sem levar ninguém.
+
+O Arno puxa a corda do sino que chamou o Antigo em 1852, o sol entra pelos vitrais e a cerração vai embora da serra. O relógio do Ewald volta a andar, de 23:47 para 23:48, e ele envelhece os vinte anos de uma vez. Nos epílogos:
+
+- o Seu Gerhard põe uma placa de bronze para as pespontadeiras de 1967;
+- a placa velha da caverna é arrancada e o fogo fica aceso todo inverno;
+- a Linha Esperança joga bolão de dia;
+- em maio de 1998, as moças dançam o pau-de-fita em volta de uma araucária nova, plantada no toco pelo Seu Kessler.
+
+Na última cena, o Arno desce a serra dirigindo, com o pai de cabelo branco no banco do carona, ao contrário da abertura do capítulo 1.
+
+<p align="center">
+  <img src="docs/img/c7-epilogo-caverna.png" width="49%" alt="Epílogo: no Morro dos Bugres, a placa velha arrancada e o fogo aceso na boca da caverna">
+  <img src="docs/img/c7-epilogo-festa.png" width="49%" alt="Epílogo: a 3ª Festa da Batata, em 1998, com o pau-de-fita em volta da araucária nova">
+  <img src="docs/img/c7-cabine.png" width="49%" alt="A última cena: o Arno dirige e o Ewald, de bigode branco, vai no banco do carona">
+  <img src="docs/img/c7-creditos.png" width="49%" alt="Créditos: Teewald City, uma história em sete capítulos">
+</p>
+
+<p align="center">
+  <img src="docs/img/c7-manha.png" width="49%" alt="A manhã entra pelos vitrais da igreja cheia de gente">
 </p>
 
 </details>
@@ -470,6 +731,19 @@ Arno é desenhado **por poses**. Cada quadro de animação é uma lista de ângu
   <img src="docs/img/arte-ciclope.png" width="768" alt="O Ciclope Gigante: pairando, rasante, lançando orbes, ferido e derrotado">
   <img src="docs/img/arte-demonio.png" width="768" alt="O Demônio Antigo: andando de quatro, investida, salto, erguido, garras, grito, atordoado e derrotado">
   <img src="docs/img/arte-moco.png" width="768" alt="O Moço do Baile: parado, com a gaita, dançando, laço, boleadeira, pisada, rodopio e atordoado">
+</p>
+
+Os capítulos 4 a 7 usam um **elenco compartilhado**: a Dona Frida de corpo inteiro, a Dona Rosa com o balaio de taquara, a Oma Hedwig moça com o lampião, o Seu Arnoldo, o Seu Helmut com o chapéu da Sociedade de Tiro, as crianças da linha, as sonâmbulas de camisola e o velho Gerhard na cadeira de rodas, além de retratos novos para os diálogos. A Boiguaçu e a Boitatá são feitas de gomos desenhados um a um, cada um com os seus olhinhos, que o jogo encadeia em movimento.
+
+<p align="center">
+  <img src="docs/img/arte-elenco.png" width="49%" alt="O elenco dos capítulos 4 a 7: Dona Frida, Dona Rosa, Oma Hedwig, Seu Arnoldo, Seu Helmut, Seu Gerhard, as crianças, uma sonâmbula, a Hilde, o Ewald velho e o Erwin, com os retratos">
+  <img src="docs/img/arte-cap4.png" width="49%" alt="Capítulo 4: a Moça do Serão, os sapatos Modelo Hilde, os tamancos, a botina, o contramestre e O Couro">
+  <img src="docs/img/arte-cap5.png" width="49%" alt="Capítulo 5: o Bugreiro, os cães, o boi sem olho, o olho voador, os ervateiros possuídos, a Boiguaçu e a Boitatá">
+  <img src="docs/img/arte-cap6.png" width="49%" alt="Capítulo 6: o Pelznickel, Johann Vogt, o espantalho, a barba-de-velho e o jogador de bolão">
+</p>
+
+<p align="center">
+  <img src="docs/img/arte-alte.png" width="768" alt="Der Alte, o Antigo, na forma verdadeira: rastejando, erguido, varrendo, gritando, saltando e no teto">
 </p>
 
 ### Cenário e itens
@@ -556,7 +830,7 @@ As cores também podem ser funções `(x, y) → cor`, e é assim que sai o xadr
 
 - As fases são mapas de *tiles* de 16 px (chão, plataforma vazada, pedra, água, tábua). Elas definem **arenas**, em que a câmera trava até as ondas de inimigos acabarem, **pontos de retorno** (as capelinhas), **zonas** de luz e neblina, **falas** que disparam em certos pontos, placas e itens.
 - As cutscenes são escritas como **corrotinas** (geradores de JavaScript): "abre o diálogo e espera fechar", "anda até ali", "escurece em 30 quadros", e várias podem rodar em paralelo.
-- Cada capítulo se encaixa na cena da fase por **ganchos** no objeto do nível (`L.init`, `L.update`, `L.bossSeq`, `L.clearSeq`, `L.hud`, `L.prepareBg`, `L.tileFor`, `L.saveExtra`, `L.nextScene`). Um capítulo novo é um arquivo de nível, um de arte e um de cenas, sem copiar o motor.
+- Cada capítulo se encaixa na cena da fase por **ganchos** no objeto do nível (`L.init`, `L.update`, `L.bossSeq`, `L.clearSeq`, `L.hud`, `L.prepareBg`, `L.tileFor`, `L.saveExtra`, `L.nextScene`). Um capítulo novo é um arquivo de nível, um de arte e um de cenas, sem copiar o motor. Do capítulo 4 em diante, cada capítulo também tem os próprios textos e músicas, registra os próprios efeitos sonoros (`TC.audio.addSfx`) e só entra no menu quando se declara pronto (`TC.READY[n]`). Há ganchos novos para o piloto automático de testes (`L.botGoal`), para fechar os olhos segurando ↓ (`L.allowCover`) e para deixar o Arno lento (`L.speedMul`).
 
 ---
 
@@ -591,7 +865,11 @@ O **Difícil** é o balanceamento original de fliperama.
 | Atacar (combo X X X, voadora no ar) | X / J | X ou B | Botão B (amarelo) |
 | Giro especial (gasta um pouco de energia ao acertar) | C / L | Y, RB ou RT | Botão Y (verde) |
 | Ler placas | ↑ perto da placa | ↑ | ↑ no direcional |
-| Atirar com o revólver (capítulos 2 e 3, gasta 1 bala) | V / I ou ↑ + X | LB / LT ou ↑ + ataque | ↑ no direcional + botão B |
+| Atirar com o revólver (capítulos 2 a 6, gasta 1 bala) | V / I ou ↑ + X | LB / LT ou ↑ + ataque | ↑ no direcional + botão B |
+| Arremessar bola de bolão (capítulo 6, quando o Arno carrega uma) | o mesmo botão do revólver | o mesmo do revólver | o mesmo do revólver |
+| Laço bento (capítulo 7, no lugar do revólver, sem munição) | o mesmo botão do revólver | o mesmo do revólver | o mesmo do revólver |
+| Abrir as portas com a chave (chefe do capítulo 4) | ↑ perto da porta | ↑ | ↑ no direcional |
+| Fechar os olhos contra o brilho da Boitatá (capítulo 5) | segurar ↓ no chão | segurar ↓ | segurar ↓ no direcional |
 | Pausa | Enter / Esc | Start | START |
 | Tela cheia / mudo | F / M | — | Botões pequenos no topo |
 | Menus e diálogos | Setas + Z / Enter | Direcional + A | Tocar direto no item ou na tela |
@@ -642,7 +920,7 @@ Em **Opções** dá para trocar a dificuldade, o idioma (português ou inglês),
 
 <p align="center">
   <img src="docs/img/menu-opcoes.png" width="49%" alt="Menu de opções">
-  <img src="docs/img/menu-capitulos.png" width="49%" alt="Menu de capítulos com os três capítulos">
+  <img src="docs/img/menu-capitulos.png" width="49%" alt="Menu de capítulos com os sete capítulos">
   <img src="docs/img/en-cabine.png" width="49%" alt="A abertura em inglês: Look at those araucarias...">
   <img src="docs/img/en-hud.png" width="49%" alt="O HUD em inglês no capítulo 2: SCORE e FIRE THE .38">
 </p>
@@ -696,12 +974,16 @@ js/art_env.js       céu, lua, serras, araucárias, casas de enxaimel, igreja, t
 js/art_chars.js     Arno (por poses), inimigos, chefe, itens, retratos
 js/art_ch2.js       capítulo 2: colonos possuídos, lobisomem, o Demônio Antigo, revólver, fitas, pavilhão, atafona, serraria, carijó, toco
 js/art_ch3.js       capítulo 3: mineiros, morcegos, dançarinos, o Moço do Baile, Ewald, Ingrid, mina, elevador, gruta e salão do baile
+js/art_cast.js      elenco dos capítulos 4 a 7: Dona Frida de corpo inteiro, Dona Rosa, Oma Hedwig, Seu Arnoldo, Seu Helmut, as crianças, as sonâmbulas e o Seu Gerhard
+js/art_ch4.js ... art_ch7.js   arte dos capítulos 4 a 7 (fábrica de calçados, Morro dos Bugres, Linha Esperança, Matriz)
+js/lang_ch4.js ... lang_ch7.js textos dos capítulos 4 a 7 (português e inglês)
+js/music_ch4.js ... music_ch7.js músicas e efeitos sonoros dos capítulos 4 a 7
 js/art_cab.js       cabine do caminhão, volante, placas de estrada
 js/road.js          estrada pseudo-3D
 js/mode7.js         plano em perspectiva "Mode 7" e mapa da cidade
 js/main.js          laço de 60 Hz, troca de cenas, escala da tela e pós-processamento
-js/scenes/          boot, título, abertura, final, capítulos 2 e 3 (chapter2.js, chapter3.js: prólogos e finais) e depuração
-js/stage/           entidades, jogador, inimigos (enemies2.js e enemies3.js: os dos capítulos 2 e 3), layout das fases (level1.js, level2.js, level3.js) e cena da fase
+js/scenes/          boot, título, abertura, final, capítulos 2 a 7 (chapter2.js ... chapter7.js: prólogos e finais) e depuração
+js/stage/           entidades, jogador, inimigos (enemies2.js ... enemies7.js: os dos capítulos 2 a 7), layout das fases (level1.js ... level7.js) e cena da fase
 docs/img/           prints e GIFs deste README (o jogo não usa nenhum deles)
 ```
 
@@ -711,8 +993,9 @@ Toda a arte e todo o som são gerados por código quando o jogo carrega. O jogo 
 
 Acrescente os parâmetros à URL, por exemplo `index.html?scene=stage&x=4200`:
 
-- `scene=title|intro|stage|ending|ch2intro|ending2|ch3intro|ending3|debug` abre direto numa cena. `debug&page=0..10` mostra as artes (5 a 8 são do capítulo 2 e 9 e 10 do capítulo 3).
-- `ch=2` ou `ch=3` (com `scene=stage`) abre a fase desse capítulo. `ribbons=N` já começa com N fitas e `bosshp=N` define a energia do chefe.
+- `scene=title|intro|stage|ending|ch2intro|ending2|ch3intro|ending3|ch4intro|ending4|...|ch7intro|ending7|debug` abre direto numa cena (`scene=stage&ch=5` abre a fase de um capítulo). `debug&page=0..10` mostra as artes (5 a 8 são do capítulo 2 e 9 e 10 do capítulo 3).
+- `ch=2` a `ch=7` (com `scene=stage`) abre a fase desse capítulo. `ribbons=N` já começa com N fitas (capítulo 2, e no capítulo 7 começa o pau-de-fita com N fitas amarradas) e `bosshp=N` define a energia do chefe.
+- Capítulo 6: `balls=N` dá N bolas de bolão ao Arno, `c6vogt=1` começa a luta com o Vogt já sem o musgo e `c6atk=<estado>` força um ataque do Pelznickel.
 - `lang=pt|en` define o idioma.
 - `diff=easy|normal|hard` define a dificuldade.
 - `x=NNNN` começa a fase nessa posição. `god=1` deixa o Arno praticamente invencível.

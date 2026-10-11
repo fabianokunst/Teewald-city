@@ -18,7 +18,7 @@
     art();
     base(this, 'c5ox', x, y);
     this.w = 32; this.h = 26;
-    this.hp = this.maxHp = hpFor(8);
+    this.hp = this.maxHp = hpFor(7);
     this.name = 'en.c5ox';
     this.score = 400;
     this.state = 'wander';
@@ -81,7 +81,7 @@
         this.vx = TC.approach(this.vx, 0, 0.2);
         this.face = dx < 0 ? -1 : 1;
         if (this.t % 14 === 0) { st.dust(this.x + this.face * 14, this.y); TC.audio.sfx('step'); }
-        if (this.t >= frames(44, D.windup)) { this.state = 'charge'; this.t = 0; this.x0 = this.x; TC.audio.sfx('growl'); }
+        if (this.t >= frames(52, D.windup)) { this.state = 'charge'; this.t = 0; this.x0 = this.x; TC.audio.sfx('growl'); }
         break;
       case 'charge':
         this.vx = this.face * 3.2 * D.speed;
@@ -778,7 +778,7 @@
     }
   };
   Jacob.prototype.light = function (L, cx, cy) {
-    L.add(this.x - cx, this.y - 36 - cy, 60, '#90b0b8', 0.5 * this.alpha);
+    L.add(this.x - cx, this.y - 36 - cy, 64, '#a0c0c8', 0.68 * this.alpha);
     if (this.torch && this.state !== 'dying' && this.state !== 'gone' && this.state !== 'aim' && this.state !== 'lock' && this.state !== 'rush' && this.state !== 'rushPrep') {
       var f = 0.9 + Math.sin(this.t * 0.4) * 0.08;
       L.add(this.x - this.face * 12 - cx, this.y - 54 - cy, 56 * f, '#ff9040', 0.9 * this.alpha);

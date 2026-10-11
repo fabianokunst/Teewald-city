@@ -185,7 +185,7 @@
     /* ---------- itens e quebráveis ---------- */
     [[12, 'crate', 'cuca'], [31, 'barrel', 'linguica'], [40, 'crate', 'chimarrao'], [61, 'barrel', 'cuca'], [77, 'crate', 'linguica'],
       [95, 'barrel', 'chimarrao'], [123, 'crate', 'cuca'], [138, 'barrel', 'linguica'], [158, 'crate', 'chimarrao'], [171, 'barrel', 'cuca'],
-      [188, 'crate', 'linguica'], [210, 'barrel', 'chimarrao'], [227, 'crate', 'cuca'], [240, 'barrel', 'linguica'], [261, 'crate', 'chimarrao'],
+      [188, 'crate', 'chimarrao'], [210, 'barrel', 'chimarrao'], [227, 'crate', 'cuca'], [240, 'barrel', 'linguica'], [261, 'crate', 'chimarrao'],
       [272, 'barrel', 'cuca'], [278, 'crate', 'chimarrao']
     ].forEach(function (p) { L.props.push({ kind: p[1], x: p[0] * TS + 8, drop: p[2] }); });
     [[183, 7], [184, 7], [196, 8], [198, 8], [249, 8], [250, 8], [85, 10], [231, 11]].forEach(function (p) {
@@ -217,7 +217,7 @@
       { x0: 0, waves: [[gr(150), gr(210)], [cr('r'), f('r')], [pc('r', 'colono'), gr(180)]] },
       { x0: 24 * TS, waves: [[wolf('r')], [mi('l'), bat('r'), bat('l')], [dn('r'), pc('l', 'colona')]] },
       { x0: 46 * TS, waves: [[s('l'), s('r')], [f('l'), f('r'), g('r')], [wolf('l'), dn('r'), gr(128)]] },
-      { x0: 104 * TS, waves: [[gr(60), gr(130), gr(200)], [s('r'), pc('l', 'colona'), g('r')], [wolf('r'), gr(80), gr(180), f('l')]] },
+      { x0: 104 * TS, waves: [[gr(60), gr(130), gr(200)], [s('r'), pc('l', 'colona'), g('r')], [wolf('r'), gr(80), gr(180)]] },
       { x0: 140 * TS, waves: [[gr(80), gr(176), bat('r')], [mi('l'), mi('r')], [gr(60), gr(200), s('r'), f('l')]] },
       { x0: 190 * TS, echo: 1, waves: [[{ t: 'c7cyclops', drop: 170 }]] },
       { x0: 242 * TS, echo: 2, waves: [[{ t: 'c7moco', rise: 190 }]] },
@@ -703,6 +703,7 @@
               b.hp = Math.min(b.hp, b.floorHp());
               b.flash = 8;
               TC.audio.sfx('c7sparkle'); TC.fx.flash('#fff0c0', 0.25, 0.05);
+              healArno(st, 1);
               if (b.ribbons >= 7 && b.state !== 'kneel') st.cine = new TC.Script(kneelSeq(st, b));
             });
           }
@@ -791,6 +792,15 @@
       }
       renderLive(st);
     }
+    function healArno(st, n) {
+      var p = st.player;
+      if (p.hp >= p.maxHp || p.hp <= 0) return;
+      p.hp = Math.min(p.maxHp, p.hp + n);
+      TC.audio.sfx('heal');
+      st.floatText(p.x, p.y - 40, '+' + n, '#a0ffa0');
+      for (var i = 0; i < 8; i++) st.parts.add({ x: p.x + TC.rnd.range(-8, 8), y: p.y - TC.rnd.range(4, 30), vy: -0.6, life: 30, color: '#c0ffc0', size: 1, fade: true, layer: 1 });
+    }
+    L.c7heal = healArno;
     function clearHands(st) {
       st.enemies.forEach(function (e) { if (e.type === 'c7hand' && e.alive) e.release(st, true); });
       st.orbs.length = 0;
@@ -914,7 +924,13 @@
       clearHands(st);
       st.killAllMinions();
       yield* co.until(function () { return p.onGround && (p.state === 'normal' || p.state === 'attack' || p.state === 'shoot' || p.state === 'cine'); });
-      p.setState('cine'); p.pose = 'idle'; p.vx = 0; p.face = boss.x > p.x ? 1 : -1;
+      p.setState('cine'); p.pose = 'idle'; p.vx = 0;
+      // o Antigo recua para o outro lado da nave
+      var ax0 = boss.arena.x0, bx = p.x < ax0 + 128 ? ax0 + 204 : ax0 + 52;
+      boss.face = bx > boss.x ? 1 : -1;
+      for (i = 0; i < 40; i++) { boss.x += (bx - boss.x) * 0.08; boss.vx = 1; yield; }
+      boss.vx = 0;
+      p.face = boss.x > p.x ? 1 : -1; boss.face = -p.face;
       TC.fx.tween('letterbox', 22, 30);
       st.save();
       if (n === 2) {
@@ -956,6 +972,8 @@
         R.danceOn = true;
         st.hint = { key: 'hint.c7p3', t: 360 };
       }
+      // a reza da cidade dá fôlego ao Arno a cada fase
+      healArno(st, 3);
       TC.fx.tween('letterbox', 0, 30);
       boss.inPhase = false;
       boss.set('stalk');

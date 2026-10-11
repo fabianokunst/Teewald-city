@@ -1058,14 +1058,13 @@
     c.fillStyle = TC.col('#4a4030'); c.fillRect(0, 100, W, 12);
     c.fillStyle = TC.col('#6a5a40'); c.fillRect(0, 100, W, 2);
     // a placa velha arrancada, jogada no chão
-    var sw = TC.font.measure('CAVERNA DOS BUGRES') + 8;
-    var sg = TC.canvas(sw + 2, 14), sc = sg.ctx;
-    sc.fillStyle = TC.col('#3a2a1a'); sc.fillRect(0, 0, sw + 2, 14);
-    sc.fillStyle = TC.col('#6a4a2a'); sc.fillRect(1, 1, sw, 12);
-    TC.font.draw(sc, 'CAVERNA DOS BUGRES', sw / 2 + 1, 3, '#2a1a0a', { align: 'center' });
-    sc.fillStyle = TC.col('#e8e0d0'); TC.thickLine(sc, 2, 2, sw, 12, 1); TC.thickLine(sc, 2, 12, sw, 2, 1);
-    var rot = TC.rotate(sg, -0.1);
-    c.drawImage(rot, 64 - rot.width / 2, 100 - rot.height / 2);
+    // a placa velha arrancada, partida em duas e largada no chão
+    var sw = TC.font.measure('CAVERNA DOS BUGRES') + 8, sx0 = Math.round(64 - sw / 2);
+    c.fillStyle = TC.col('#3a2a1a'); c.fillRect(sx0 - 1, 93, sw + 2, 13);
+    c.fillStyle = TC.col('#7a5a34'); c.fillRect(sx0, 94, sw, 11);
+    TC.font.draw(c, 'CAVERNA DOS BUGRES', 64, 96, '#2a1a0a', { align: 'center' });
+    c.fillStyle = TC.col('#1a120a'); for (var cy2 = 93; cy2 < 106; cy2++) c.fillRect(Math.round(64 + Math.sin(cy2 * 1.3) * 2), cy2, 1, 1);
+    c.fillStyle = TC.col('#4a3020'); c.fillRect(sx0 + 10, 106, 3, 4); c.fillRect(sx0 + sw - 14, 106, 3, 4);
     cv.fireX = 175; cv.fireY = 100;
     return cv;
   };
@@ -1226,6 +1225,4 @@
 
   TC.ui.addVoice('erwin', 420, '#e8c070');
   TC.ui.addVoice('ewaldOld', 380, '#e8d8c8');
-  TC.ui.addVoice('kessler7', 380, '#c8b898');
-  TC.ui.addVoice('ingrid7', 760, '#f0d070');
 })();

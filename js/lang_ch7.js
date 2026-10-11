@@ -13,8 +13,6 @@
     'end7.chapter': 'FIM DO CAPÍTULO 7',
     'name.erwin': 'SEU ERWIN',
     'name.ewaldOld': 'EWALD BECKER',
-    'name.kessler7': 'SEU KESSLER',
-    'name.ingrid7': 'INGRID WEBER',
 
     /* ---------- prólogo ---------- */
     'ch7.card1': 'Matriz de São Miguel Arcanjo',
@@ -197,8 +195,6 @@
     'end7.chapter': 'END OF CHAPTER 7',
     'name.erwin': 'MR. ERWIN',
     'name.ewaldOld': 'EWALD BECKER',
-    'name.kessler7': 'MR. KESSLER',
-    'name.ingrid7': 'INGRID WEBER',
 
     'ch7.card1': 'Church of Saint Michael the Archangel',
     'ch7.card2': 'The night of the seven tolls',

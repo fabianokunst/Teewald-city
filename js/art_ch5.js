@@ -947,14 +947,14 @@
     });
     // a estrela de néon da fábrica Morgenstern
     var sx = 96, sy = 22;
-    c.fillStyle = TC.col('#ff4070');
+    c.fillStyle = TC.col('#ff60c0');
     for (var p = 0; p < 10; p++) {
       var a1 = -Math.PI / 2 + p * Math.PI / 5, a2 = -Math.PI / 2 + (p + 1) * Math.PI / 5;
       var r1 = p % 2 ? 7 : 16, r2 = p % 2 ? 16 : 7;
       TC.thickLine(c, sx + Math.cos(a1) * r1, sy + Math.sin(a1) * r1, sx + Math.cos(a2) * r2, sy + Math.sin(a2) * r2, 2);
     }
-    TC.font.draw(c, 'MORGENSTERN', sx, sy + 20, '#ff80a0', { align: 'center' });
-    lights.push({ x: sx, y: sy, col: '#ff4070', big: true });
+    TC.font.draw(c, 'MORGENSTERN', sx, sy + 20, '#ff9ad8', { align: 'center' });
+    lights.push({ x: sx, y: sy, col: '#ff60c0', big: true });
     cv.lights = lights;
     return cv;
   };

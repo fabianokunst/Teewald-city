@@ -707,3 +707,5 @@
   Ending5Scene.prototype.onHide = function () { };
   TC.Ending5Scene = Ending5Scene;
 })();
+
+TC.READY[5] = true;

@@ -19,7 +19,7 @@
     opt = opt || {};
     Boss.call(this, x, y, opt.arena);
     this.type = 'c7cyclops';
-    this.hp = this.maxHp = Math.max(8, Math.round(TC.diff().bossHp * 0.5));
+    this.hp = this.maxHp = Math.max(8, Math.round(TC.diff().bossHp * 0.4));
     if (opt.arena && opt.arena.bossHpLeft) this.hp = TC.clamp(opt.arena.bossHpLeft, 1, this.maxHp);
     this.name = 'c7.echo1';
     this.score = 3000;
@@ -62,7 +62,7 @@
     opt = opt || {};
     Moco.call(this, x, y, opt);
     this.type = 'c7moco';
-    this.hp = this.maxHp = Math.max(8, Math.round(TC.diff().bossHp * 0.55));
+    this.hp = this.maxHp = Math.max(8, Math.round(TC.diff().bossHp * 0.45));
     if (opt.arena && opt.arena.bossHpLeft) this.hp = TC.clamp(opt.arena.bossHpLeft, 1, this.maxHp);
     this.name = 'c7.echo2';
     this.score = 3000;
@@ -264,12 +264,14 @@
         this.face = dx < 0 ? -1 : 1;
         this.vx = TC.approach(this.vx, 0, 0.2);
         if (t === 1) TC.audio.sfx('growl');
-        if (t > frames(34, D.windup)) { this.set('swipe'); TC.audio.sfx('swing2'); }
+        if (t > frames(34, D.windup) / slow) { this.set('swipe'); TC.audio.sfx('swing2'); }
         break;
       case 'swipe':
         if (t >= 6 && t <= 12 && play) {
-          var bx = this.face > 0 ? this.x + 6 : this.x - 76;
-          if (TC.overlap({ x: bx, y: this.y - 110, w: 70, h: 100 }, p.hurtBox())) p.damage(st, 2, this.face, true);
+          // as fitas amarram os braços: o alcance encurta a cada fita
+          var reach = 70 - this.ribbons * 4;
+          var bx = this.face > 0 ? this.x + 6 : this.x - 6 - reach;
+          if (TC.overlap({ x: bx, y: this.y - 110, w: reach, h: 100 }, p.hurtBox())) p.damage(st, 2, this.face, true);
         }
         if (t === 8) { TC.fx.shake(2, 6); st.dust(this.x + this.face * 60, G); }
         if (t > 36) this.set('stalk');
@@ -280,7 +282,7 @@
         this.x += (ex - this.x) * 0.08;
         this.face = -this.side;
         if (t % 6 === 0) st.dust(this.x - this.face * 30, G);
-        if (t > frames(48, D.windup)) { this.set('charge'); TC.audio.sfx('skitter'); }
+        if (t > frames(48, D.windup) / slow) { this.set('charge'); TC.audio.sfx('skitter'); }
         break;
       }
       case 'charge':
@@ -428,13 +430,13 @@
     if (this.state !== 'wall' && this.state !== 'ceil' && this.state !== 'dropPrep' && this.state !== 'drop' && this.state !== 'climb') this.x = TC.clamp(this.x, this.arena.x0 - 30, this.arena.x0 + W + 30);
     if (this.state === 'charge' || this.state === 'lunge') contact(this, st, 2, true);
     else if (this.state === 'drop') contact(this, st, 2, true);
-    else if (this.state === 'stalk') contact(this, st, 1, false, true);
+    else if (this.state === 'stalk') contact(this, st, 0.5, false, true);   // só no difícil (encostar)
   };
   AP.frame = function () {
     var S = art().alte, t = this.t;
     switch (this.state) {
       case 'intro': case 'fogBreath': case 'grabCall': case 'floorCall': return S.scream[0];
-      case 'phase': return S.idle[Math.floor(t / 24) % 2];
+      case 'phase': return Math.abs(this.vx) > 0.2 ? S.crawl[Math.floor(t / 5) % 6] : S.idle[Math.floor(t / 24) % 2];
       case 'stalk': return Math.abs(this.vx) > 0.2 ? S.crawl[Math.floor(t / 6) % 6] : S.idle[Math.floor(t / 24) % 2];
       case 'climb': return S.crawl[Math.floor(t / 4) % 6];
       case 'wall': return S.wall[Math.floor(t / 5) % 6];
@@ -976,6 +978,11 @@
     this.x = TC.approach(this.x, tx, 0.9);
     this.face = p.x < this.x ? -1 : 1;
     if (this.t % 5 === 0) st.parts.add({ x: this.x + TC.rnd.range(-8, 8), y: this.y - TC.rnd.range(4, 40), vy: -0.4, life: 40, color: '#ffe8c0', size: 1, fade: true, layer: 1 });
+    // perto do lampião da benzedeira, o Arno se recupera devagar
+    if (this.alpha > 0.8 && st.mode === 'play' && this.t % 100 === 0 && Math.abs(p.x - this.x) < 44 && p.hp > 0 && p.hp < p.maxHp) {
+      p.hp = Math.min(p.maxHp, p.hp + 0.5);
+      for (var i = 0; i < 6; i++) st.parts.add({ x: p.x + TC.rnd.range(-6, 6), y: p.y - TC.rnd.range(6, 28), vy: -0.5, life: 26, color: '#ffe0a0', size: 1, fade: true, layer: 1 });
+    }
   };
   Hedwig.prototype.draw = function (c, cx, cy) {
     var C7 = art(), bob = Math.round(Math.sin(this.t * 0.06) * 2);

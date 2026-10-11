@@ -77,12 +77,13 @@
       ['kessler', C2.kessler, 'stand', 16, 1], ['helmut', CAST.helmut, 'idle', 36, 1], ['arnoldo', CAST.arnoldo, 'idle', 56, 1],
       ['lena', CAST.kids.girl, 'idle', 73, 1], ['arno', A.arno, 'idle', 100, 1], ['ewald', C7.ewaldYoung, 'idle', 122, -1], ['ingrid', C3.ingrid, 'idle', 142, -1],
       ['erwin', C7.erwin, 'idle', 162, -1], ['gerhard', CAST.gerhard, 'idle', 186, -1],
-      ['rosa', CAST.rosa, 'idle', 212, -1], ['frida', CAST.frida, 'cuia', 236, -1]
+      ['rosa', CAST.rosa, 'idle', 212, -1], ['frida', CAST.frida, 'cuia', 236, -1],
+      ['kidb', CAST.kids.boy, 'idle', 84, 1, 4], ['kids', CAST.kids.small, 'idle', 198, -1, 4]
     ];
     this.cast = {};
     this.order = [];
     var self = this;
-    cast.forEach(function (c) { var o = { id: c[0], set: c[1], pose: c[2], base: c[2], x: c[3], x0: c[3], face: c[4], anim: 0 }; self.cast[c[0]] = o; self.order.push(o); });
+    cast.forEach(function (c) { var o = { id: c[0], set: c[1], pose: c[2], base: c[2], x: c[3], x0: c[3], face: c[4], anim: 0, dy: c[5] || 0 }; self.cast[c[0]] = o; self.order.push(o); });
     this.slots = [];
     this.flying = [];
     this.fogWin = 0;
@@ -248,7 +249,7 @@
       var set = o.set, pose = o.pose;
       if (o.id === 'arno') { C7.drawFig(pc, A.arno, pose === 'run' ? 'run' : pose, o.x, GYS, o.face, t, o.anim); return; }
       if (!set[pose]) pose = set.idle ? 'idle' : 'stand';
-      C7.drawFig(pc, set, pose, o.x, GYS, o.face, t, o.anim);
+      C7.drawFig(pc, set, self.pray && o.dy && pose === 'idle' ? 'scared' : pose, o.x, GYS + o.dy, o.face, t, o.anim);
     });
     this.parts.draw(pc, 0, 0, 0);
     var fw = this.fogWin;
@@ -281,9 +282,9 @@
     this.parts.draw(c, 0, 0, 1);
     // as sete fitas reunidas
     var sx = 128 - 3 * 22;
-    var by = 134;
-    TC.ui.box(c, sx - 14, by, 7 * 22 + 6, 26, 'dark', 0.85);
-    for (var k = 0; k < 7; k++) {
+    var by = 134, shown = this.slots.length || this.flying.length;
+    if (shown) TC.ui.box(c, sx - 14, by, 7 * 22 + 6, 26, 'dark', 0.85);
+    for (var k = 0; k < 7 && shown; k++) {
       var x = sx + k * 22;
       c.fillStyle = '#0a0808'; c.fillRect(x - 8, by + 3, 16, 20);
       if (this.slots[k]) c.drawImage(C7.fitaBig[k], x - 7, by + 4);
@@ -328,11 +329,12 @@
       ['kessler', C2.kessler, 'stand', 16, 1], ['helmut', CAST.helmut, 'idle', 36, 1], ['arnoldo', CAST.arnoldo, 'idle', 56, 1],
       ['arno', A.arno, 'idle', 98, 1], ['ewald', C7.ewaldYoung, 'idle', 122, -1], ['ingrid', C3.ingrid, 'idle', 144, -1],
       ['erwin', C7.erwin, 'play', 164, -1], ['gerhard', CAST.gerhard, 'idle', 188, -1], ['lena', CAST.kids.girl, 'wave', 74, 1],
-      ['rosa', CAST.rosa, 'idle', 214, -1], ['frida', CAST.frida, 'cuia', 238, -1]
+      ['rosa', CAST.rosa, 'idle', 214, -1], ['frida', CAST.frida, 'cuia', 238, -1],
+      ['kidb', CAST.kids.boy, 'wave', 86, 1, 4], ['kids', CAST.kids.small, 'wave', 200, -1, 4]
     ];
     this.cast = {}; this.order = [];
     var self = this;
-    cast.forEach(function (c) { var o = { id: c[0], set: c[1], pose: c[2], base: c[2], x: c[3], face: c[4], anim: 0 }; self.cast[c[0]] = o; self.order.push(o); });
+    cast.forEach(function (c) { var o = { id: c[0], set: c[1], pose: c[2], base: c[2], x: c[3], face: c[4], anim: 0, dy: c[5] || 0 }; self.cast[c[0]] = o; self.order.push(o); });
     this.age = 0;
     this.watchMin = 47;
     this.vig = -1; this.vigA = 0; this.capKey = null; this.cap = 0; this.cap2Key = null; this.cap2 = 0; this.plaqueA = 0; this.gutA = 0;
@@ -603,7 +605,7 @@
         return;
       }
       var pose = o.set[o.pose] ? o.pose : (o.set.idle ? 'idle' : 'stand');
-      C7.drawFig(pc, o.set, pose, o.x, GYS, o.face, t, o.anim);
+      C7.drawFig(pc, o.set, pose, o.x, GYS + (o.dy || 0), o.face, t + (o.dy ? 14 : 0), o.anim);
     });
     this.parts.draw(pc, 0, 0, 0);
     lightPass(this, c, '#e8d8c0', function (L) {
@@ -686,8 +688,9 @@
       C7.drawFig(p, CAST.frida, 'cuia', img.fireX + 24, 101, -1, t, t);
     } else if (k === 2) {
       var kids = CAST.kids;
-      C7.drawFig(p, kids.boy, 'wave', 34, 96, 1, t, t); C7.drawFig(p, kids.girl, 'wave', 52, 96, -1, t + 14, t); C7.drawFig(p, kids.small, 'walk', 70 + (t * 0.3) % 20, 96, 1, t, t);
-      C7.drawFig(p, CAST.arnoldo, 'idle', 140, 96, -1, t, t);
+      C7.drawFig(p, kids.boy, 'wave', 30, 97, 1, t, t, 1, null, 0.8); C7.drawFig(p, kids.girl, 'wave', 46, 97, -1, t + 14, t, 1, null, 0.8); C7.drawFig(p, kids.small, 'walk', 62 + (t * 0.3) % 18, 97, 1, t, t, 1, null, 0.8);
+      C7.drawFig(p, CAST.arnoldo, 'idle', 158, 98, -1, t, t, 1, null, 0.8);
+      C7.drawFig(p, kids.girl, 'wave', 145, 98, 1, t + 7, t, 1, null, 0.7);
       // a bola de bolão rolando na cancha
       var bx = 182 + (t * 0.8) % 34;
       p.fillStyle = '#3a2a1a'; TC.fillCircle(p, bx, 85, 2);
@@ -698,7 +701,8 @@
       list.sort(function (q, r) { return q.z - r.z; });
       list.forEach(function (q) {
         p.fillStyle = C7.FITAS[q.d];
-        for (var s = 0; s <= 30; s++) { var u = s / 30; p.fillRect(Math.round(img.poleX + (q.x - img.poleX) * u), Math.round(img.poleY + (q.y - 34 - img.poleY) * u + Math.sin(u * Math.PI) * 4), 1, 1); }
+        var nn = Math.max(10, Math.round(Math.max(Math.abs(q.x - img.poleX), Math.abs(q.y - 34 - img.poleY))));
+        for (var s = 0; s <= nn; s++) { var u = s / nn; p.fillRect(Math.round(img.poleX + (q.x - img.poleX) * u), Math.round(img.poleY + (q.y - 34 - img.poleY) * u + Math.sin(u * Math.PI) * 4), 1, 1); }
         C7.drawFig(p, C7.folk[[1, 3, 7, 5, 1, 3, 7][q.d]], 'dance', q.x, q.y, Math.cos(q.a) > 0 ? -1 : 1, t, t + q.d * 4, 1, q.z < 0 ? ['#2a3a2a', 0.2] : null, q.z < 0 ? 0.8 : 0.9);
       });
       C7.drawFig(p, C7.C2.kessler, 'stand', 196, 102, -1, t, t);
@@ -814,3 +818,5 @@
   Ending7Scene.prototype.onHide = function () { };
   TC.Ending7Scene = Ending7Scene;
 })();
+
+TC.READY[7] = true;

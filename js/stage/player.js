@@ -115,8 +115,10 @@
     if (TC.params.bot && ctl) {
       var B = this.bot(st);
       left = B.left; right = B.right; jumpD = B.jump;
-      if (B.jump && !this._bj) this.jumpBuf = 7;
+      // o pulo do piloto dispara na borda do botão; se ficar "apertado" parado no chão (encostado num degrau), solta e aperta de novo
+      if (B.jump && (!this._bj || (this.onGround && this._bjT > 12))) { this.jumpBuf = 7; this._bjT = 0; }
       this._bj = B.jump;
+      this._bjT = B.jump ? (this._bjT || 0) + 1 : 0;
       if (B.atk) this.atkBuf = 8;
       spP = B.sp;
       shootP = !!st.gun && B.shoot;
@@ -238,8 +240,11 @@
       st.dust(this.x, this.y);
     }
     if (this.onGround && this.state !== 'dead') {
-      var under = st.level.tile(Math.floor(this.x / 16), Math.floor(this.y / 16));
-      if (under !== 4) { this.lastSafe.x = this.x; this.lastSafe.y = this.y; }
+      // só grava o ponto seguro com os dois pés em chão firme (longe da beirada de um buraco)
+      var lvl0 = st.level, fy = Math.floor(this.y / 16);
+      var uL = lvl0.tile(Math.floor((this.x - 7) / 16), fy), uR = lvl0.tile(Math.floor((this.x + 7) / 16), fy);
+      var okL = uL !== 4 && uL !== 0, okR = uR !== 4 && uR !== 0;
+      if (okL && okR) { this.lastSafe.x = this.x; this.lastSafe.y = this.y; }
     }
     if (this.y > st.level.pxH + 24 && this.state !== 'dead') st.playerFell(this);
   };

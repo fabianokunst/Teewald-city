@@ -238,8 +238,8 @@
     function bt(side, y) { return { t: 'bat', side: side, y: y || 56, opt: { fly: side === 'l' ? 1 : -1 } }; }
     function ey(side) { return { t: 'c5eye', side: side, y: 130 }; }
     L.arenas = [
-      { x0: 14 * TS, waves: [[ox('r')], [f('l'), f('r')], [ox('l'), f('r')]] },
-      { x0: 39 * TS, waves: [[ox('r')], [ox('l'), f('r')], [ox('r'), ox('l')]] },
+      { x0: 14 * TS, waves: [[ox('r')], [f('l')], [ox('l'), f('r')]] },
+      { x0: 39 * TS, waves: [[ox('r')], [f('l'), f('r')], [ox('r'), ox('l')]] },
       { x0: 63 * TS, waves: [[ev('r'), ev('l')], [dg('r'), dg('l')], [ev('r'), dg('l'), ev('l')]] },
       { x0: 87 * TS, waves: [[dg('r'), dg('r')], [ev('l'), ev('r'), dg('r')], [ox('r'), dg('l')]] },
       { x0: 120 * TS, waves: [[f('r'), cr('r')], [dg('l'), dg('r'), f('l')], [cr('l'), dg('r'), ev('r')]] },
@@ -569,8 +569,12 @@
       if (window.__stats) window.__stats.c5log = st._log;
       var baseFell = st.playerFell, baseDead = st.onPlayerDead;
       st.playerFell = function (p) {
-        var near = st.enemies.filter(function (e) { return e.alive && Math.abs(e.x - p.x) < 120; }).map(function (e) { return e.type + ':' + e.state + '@' + Math.round(e.x); }).join('|');
-        st._log.falls.push(Math.round(p.x) + (TC.params.bot ? ' s=' + p.state + ' safe=' + Math.round(p.lastSafe.x) + ' ' + near : ''));
+        st._log.falls.push(Math.round(p.x));
+        // o "último lugar seguro" pode ser a ponta do barranco, com meio pé no ar: volta o Arno para o chão firme
+        var ls = p.lastSafe, ty = Math.floor((ls.y + 1) / TS);
+        var firm = function (x) { var tl = L.tile(Math.floor(x / TS), ty); return E.isSolid(tl) || tl === 2; };
+        var ok = function (x) { return firm(x - 7) && firm(x + 7); };
+        if (!ok(ls.x)) for (var d = 1; d <= 28; d++) { if (ok(ls.x - d)) { ls.x -= d; break; } if (ok(ls.x + d)) { ls.x += d; break; } }
         return baseFell.call(st, p);
       };
       st.onPlayerDead = function () { st._log.deaths.push(Math.round(st.player.x) + (st.boss ? ':' + st.boss.type : '')); return baseDead.call(st); };
