@@ -812,7 +812,12 @@
     L.shrines.forEach(function (sh) { if (sh.lit) Lt.add(sh.x - camX, 172, 26, '#ffc060', 0.9 * candleFlick(t, sh.x)); });
     for (i = 0; i < this.enemies.length; i++) if (this.enemies[i].light) this.enemies[i].light(Lt, camX, 0);
     for (i = 0; i < this.deco.length; i++) if (this.deco[i].light) this.deco[i].light(Lt, camX, 0);
-    for (i = 0; i < this.orbs.length; i++) Lt.add(this.orbs[i].x - camX, this.orbs[i].y, 20, '#60ff80', 0.7);
+    // projéteis: cada um pode trazer a própria luz (os orbes verdes do Ciclope são o padrão)
+    for (i = 0; i < this.orbs.length; i++) {
+      var ob = this.orbs[i];
+      if (ob.light) ob.light(Lt, camX, 0);
+      else if (!ob.noLight) Lt.add(ob.x - camX, ob.y, 20, '#60ff80', 0.7);
+    }
     var p = this.player;
     var pl = this.level.playerLight;   // debaixo da terra o Arno leva uma lamparina
     Lt.add(p.x - camX, p.y - 16, pl ? pl.r : 42, pl ? pl.col : '#7a7aa8', pl ? pl.a : 0.55);

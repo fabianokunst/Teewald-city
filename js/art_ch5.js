@@ -443,7 +443,29 @@
     cv.cx = 18; cv.cy = 14;   // ponto de rotação (onde o pescoço encaixa)
     return cv;
   }
+  /* gomo da Boitatá: uma bola de chama sem contorno, com olhinhos acesos */
+  function fireSeg(r, eyes) {
+    var S = r * 2 + 6, pb = new TC.PixBuf(S, S), c = S / 2, seed = r * 13 + (eyes === 'open' ? 1 : 0);
+    for (var y = 0; y < S; y++) for (var x = 0; x < S; x++) {
+      var dx = (x + 0.5 - c) / r, dy = (y + 0.5 - c) / r, d = Math.sqrt(dx * dx + dy * dy);
+      var edge = 1 + (H2(x, y >> 1, seed) - 0.5) * 0.5 + (dy < 0 ? -dy * 0.25 : 0);
+      if (d > edge) continue;
+      var k = d / edge;
+      pb.set(x, y, u32(k < 0.35 ? '#fff8d0' : k < 0.6 ? '#ffd860' : k < 0.82 ? '#ff9a28' : '#e05a10'));
+    }
+    if (eyes) {
+      var rr = TC.RNG(seed + 5);
+      for (var e = 0; e < 3; e++) {
+        var a = rr.range(0, TC.TAU), dd = rr.range(0.1, 0.55) * r;
+        var ex = Math.round(c + Math.cos(a) * dd), ey = Math.round(c + Math.sin(a) * dd * 0.8);
+        if (eyes === 'open') { pb.rect(ex - 1, ey, 3, 1, u32('#ffffff')); pb.set(ex, ey, u32('#6a1800')); }
+        else pb.rect(ex - 1, ey, 3, 1, u32('#c04010'));
+      }
+    }
+    return pb.toCanvas();
+  }
   function snakeSeg(kind, r, eyes) {
+    if (kind === 'fire') return fireSeg(r, eyes);
     var S = r * 2 + 4, pb = new TC.PixBuf(S, S), c = S / 2;
     var fire = kind === 'fire';
     var sh = fire ? shadeFn('#ffe070', '#f88a20', '#c84a0c', '#80200a') : shadeFn('#34442e', '#1e2a1a', '#121a0e', '#080c06');
@@ -468,11 +490,51 @@
     outline(pb, u32(fire ? '#8a2000' : '#040604'));
     return pb.toCanvas();
   }
+  /* a cabeça da Boitatá: a mesma silhueta da Boiguaçu, mas toda de fogo — o miolo branco, a borda vermelha,
+     labaredas por cima e olhos acesos por toda parte */
+  function fireHead(dark, open) {
+    var src = TC.bufFrom(dark), w = src.w, h = src.h, pad = 6;
+    var pb = new TC.PixBuf(w, h + pad), x, y;
+    var depth = new Uint8Array(w * h);
+    for (y = 0; y < h; y++) for (x = 0; x < w; x++) if (src.d[y * w + x] >>> 24) depth[y * w + x] = 1;
+    for (var it = 1; it < 6; it++) {
+      for (y = 1; y < h - 1; y++) for (x = 1; x < w - 1; x++) {
+        var i = y * w + x;
+        if (depth[i] === it && depth[i - 1] >= it && depth[i + 1] >= it && depth[i - w] >= it && depth[i + w] >= it) depth[i] = it + 1;
+      }
+    }
+    var cols = ['', '#b83008', '#e86018', '#ff9a28', '#ffc040', '#ffd458', '#ffe070'];
+    for (y = 0; y < h; y++) for (x = 0; x < w; x++) {
+      var d = depth[y * w + x];
+      if (!d) continue;
+      var o = src.d[y * w + x], r = o & 255, g = (o >> 8) & 255;
+      // a boca aberta continua escura e vermelha por dentro
+      if (open && r > g + 30) { pb.set(x, y + pad, u32(r > 200 ? '#ffe8a0' : '#8a1808')); continue; }
+      pb.set(x, y + pad, u32(cols[Math.min(6, d)]));
+    }
+    // labaredas por cima do crânio
+    for (x = 4; x < w - 6; x++) {
+      var top = -1;
+      for (y = 0; y < h; y++) if (depth[y * w + x]) { top = y; break; }
+      if (top < 0) continue;
+      var fh = Math.round(2 + H2(x, 1, 790) * 5 * (x < 36 ? 1 : 0.4));
+      for (var k = 1; k <= fh; k++) pb.set(x, top + pad - k, u32(k > fh - 1 ? '#c84010' : k > fh / 2 ? '#ff9a28' : '#ffd860'));
+    }
+    // olhos: um grande e vários pequenos
+    var eyes = [[33, 10, 2], [20, 9, 1], [25, 14, 1], [12, 13, 1], [40, 13, 1], [16, 6, 1]];
+    eyes.forEach(function (e) {
+      var ex = e[0], ey = e[1] + pad;
+      if (e[2] === 2) { pb.rect(ex - 4, ey - 2, 9, 5, u32('#7a1800')); pb.rect(ex - 3, ey - 1, 7, 3, u32('#ffffff')); pb.rect(ex, ey - 1, 1, 3, u32('#2a0400')); }
+      else { pb.rect(ex - 2, ey - 1, 5, 3, u32('#8a2000')); pb.rect(ex - 1, ey, 3, 1, u32('#ffffff')); pb.set(ex, ey, u32('#3a0800')); }
+    });
+    var cv = pb.toCanvas();
+    return cv;
+  }
   function buildSnake() {
     var out = { dark: {}, fire: {} };
     ['dark', 'fire'].forEach(function (k) {
-      out[k].head = snakeHead(k, false);
-      out[k].headOpen = snakeHead(k, true);
+      out[k].head = k === 'fire' ? fireHead(out.dark.head, false) : snakeHead(k, false);
+      out[k].headOpen = k === 'fire' ? fireHead(out.dark.headOpen, true) : snakeHead(k, true);
       out[k].seg = [];
       out[k].segOpen = [];
       for (var i = 0; i < 16; i++) {
@@ -650,22 +712,24 @@
     }
     T.pitL = pit(0); T.pitR = pit(1);
     // chão da caverna: arenito cor de ferrugem
+    function sandN(xx, y, s) { return TC.vnoise2(xx / 5, y / 3, s, 32 / 5, 0) * 0.7 + H2(xx, y, s + 1) * 0.3; }
     T.sandTop = [0, 1].map(function (v) {
       return tile(function (x, y) {
         var xx = x + v * 16;
-        if (y === 0) return H2(xx, 0, 340) > 0.3 ? '#b88a5a' : '#9a6a40';
-        if (y < 3) return H2(xx, y, 341) > 0.5 ? '#8a5a38' : '#7a4c30';
-        var row = Math.floor((y - 3) / 4);
-        var n = H2(Math.floor((xx + row * 5) / 9), row, 342);
-        if ((xx + row * 5) % 9 === 0 || (y - 3) % 4 === 3) return '#3a2214';
-        return n > 0.5 ? '#6a3e26' : '#5a3420';
+        var top = Math.round(H2(xx >> 1, 0, 340) * 1.5);
+        if (y < top) return null;
+        if (y === top) return H2(xx, 0, 341) > 0.25 ? '#c8986a' : '#a87a4c';
+        if (y === top + 1) return H2(xx, 1, 342) > 0.5 ? '#9a6a40' : '#8a5a38';
+        var n = sandN(xx, y, 344);
+        if (n > 0.78 && H2(xx, y, 345) > 0.5) return '#2e1a0e';
+        return n > 0.62 ? '#7a4a2e' : n > 0.38 ? '#62381f' : '#52301c';
       });
     });
     T.sand = [0, 1].map(function (v) {
       return tile(function (x, y) {
-        var xx = x + v * 16, row = Math.floor(y / 4);
-        if ((xx + row * 5) % 9 === 0 || y % 4 === 3) return '#301c10';
-        return H2(Math.floor((xx + row * 5) / 9), row, 343) > 0.5 ? '#5a3420' : '#4a2a1a';
+        var xx = x + v * 16, n = sandN(xx, y + 16, 346);
+        if (n > 0.8 && H2(xx, y, 347) > 0.5) return '#2a160c';
+        return n > 0.6 ? '#5e3620' : n > 0.36 ? '#4e2c1a' : '#422414';
       });
     });
     // carroceria do caminhão: tábuas

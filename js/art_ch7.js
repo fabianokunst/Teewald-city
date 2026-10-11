@@ -1163,6 +1163,8 @@
   ART.ch7Init = function () {
     if (C7.ready) return C7;
     var C2 = ART.ch2Init(), C3 = ART.ch3Init(), CAST = ART.castInit();
+    // os capítulos 4 a 6 registram retratos próprios (a Hilde, a Lena de tranças): carrega se existirem
+    ['ch4Init', 'ch5Init', 'ch6Init'].forEach(function (k) { try { if (ART[k]) ART[k](); } catch (e) { /* capítulo ainda incompleto */ } });
     C7.C2 = C2; C7.C3 = C3; C7.CAST = CAST;
     C7.fitaIcon = fitaIcons(1);
     C7.fitaBig = fitaIcons(2);

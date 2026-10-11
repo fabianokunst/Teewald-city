@@ -40,7 +40,7 @@
         x < 206 ? 'mouth' : x < Z.wall ? 'cave' : x < Z.road ? 'wall' : 'bed';
     }
     // a sanga do potreiro (um pulo)
-    fill(33, 35, 12, 12, 0); fill(33, 35, 13, 13, 4);
+    fill(33, 34, 12, 12, 0); fill(33, 34, 13, 13, 4);
     // os raídos empilhados (plataforma; o desenho vem do cenário)
     fill(81, 84, 10, 10, 2);
     // ressaltos de basalto subindo o morro
@@ -48,10 +48,11 @@
     fill(139, 140, 11, 11, 3); fill(141, 143, 10, 11, 3); fill(144, 145, 11, 11, 3);
     // prateleira de pedra na caverna e o poço d'água
     fill(234, 236, 10, 10, 2);
-    fill(243, 245, 12, 12, 0); fill(243, 245, 13, 13, 4);
+    fill(243, 244, 12, 12, 0); fill(243, 244, 13, 13, 4);
     // a parede que separa a caverna da estrada (ninguém passa: o caminho é o caminhão)
     fill(Z.wall, Z.road - 1, 0, 13, 3);
     L.pits = [[167, 168], [172, 173], [178, 179]];
+    L.pits.forEach(function (pp) { L.style[pp[0]] = 'pitL'; L.style[pp[1]] = 'pitR'; });
 
     /* ---------- cenário ---------- */
     var r = TC.RNG(1888);
@@ -93,7 +94,7 @@
     (function () {
       var sg = C2.sign(124, 22, [['ERVATEIRA BECKER', '#f0e0b0'], ['DESDE 1889', '#c8d8a0']], { legs: 12, bg: '#2a3a24', trim: '#5a7a4a' });
       var tilt = TC.rotate(sg, 0.12);
-      back(tilt, 59 * TS - tilt.width / 2, GY + 6 - tilt.height, 2);
+      back(tilt, 59 * TS - tilt.width / 2, GY + 5 - (tilt.height + sg.height) / 2, 2);
       L.signs.push({ x: 59 * TS, y: GY, key: 's5.erva' });
     })();
     for (x = Z.erva; x < Z.forest; x += r.int(2, 4)) {
@@ -107,7 +108,7 @@
     back(C5.barbaqua(), 90 * TS, GY + 2 - 90, -1);
 
     // --- 3. a mata de araucária subindo o morro ---
-    for (x = Z.forest; x < Z.village; x += r.int(3, 5)) tree(x * TS + r.int(0, 10), r() < 0.8 ? 'a' : 'p', r.int(170, 230), r() < 0.5 ? -1 : 0);
+    for (x = Z.forest; x < Z.village; x += r.int(3, 5)) tree(x * TS + r.int(0, 10), 'a', r.int(170, 230), r() < 0.5 ? -1 : 0);
     [[106, 30, 18], [124, 36, 20], [133, 24, 14], [152, 40, 22], [160, 30, 18]].forEach(function (rk, k) { back(C5.rock(rk[0] + k, rk[1], rk[2]), rk[0] * TS, GY + 2 - rk[2], 1); });
     // ressaltos: pedra de basalto
     sign(138, 's5.gralha', C2.sign(84, 22, [['NÃO CORTE', '#f0e0b0'], ['O PINHEIRO', '#d8c890']], { legs: 10, bg: '#3a2a1c' }));
@@ -127,7 +128,8 @@
       L._mouth = back(cm, 206 * TS - cm.mouthX, GY + 2 - cm.height, -1);
       L._mouth.lights = [];
       var cs = C2.sign(100, 22, [['CAVERNA DOS BUGRES', '#f0e0b0'], ['PONTO TURÍSTICO - 1950', '#c8b890']], { legs: 12, bg: '#4a3020', trim: '#7a5a3a' });
-      back(TC.rotate(cs, -0.06), 187 * TS - 54, GY + 6 - cs.height - 6, 2);
+      var csr = TC.rotate(cs, -0.06);
+      back(csr, 187 * TS - csr.width / 2, GY + 4 - (csr.height + cs.height) / 2, 2);
       L.signs.push({ x: 187 * TS + 4, y: GY, key: 's5.cavesign' });
       var fp = C5.firePit();
       L._fireX = 197 * TS; L._firePit = back(fp, L._fireX - 20, GY + 1 - 14, 2);
@@ -222,7 +224,7 @@
 
     /* ---------- inimigos avulsos ---------- */
     function sp(t, tx, y, opt) { L.spawns.push({ t: t, x: tx * TS, y: y, opt: opt || {} }); }
-    sp('c5ox', 10, GY, { face: 1 }); sp('flame', 32, 70);
+    sp('c5ox', 10, GY, { face: 1 });
     sp('c5ox', 59, GY); sp('c5erv', 76, GY); sp('c5dog', 98, GY);
     sp('flame', 112, 70); sp('c5dog', 130, GY); sp('crow', 140, 70); sp('c5dog', 155, GY);
     sp('bat', 220, 50); sp('c5eye', 236, 140); sp('bat', 247, 44); sp('c5eye', 270, 140); sp('bat', 275, 50);
@@ -425,17 +427,28 @@
           if (flash) open = 1.3;
           open = Math.min(1, open);
           if (open <= 0.05) continue;
-          var rw = 5 * e.s, rh = Math.max(1, Math.round((3 * e.s) * open));
-          c.fillStyle = flash ? '#ffffff' : TC.mix('#8a8a60', '#e8f0a0', Math.max(open * 0.6, warnK));
-          TC.fillEllipse(c, ex, ey, rw, rh);
-          if (!flash) {
-            var dx = TC.clamp((psx - ex) / 60, -1, 1) * (rw - 2), dy = TC.clamp((psy - ey) / 60, -1, 1) * Math.max(0, rh - 2);
-            c.drawImage(IR, Math.round(ex + dx - IR.width / 2), Math.round(ey + dy - IR.height / 2));
-          }
+          drawWallEye(c, ex, ey, e.s, open, psx, psy, warnK, flash);
           if (warnK > 0.3 || flash) TC.Lighting.glow(c, ex, ey, 6 * e.s + warnK * 4, '#f0ffb0', flash ? 0.9 : warnK * 0.6);
         }
       }
       c.restore();
+    }
+
+    /* um olho da parede: amêndoa clara, íris âmbar com pupila em fenda, pálpebra escura */
+    function drawWallEye(c, ex, ey, s, open, psx, psy, warnK, flash) {
+      var rw = 6 * s + 1, rh = Math.max(1, Math.round(3.6 * s * open));
+      c.fillStyle = '#2a1408'; TC.fillEllipse(c, ex, ey, rw + 1, rh + 1);
+      c.fillStyle = flash ? '#ffffff' : TC.mix('#b8ac78', '#f4ffc0', Math.max(open * 0.4, warnK));
+      TC.fillEllipse(c, ex, ey, rw, rh);
+      c.fillRect(ex - rw - 1, ey, 2, 1); c.fillRect(ex + rw, ey, 2, 1);
+      if (flash) return;
+      var ri = Math.max(1, Math.min(rh, Math.round(2.6 * s)));
+      var ix = Math.round(ex + TC.clamp((psx - ex) / 70, -1, 1) * (rw - ri - 1)), iy = Math.round(ey + TC.clamp((psy - ey) / 70, -1, 1) * Math.max(0, rh - ri));
+      c.fillStyle = warnK > 0.5 ? '#ffe060' : '#a86818'; TC.fillCircle(c, ix, iy, ri);
+      c.fillStyle = warnK > 0.5 ? '#fff4a0' : '#d89a28'; TC.fillCircle(c, ix, iy, Math.max(0.5, ri - 1));
+      c.fillStyle = '#0a0402'; c.fillRect(ix, iy - ri + 1, 1, Math.max(1, ri * 2 - 1));
+      if (ri > 1) { c.fillStyle = '#ffffff'; c.fillRect(ix - 1, iy - 1, 1, 1); }
+      if (rh > 2) { c.fillStyle = 'rgba(160,40,30,0.6)'; c.fillRect(ex - rw + 1, ey, 2, 1); c.fillRect(ex + rw - 2, ey + 1, 2, 1); }
     }
 
     function drawRoad(c, camX, t, st) {
@@ -489,6 +502,8 @@
         if (st === 'village') return open ? T.villTop[v] : baseT.dirt[v];
         if (st === 'mouth') return open ? T.villTop[v] : baseT.dirt[v];
         if (st === 'cave' || st === 'wall') return open ? T.sandTop[v] : T.sand[v];
+        if (st === 'pitL') return open ? T.pitL : baseT.dirt[v];
+        if (st === 'pitR') return open ? T.pitR : baseT.dirt[v];
       }
       if (code === 3) {
         if (st === 'cave' || st === 'wall') return open ? T.sandTop[v] : T.sand[v];
@@ -498,8 +513,6 @@
       if (code === 2 && st === 'cave') return T.sandTop[v];
       return null;
     };
-    /* as casas subterrâneas: o desenho do buraco no lugar do capim (feito depois que os tiles saem) */
-    var baseRender = null;
 
     /* ---------- partículas ---------- */
     L.particles = function (st) {
@@ -551,6 +564,16 @@
       st.drawOverlay = function (c) { overlay(st, c); baseOverlay.call(st, c); };
       var baseExit = st.exit;
       st.exit = function () { TC.audio.engineStop(0.3); baseExit.call(st); };
+      // registro para os testes: onde o Arno caiu e onde morreu
+      st._log = { falls: [], deaths: [] };
+      if (window.__stats) window.__stats.c5log = st._log;
+      var baseFell = st.playerFell, baseDead = st.onPlayerDead;
+      st.playerFell = function (p) {
+        var near = st.enemies.filter(function (e) { return e.alive && Math.abs(e.x - p.x) < 120; }).map(function (e) { return e.type + ':' + e.state + '@' + Math.round(e.x); }).join('|');
+        st._log.falls.push(Math.round(p.x) + (TC.params.bot ? ' s=' + p.state + ' safe=' + Math.round(p.lastSafe.x) + ' ' + near : ''));
+        return baseFell.call(st, p);
+      };
+      st.onPlayerDead = function () { st._log.deaths.push(Math.round(st.player.x) + (st.boss ? ':' + st.boss.type : '')); return baseDead.call(st); };
       L.lanterns.forEach(function (l) { l.lit = false; l.o.lights = null; l.o.glows = null; l.o.candle = false; });
       if (save && save.cp != null) L.lanterns.forEach(function (l) { if (l.cp <= save.cp) lightLantern(l, true); });
     };
@@ -572,7 +595,7 @@
     };
     L.speedMul = function (st, p) { return st.dazzle > 0 ? 0.5 : 1; };
     L.debugInfo = function (st) {
-      return { glare: st.glare.phase, dazzle: st.dazzle, fire: st.fireLit, road: !!st.roadOn, dawn: Math.round((st.dawn || 0) * 100) / 100, ammo: st.gun ? st.gun.ammo : 0 };
+      return { glare: st.glare.phase, dazzle: st.dazzle, fire: st.fireLit, road: !!st.roadOn, dawn: Math.round((st.dawn || 0) * 100) / 100, ammo: st.gun ? st.gun.ammo : 0, log: st._log };
     };
 
     L.afterCard = function* (st) {
@@ -648,7 +671,7 @@
     function drawLids(c, k) {
       // de olhos fechados: o escuro vermelho das pálpebras
       var h = Math.round(TC.H / 2 * k);
-      c.fillStyle = 'rgba(20,4,4,0.92)';
+      c.fillStyle = 'rgba(20,4,4,0.8)';
       c.fillRect(0, 0, SW, h); c.fillRect(0, TC.H - h, SW, h);
       if (k >= 1) { c.fillStyle = 'rgba(40,8,8,0.85)'; c.fillRect(0, 0, SW, TC.H); }
     }
@@ -670,6 +693,7 @@
         if (gl.t >= gl.warn) {
           gl.phase = 'flash'; gl.t = 0;
           gl.safe = !!p.covering;
+          if (st._log) (st._log.glare = st._log.glare || []).push(gl.safe ? 'safe' : 'dazed');
           TC.audio.sfx('c5glare');
           if (!gl.safe) {
             st.dazzle = gl.dazMax || frames(120);
@@ -721,7 +745,8 @@
       // os mil olhos da parede (entre as arenas também)
       if (st.mode === 'play') {
         if (px > Z.cave * TS + 16 && px < Z.boss * TS && st.glare.phase === 'idle' && !st.boss) {
-          if (--st.glareT <= 0) {
+          // (nunca em cima do poço d'água: dá tempo de atravessar antes)
+          if (--st.glareT <= 0 && Math.abs(px - 243.5 * TS) > 64 && p.onGround) {
             L.glare(st, frames(st.firstGlare ? 96 : 140, D.windup));
             st.firstGlare = true;
             st.glareT = frames(660 + TC.rnd.int(0, 240), D.cool);
@@ -825,7 +850,7 @@
     /* ---------- piloto automático (testes): olhos fechados, sair da mira, ir na cabeça tonta ---------- */
     L.botGoal = function (st, p) {
       var gl = st.glare;
-      if (gl.phase === 'flash' || (gl.phase === 'warn' && gl.t > gl.warn - 52)) return { duck: true };
+      if (gl.phase === 'flash' || (gl.phase === 'warn' && gl.t > gl.warn - 52)) return p.onGround ? { duck: true } : null;
       var goal = null, i;
       // pinhas: sair de baixo da sombra
       for (i = 0; i < st.deco.length; i++) {
@@ -908,14 +933,14 @@
       yield* co.wait(70);
       if (!a.seen) {
         a.seen = true;
-        yield* say(st, 'jacob', 'j.1', null, 'bottom');
+        yield* say(st, 'jacob', 'c5.j1', null, 'bottom');
         p.pose = 'shock';
-        yield* say(st, 'arno', 'j.2', 'shock', 'bottom');
+        yield* say(st, 'arno', 'c5.j2', 'shock', 'bottom');
         p.pose = 'idle';
-        yield* say(st, 'jacob', 'j.3', null, 'bottom');
-        yield* say(st, 'arno', 'j.4', null, 'bottom');
-        yield* say(st, 'jacob', 'j.5', null, 'bottom');
-        yield* say(st, 'arno', 'j.6', null, 'bottom');
+        yield* say(st, 'jacob', 'c5.j3', null, 'bottom');
+        yield* say(st, 'arno', 'c5.j4', null, 'bottom');
+        yield* say(st, 'jacob', 'c5.j5', null, 'bottom');
+        yield* say(st, 'arno', 'c5.j6', null, 'bottom');
       } else yield* co.wait(20);
       st.bossBarFill = 0;
       TC.fx.tween('letterbox', 0, 30);
@@ -933,8 +958,8 @@
       if (st.cine) return;
       st.cine = new TC.Script((function* () {
         st.mode = 'cine';
-        yield* say(st, 'jacob', 'j.7', null, 'bottom');
-        yield* say(st, 'arno', 'j.7b', null, 'bottom');
+        yield* say(st, 'jacob', 'c5.j7', null, 'bottom');
+        yield* say(st, 'arno', 'c5.j7b', null, 'bottom');
         if (st.mode === 'cine') st.mode = 'play';
       })());
     };
@@ -949,7 +974,7 @@
       yield* lockPlayer(st, j.x > p.x ? 1 : -1);
       TC.fx.tween('letterbox', 22, 30);
       yield* co.wait(20);
-      yield* say(st, 'jacob', 'j.8');
+      yield* say(st, 'jacob', 'c5.j8');
       TC.audio.sfx('ghostDie');
       for (var k = 0; k < 70; k++) {
         j.alpha = Math.max(0, 1 - k / 60);
@@ -959,7 +984,7 @@
       j.alive = false;
       st.boss = null; st.bossBarFill = 0;
       yield* co.wait(30);
-      yield* say(st, 'arno', 'j.9');
+      yield* say(st, 'arno', 'c5.j9');
       // a Dona Frida, o Ewald e a Dona Rosa chegam pela trilha, com os nós de pinho
       TC.audio.music('lore', 1.5);
       var cast = A.castInit();
@@ -976,25 +1001,30 @@
         yield;
       }
       ro.face = -1;
-      p.face = p.x > L._fireX ? -1 : 1;
-      yield* say(st, 'ewald', 'c.1');
-      yield* say(st, 'arno', 'c.2');
-      yield* say(st, 'ewald', 'c.3');
-      yield* say(st, 'rosa', 'c.4');
+      // o Arno vem até o fogo
+      var stand = L._fireX + 56;
+      p.pose = 'run';
+      for (k = 0; k < 300 && Math.abs(p.x - stand) > 3; k++) { p.face = stand > p.x ? 1 : -1; p.x += p.face * 1.1; p.anim++; if (p.anim % 16 === 0) TC.audio.sfx('step'); yield; }
+      p.pose = 'idle';
+      p.face = -1;
+      yield* say(st, 'ewald', 'c5.c1');
+      yield* say(st, 'arno', 'c5.c2');
+      yield* say(st, 'ewald', 'c5.c3');
+      yield* say(st, 'rosa', 'c5.c4');
       // a Dona Rosa acende o fogo e reza
       ro.pose = 'pray'; ro.face = -1;
       TC.audio.stopMusic(1.5);
       yield* co.wait(40);
-      yield* TC.ui.say(st.dlg, [{ who: null, key: 'c.pray' }], { pos: 'top' });
+      yield* TC.ui.say(st.dlg, [{ who: null, key: 'c5.cpray' }], { pos: 'top' });
       lightFire(st, false);
       st.fireActors = { frida: fr, rosa: ro, ewald: ew };
       yield* co.wait(60);
       fr.pose = 'cuia';
       ro.pose = 'idle';
       TC.audio.music('lore', 1.5);
-      yield* say(st, 'frida', 'c.5');
-      yield* say(st, 'rosa', 'c.6');
-      yield* say(st, 'ewald', 'c.7');
+      yield* say(st, 'frida', 'c5.c5');
+      yield* say(st, 'rosa', 'c5.c6');
+      yield* say(st, 'ewald', 'c5.c7');
       // ponto de retorno: o fogo aceso
       if (L.FIRE_CP > st.cp) { st.cp = L.FIRE_CP; }
       st.save();
@@ -1026,9 +1056,9 @@
       yield* co.wait(30);
       if (!a.seen) {
         a.seen = true;
-        yield* say(st, 'arno', 'k.1', 'shock', 'bottom');
+        yield* say(st, 'arno', 'c5.k1', 'shock', 'bottom');
         p.pose = 'idle';
-        yield* say(st, 'arno', 'k.2', null, 'bottom');
+        yield* say(st, 'arno', 'c5.k2', null, 'bottom');
       }
       p.pose = 'idle';
       st.bossBarFill = 0;
@@ -1074,6 +1104,8 @@
         yield;
       }
       tro.lights.forEach(function (lt) { lt.a = 0; }); tro.glows.forEach(function (lt) { lt.a = 0; });
+      // o tesouro fica apagado: postes, lampiões, velas e a estrela, tudo sem luz
+      tro.cv = TC.tint(tro.cv, '#100808', 0.55);
       L._truck5.lights = null;
       // pega fogo
       TC.audio.sfx('roar'); TC.audio.sfx('flame');
@@ -1086,6 +1118,19 @@
       b.free = true;
       for (k = 0; k < 60; k++) { b.moveHead(a.x0 + 140, 20, 0.05); yield; }
       TC.audio.sfx('c5crack'); TC.fx.shake(7, 60);
+      // o buraco no teto: lá fora, a madrugada
+      (function () {
+        var hw = 70, hh = 40, hole = TC.canvas(hw * 2, hh), hc = hole.ctx;
+        for (var yy = 0; yy < hh; yy++) {
+          var half = Math.round(hw * Math.sqrt(Math.max(0, 1 - yy / hh)) * (0.8 + TC.hash2(yy, 3, 9) * 0.2));
+          hc.fillStyle = TC.mix('#3a4a8a', '#1a1e40', yy / hh); hc.fillRect(hw - half, yy, half * 2, 1);
+          hc.fillStyle = '#2a1810'; hc.fillRect(hw - half - 2, yy, 2, 1); hc.fillRect(hw + half, yy, 2, 1);
+        }
+        for (var s = 0; s < 12; s++) { hc.fillStyle = '#c8d0f0'; hc.fillRect(hw - 50 + ((s * 37) % 100), (s * 7) % 20, 1, 1); }
+        var o = { cv: hole, x: a.x0 + 150 - hw, y: 0, z: 5, lights: [{ dx: hw, dy: 30, r: 90, col: '#8090c0', a: 0.6 }, { dx: hw, dy: 150, r: 70, col: '#6070a8', a: 0.45 }] };
+        L.back.push(o);
+        L._hole = o;
+      })();
       for (k = 0; k < 90; k++) {
         if (k % 2 === 0) st.parts.add({ x: a.x0 + TC.rnd.range(60, 220), y: -10, vx: TC.rnd.range(-0.6, 0.6), vy: TC.rnd.range(1, 3), ay: 0.2, life: 70, color: TC.rnd.pick(['#6a3e26', '#8a5a38', '#4a2a1a']), size: TC.rnd.int(2, 4) });
         b.moveHead(a.x0 + 150, -120, 0.03);
@@ -1096,15 +1141,15 @@
       st.ambientOverride = '#4a4048';
       yield* co.wait(30);
       p.pose = 'idle';
-      yield* say(st, 'arno', 'k.3', 'shock');
+      yield* say(st, 'arno', 'c5.k3', 'shock');
       // o Ewald chega correndo
       var ew = new E.Actor(C3.ewald, a.x0 - 10, GY, 1); ew.pose = 'walk'; ew.speed = 4;
       st.deco.push(ew);
       p.face = -1;
       for (k = 0; k < 120 && ew.x < p.x - 34; k++) { ew.x += 1.4; yield; }
       ew.pose = 'idle';
-      yield* say(st, 'ewald', 'k.4');
-      yield* say(st, 'arno', 'k.5');
+      yield* say(st, 'ewald', 'c5.k4');
+      yield* say(st, 'arno', 'c5.k5');
       TC.fx.fadeOut(40);
       yield* co.wait(46);
       // corte: morro abaixo, na carroceria
@@ -1142,8 +1187,8 @@
       TC.audio.sfx('c5hiss');
       if (!a.seen) {
         a.seen = true;
-        yield* say(st, 'ewald', 'r.1', null, 'bottom');
-        yield* say(st, 'arno', 'r.2', null, 'bottom');
+        yield* say(st, 'ewald', 'c5.r1', null, 'bottom');
+        yield* say(st, 'arno', 'c5.r2', null, 'bottom');
       }
       st.bossBarFill = 0;
       TC.fx.tween('letterbox', 0, 30);
@@ -1173,8 +1218,8 @@
       TC.fx.tween('letterbox', 22, 40);
       for (var k = 0; k < 120; k++) { st.dawn = Math.min(1, (st.dawn || 0) + 0.004); st.ambientOverride = TC.mix('#30305a', '#c8a090', st.dawn); st.roadLean *= 0.9; yield; }
       p.pose = 'point';
-      yield* say(st, 'arno', 'v.1');
-      yield* say(st, 'ewald', 'v.2');
+      yield* say(st, 'arno', 'c5.v1');
+      yield* say(st, 'ewald', 'c5.v2');
       TC.audio.engineSet(0.3, 0.05);
       p.pose = 'idle';
       yield* co.wait(30);

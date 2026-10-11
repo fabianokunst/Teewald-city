@@ -5,7 +5,7 @@
 
   Object.assign(L.pt, {
     'chap.6': '6 — A NOITE DO PELZNICKEL',
-    'chap.6.d': 'Um vulto de barba-de-velho leva as crianças da Linha Esperança dentro de um saco.',
+    'chap.6.d': 'Um vulto de barba-de-velho leva as crianças da Linha Esperança num saco.',
     'stage6.num': 'FASE 6',
     'stage6.name': 'A NOITE DO PELZNICKEL',
     'mission6': 'Encontre as três crianças levadas pelo Pelznickel. No caminho, a casa de pedra da Oma Hedwig guarda o diário.',
@@ -46,6 +46,7 @@
     'c6.mae': 'MÃE!',
     'c6.socorro': 'SOCORRO!',
     'c6.vo': 'VÔ!',
+    'c6.dodge': 'Ruhe!',
 
     /* ---------- prólogo: a igreja e a cabine ---------- */
     'ch6.card1': 'Teewald City — a noite seguinte',
@@ -150,7 +151,7 @@
 
   Object.assign(L.en, {
     'chap.6': '6 — THE NIGHT OF THE PELZNICKEL',
-    'chap.6.d': 'A figure covered in old man\'s beard carries off the children of Linha Esperança in a sack.',
+    'chap.6.d': 'A figure in old man\'s beard carries off the children of Linha Esperança in a sack.',
     'stage6.num': 'STAGE 6',
     'stage6.name': 'THE NIGHT OF THE PELZNICKEL',
     'mission6': 'Find the three children taken by the Pelznickel. On the way, Oma Hedwig\'s stone house keeps her diary.',
@@ -191,6 +192,7 @@
     'c6.mae': 'MOM!',
     'c6.socorro': 'HELP!',
     'c6.vo': 'GRANDPA!',
+    'c6.dodge': 'Ruhe!',
 
     'ch6.card1': 'Teewald City — the next night',
     'ch6.card2': 'Mother Church of Saint Michael the Archangel',

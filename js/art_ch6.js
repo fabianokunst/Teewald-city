@@ -246,7 +246,7 @@
       }
     }
   }
-  var MOSS = ['#8a9a7a', '#a8b498', '#6a7a5a', '#4a5a40', '#c0c8b0'];
+  var MOSS = ['#9aaa88', '#b8c4a8', '#7a8a68', '#5a6a4a', '#d0d8c0'];
   function buildBarba() {
     function frame(kind, f) {
       var pb = new TC.PixBuf(24, 24), cx = 12;
@@ -274,8 +274,8 @@
         strands(pb, cx, 3, 16, 19, 61 + f, f ? 0.5 : -0.5, MOSS);
         pb.set(cx - 2 + f, 6, u32('#ffff90')); pb.set(cx + 2 + f, 6, u32('#ffff90'));
       }
-      var cv = pb.toCanvas();
-      cv.ox = 12; cv.oy = 23;
+      var cv = TC.scaleCanvas(pb.toCanvas(), 1.5);
+      cv.ox = 18; cv.oy = 35;
       return cv;
     }
     return {
@@ -612,6 +612,25 @@
     return pb.toCanvas();
   }
 
+  /* a Lena, neta do Seu Arnoldo: tranças loiras e fita vermelha */
+  function lenaPortrait(scared) {
+    var pb = new TC.PixBuf(40, 40);
+    portraitBG(pb, '#1a2a1a', '#060806');
+    ellipseFill(pb, 20, 45, 17, 11, function () { return u32('#4a6a3a'); });
+    pb.rect(16, 30, 8, 5, u32('#c09078'));
+    ellipseFill(pb, 20, 18, 12, 12, function (x, y) { return u32((x + y) % 4 === 0 ? '#c09030' : '#e8c060'); });
+    pb.rect(7, 20, 4, 15, u32('#e0b850')); pb.rect(29, 20, 4, 15, u32('#e0b850'));
+    for (var y = 22; y < 35; y += 3) { pb.rect(7, y, 4, 1, u32('#b08830')); pb.rect(29, y, 4, 1, u32('#b08830')); }
+    pb.rect(6, 34, 6, 3, u32('#c03030')); pb.rect(28, 34, 6, 3, u32('#c03030'));
+    ellipseFill(pb, 20, 23, 9, 10, function (x, y, dx, dy) { var l = -dx * 0.6 - dy * 0.3; return u32(l > 0.35 ? '#fff0d8' : l > -0.25 ? '#f0c8a0' : l > -0.6 ? '#d0a080' : '#a07060'); });
+    ellipseFill(pb, 20, 14, 10, 5, function (x, y, dx, dy) { return dy > 0.3 ? 0 : u32((x + y) % 3 === 0 ? '#c09030' : '#e8c060'); });
+    pb.rect(14, 22, 4, 3, u32('#f8f8f8')); pb.rect(23, 22, 4, 3, u32('#f8f8f8'));
+    pb.rect(15, 23, 2, 2, u32('#2a3a5a')); pb.rect(24, 23, 2, 2, u32('#2a3a5a'));
+    for (var k = 0; k < 5; k++) pb.set(14 + k * 3, 27 + (k % 2), u32('#e09080'));
+    if (scared) ellipseFill(pb, 20.5, 31, 2, 1.6, function () { return u32('#6a2020'); }); else pb.rect(18, 31, 5, 1, u32('#c04050'));
+    return pb.toCanvas();
+  }
+
   /* ====================== CABINE: O EWALD NO VOLANTE, VISTO DO BANCO DO CARONA ====================== */
   C6.cabOverlay = function () {
     var W = TC.W, H = TC.H, cv = TC.canvas(W, H), c = cv.ctx;
@@ -666,7 +685,7 @@
   };
   /* braços de couro marrom do Ewald até as mãos no volante */
   C6.drawEwaldArms = function (ctx, wcx, wcy, ang) {
-    [[-150, -10, 224], [-30, 150, 250]].forEach(function (h) {
+    [[-150, 4, 178], [-30, 40, 166]].forEach(function (h) {
       var a = h[0] * Math.PI / 180 + ang;
       var hx = wcx + Math.cos(a) * 66, hy = wcy + Math.sin(a) * 66;
       var sx = h[1], sy = h[2], dx = hx - sx, dy = hy - sy;
@@ -684,19 +703,50 @@
   };
   /* perfil do Ewald na contraluz do painel (chapéu de feltro, bigode) */
   C6.ewaldProfile = function () {
-    var cv = TC.canvas(70, 110), c = cv.ctx;
-    c.fillStyle = TC.col('#0a0608');
-    TC.fillPoly(c, [[0, 110], [0, 70], [14, 62], [30, 60], [44, 66], [52, 80], [60, 110]]);
-    TC.fillPoly(c, [[22, 62], [40, 62], [44, 50], [46, 42], [50, 40], [44, 34], [42, 22], [26, 18], [18, 30], [18, 50]]);
+    // o pai visto de lado, na contraluz do painel: chapéu de feltro, nariz, bigode, gola da jaqueta de couro
+    var cv = TC.canvas(76, 120), c = cv.ctx;
+    var dark = '#0c0809', rim = '#a86a3c', rimD = '#6a4024', skin = '#3a2418';
+    c.fillStyle = TC.col(dark);
+    // ombro e jaqueta
+    TC.fillPoly(c, [[0, 120], [0, 78], [10, 70], [28, 66], [44, 70], [56, 84], [66, 120]]);
+    // pescoço
+    TC.fillPoly(c, [[24, 70], [40, 70], [40, 58], [26, 56]]);
+    // cabeça de perfil, olhando para a direita (a estrada)
+    TC.fillPoly(c, [[20, 26], [42, 24], [46, 32], [47, 38], [52, 44], [48, 46], [49, 50], [47, 52], [48, 56], [44, 60], [38, 62], [28, 60], [20, 50], [18, 38]]);
     // chapéu
-    TC.fillPoly(c, [[8, 22], [56, 18], [56, 21], [46, 23], [44, 8], [36, 4], [22, 6], [18, 23]]);
-    c.fillStyle = TC.col('#3a2414');
-    c.fillRect(20, 19, 25, 2);
-    // contraluz laranja do painel
-    c.fillStyle = TC.col('#7a4a28');
-    for (var y = 24; y < 62; y++) { var xx = y < 34 ? 43 : y < 42 ? 46 - (y - 34) * 0.2 : y < 46 ? 49 : 44 - (y - 46) * 0.3; c.fillRect(Math.round(xx), y, 1, 1); }
-    c.fillStyle = TC.col('#4a2a18'); c.fillRect(40, 47, 8, 3);
-    c.fillStyle = TC.col('#5a3a20'); c.fillRect(44, 64, 10, 1);
+    TC.fillPoly(c, [[6, 28], [60, 23], [60, 26], [48, 28], [46, 12], [38, 7], [24, 9], [20, 28]]);
+    // pele do rosto pegando a luz do painel
+    c.fillStyle = TC.col(skin);
+    TC.fillPoly(c, [[36, 30], [42, 30], [46, 38], [50, 44], [47, 46], [47, 52], [45, 58], [38, 60], [34, 52]]);
+    // contraluz
+    c.fillStyle = TC.col(rim);
+    [[42, 30], [43, 31], [44, 33], [45, 35], [46, 37], [47, 39], [48, 40], [49, 41], [50, 42], [51, 43], [51, 44], [48, 46], [48, 47], [49, 49], [47, 52], [47, 54], [46, 56], [45, 57], [44, 58]].forEach(function (p) { c.fillRect(p[0], p[1], 1, 1); });
+    c.fillStyle = TC.col(rimD);
+    for (var x = 47; x < 60; x++) c.fillRect(x, Math.round(24 - (x - 47) * 0.1), 1, 1);
+    // olho e bigode
+    c.fillStyle = TC.col('#e8d8c0'); c.fillRect(43, 36, 1, 1);
+    c.fillStyle = TC.col('#1a0e08'); TC.fillPoly(c, [[40, 48], [49, 48], [50, 51], [44, 52], [40, 51]]);
+    c.fillStyle = TC.col('#7a5032'); c.fillRect(46, 48, 4, 1);
+    // gola e fita do chapéu
+    c.fillStyle = TC.col('#3a2414'); c.fillRect(22, 24, 25, 2);
+    c.fillStyle = TC.col(rimD); TC.thickLine(c, 40, 64, 52, 74, 1.4);
+    for (var y = 74; y < 118; y += 3) c.fillRect(Math.round(52 + (y - 74) * 0.3), y, 1, 1);
+    return cv;
+  };
+  /* o joelho do Arno no banco do carona, com a mão em cima */
+  C6.arnoKnee = function () {
+    var cv = TC.canvas(76, 30), c = cv.ctx;
+    c.fillStyle = TC.col('#1e2c56'); TC.fillEllipse(c, 40, 22, 34, 12);
+    c.fillStyle = TC.col('#2c3e70'); TC.fillEllipse(c, 40, 20, 31, 10);
+    c.fillStyle = TC.col('#3c5490'); TC.fillEllipse(c, 38, 17, 24, 6);
+    c.fillStyle = TC.col('#5a74b0'); TC.fillEllipse(c, 34, 14, 12, 2);
+    c.fillStyle = TC.col('#1e2c56'); for (var x = 10; x < 70; x += 3) c.fillRect(x, Math.round(26 - Math.sin((x - 10) / 60 * Math.PI) * 8), 1, 1);
+    // a mão e o punho da camisa xadrez
+    c.fillStyle = TC.col('#7a2420'); c.fillRect(54, 6, 16, 8);
+    c.fillStyle = TC.col('#b03428'); c.fillRect(54, 6, 16, 2); c.fillRect(58, 6, 2, 8); c.fillRect(64, 6, 2, 8);
+    c.fillStyle = TC.col('#c88a5a'); TC.fillEllipse(c, 50, 12, 7, 4);
+    c.fillStyle = TC.col('#e8aa76'); TC.fillEllipse(c, 49, 11, 5, 2);
+    c.fillStyle = TC.col('#9a5e3a'); c.fillRect(44, 14, 10, 1);
     return cv;
   };
 
@@ -1266,15 +1316,16 @@
     c.fillStyle = TC.col('#6a4a2e'); c.fillRect(0, 22, w, 3);
     // janelas com o luar
     cv.windows = [];
-    for (x = 26; x < boardX - 60; x += 96) {
+    [22, boardX - 92].forEach(function (x) {
       c.fillStyle = TC.col('#2a1a10'); c.fillRect(x - 3, 40, 34, 60);
       c.fillStyle = TC.col('#1c2a50'); c.fillRect(x, 43, 28, 54);
       for (var k = 0; k < 6; k++) { c.fillStyle = TC.col('#9aa8d0'); c.fillRect(x + 2 + r.int(0, 24), 45 + r.int(0, 20), 1, 1); }
       c.fillStyle = TC.col('#e8e4dc'); c.fillRect(x + 13, 43, 2, 54); c.fillRect(x, 60, 28, 2); c.fillRect(x, 78, 28, 2);
       cv.windows.push(x + 14);
-    }
+    });
+    var k;
     // cartaz do alfabeto
-    var ax = Math.round(boardX - 150);
+    var ax = 62;
     c.fillStyle = TC.col('#1a1410'); c.fillRect(ax, 30, 70, 30);
     c.fillStyle = TC.col('#e8e0c8'); c.fillRect(ax + 1, 31, 68, 28);
     TC.font.draw(c, 'A B C D E F G', ax + 35, 33, '#8a2a1a', { align: 'center' });
@@ -1298,16 +1349,16 @@
     c.fillStyle = TC.col('#7a5230'); c.fillRect(px, 52, 2, 9);
     c.fillStyle = TC.col('#9a6a3e'); TC.fillEllipse(c, px + 1, 65, 4, 5);
     c.fillStyle = TC.col('#3a2414'); c.fillRect(px, 64, 1, 1); c.fillRect(px + 2, 66, 1, 1);
-    c.fillStyle = TC.col('#2a1a10'); TC.fillCircle(c, ax + 100, 40, 7);
-    c.fillStyle = TC.col('#e8e0c8'); TC.fillCircle(c, ax + 100, 40, 6);
-    c.fillStyle = TC.col('#1a1010'); c.fillRect(ax + 100, 35, 1, 5); c.fillRect(ax + 100, 40, 4, 1);
+    c.fillStyle = TC.col('#2a1a10'); TC.fillCircle(c, boardX - 16, 40, 7);
+    c.fillStyle = TC.col('#e8e0c8'); TC.fillCircle(c, boardX - 16, 40, 6);
+    c.fillStyle = TC.col('#1a1010'); c.fillRect(boardX - 16, 35, 1, 5); c.fillRect(boardX - 16, 40, 4, 1);
     // cabides com bonezinhos e lampião de querosene
     for (k = 0; k < 4; k++) {
-      var hx = 30 + k * 20;
+      var hx = 14 + k * 12;
       c.fillStyle = TC.col('#8a8a96'); c.fillRect(hx, 110, 1, 3);
       c.fillStyle = TC.col(['#2a5a8a', '#8a2a2a', '#4a6a3a', '#5a4a3a'][k]); TC.fillEllipse(c, hx, 116, 4, 3);
     }
-    cv.lampX = Math.round(boardX - 30); cv.lampY = 30;
+    cv.lampX = 118; cv.lampY = 30;
     c.fillStyle = TC.col('#2a2a30'); c.fillRect(cv.lampX, 22, 1, 6);
     c.fillStyle = TC.col('#8a8a96'); c.fillRect(cv.lampX - 2, 28, 5, 6);
     c.fillStyle = TC.col('#ffe090'); c.fillRect(cv.lampX - 1, 29, 3, 4);
@@ -1416,7 +1467,13 @@
   function finish(cv) {
     // grão do papel e vinheta escura nas bordas
     var c = cv.ctx, w = cv.width, h = cv.height, r = TC.RNG(w * 7 + h);
-    for (var k = 0; k < w * h / 18; k++) { c.fillStyle = TC.col(r() < 0.5 ? '#f0e0b8' : '#a88a5a'); c.fillRect(r.int(0, w - 1), r.int(0, h - 1), 1, 1); }
+    // grão do papel: só um leve claro/escuro em cima da própria cor
+    var id = c.getImageData(0, 0, w, h), d = id.data;
+    for (var k = 0; k < w * h / 10; k++) {
+      var i = (r.int(0, w - 1) + r.int(0, h - 1) * w) * 4, f = r() < 0.5 ? 0.86 : 1.12;
+      d[i] = Math.min(255, d[i] * f); d[i + 1] = Math.min(255, d[i + 1] * f); d[i + 2] = Math.min(255, d[i + 2] * f);
+    }
+    c.putImageData(id, 0, 0);
     for (var y = 0; y < h; y++) for (var x = 0; x < w; x++) {
       var dx = (x - w / 2) / (w / 2), dy = (y - h / 2) / (h / 2), d = dx * dx * 0.8 + dy * dy;
       if (d > 0.75 && TC.dither(x, y, (d - 0.75) * 1.6)) { c.fillStyle = TC.col(d > 1.1 ? SEP.ink : SEP.dark); c.fillRect(x, y, 1, 1); }
@@ -1600,7 +1657,7 @@
     ART.castInit();
     C6.arnoBowl = buildArnoBowl();
     C6.ball = buildBall();
-    C6.ballIcon = TC.sprite(['.kkk.', 'kbBbk', 'kbbbk', 'kbbdk', '.kkk.'], { k: '#000000', b: '#3a2e26', B: '#8a7a6a', d: '#1a1210' });
+    C6.ballIcon = TC.sprite(['..kkk..', '.kbBbk.', 'kbBWbbk', 'kbbbbbk', 'kbbbbdk', '.kbbdk.', '..kkk..'], { k: '#d8c8a8', b: '#5a4a3e', B: '#a89480', W: '#f0e8d8', d: '#2a1e18' });
     C6.pinUp = C6.pin(false); C6.pinDown = C6.pin(true);
     C6.scare = buildScarecrow();
     C6.barba = buildBarba();
@@ -1611,7 +1668,7 @@
     C6.T = C6.tiles();
     C6.kidSackImg = C6.kidSack();
     C6.sackOpenImg = C6.sackOpen();
-    var EXTRA = { pelz: { normal: pelzPortrait() }, vogt: { normal: vogtPortrait(false), sad: vogtPortrait(true) } };
+    var EXTRA = { pelz: { normal: pelzPortrait() }, vogt: { normal: vogtPortrait(false), sad: vogtPortrait(true) }, lena: { normal: lenaPortrait(false), scared: lenaPortrait(true) } };
     var orig = ART.portrait;
     if (!orig._ch6) {
       ART.portrait = function (who, f) {

@@ -394,6 +394,7 @@
     }
     if (this.t > 240 || this.x < st.camX - 40 || this.x > st.camX + W + 40 || this.y < -60) this.alive = false;
   };
+  Last.prototype.light = function (L, cx, cy) { if (this.returned) L.add(this.x - cx, this.y - cy, 18, '#ffe080', 0.6); };
   Last.prototype.draw = function (c, cx, cy) {
     var img = TC.rotCached(art().last, this.t * 0.25 * (this.vx < 0 ? -1 : 1), 16);
     c.drawImage(this.returned ? TC.tintCached(img, '#ffe080', 0.4) : img, Math.round(this.x - img.width / 2 - cx), Math.round(this.y - img.height / 2 - cy));
@@ -412,6 +413,7 @@
     var p = st.player;
     if (st.mode === 'play' && TC.overlap({ x: this.x - 3, y: this.y - 3, w: 6, h: 6 }, p.hurtBox())) { if (p.damage(st, 1, this.vx > 0 ? 1 : -1)) this.alive = false; }
   };
+  Needle.prototype.light = function (L, cx, cy) { L.add(this.x - cx, this.y - cy, 10, '#d0e0ff', 0.4); };
   Needle.prototype.draw = function (c, cx, cy) {
     var L = Math.sqrt(this.vx * this.vx + this.vy * this.vy) || 1, ux = this.vx / L, uy = this.vy / L;
     var x = this.x - cx, y = this.y - cy;

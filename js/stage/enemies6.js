@@ -109,7 +109,10 @@
     var img = B[((Math.floor(this.rot / 6) % 4) + 4) % 4];
     c.drawImage(img, Math.round(this.x - 6 - cx), Math.round(this.y - 11 - cy));
   };
+  function stat(st, k) { st.c6stats = st.c6stats || {}; st.c6stats[k] = (st.c6stats[k] || 0) + 1; if (TC.params.bot) window.__c6stats = st.c6stats; }
+  TC.ch6.stat = stat;
   TC.ch6.throwBall = function (st, p) {
+    stat(st, 'thrown');
     st.ball = Math.max(0, (st.ball || 0) - 1);
     p.throwing = true;
     var air = !p.onGround;
@@ -155,6 +158,7 @@
   PinSet.prototype.knock = function (st) {
     if (this.down) return;
     this.down = true; this.t = 0;
+    stat(st, 'pins');
     var self = this;
     this.fall = PIN_POS.map(function (p, i) { return { x: p[0], vx: (p[0] + TC.rnd.range(-3, 3)) * 0.15 + 0.8, vy: TC.rnd.range(-3.2, -1.4), y: 0, rot: 0, k: i }; });
     TC.audio.sfx('c6pins');
@@ -343,7 +347,7 @@
     this.shakes = 0; this.lastAtk = -1;
   }
   Barba.prototype.attacking = function () { return this.state === 'leapPrep' || this.state === 'leap' || this.state === 'grab'; };
-  Barba.prototype.hurtBox = function () { return { x: this.x - 9, y: this.y - 28, w: 18, h: 28 }; };
+  Barba.prototype.hurtBox = function () { return { x: this.x - 11, y: this.y - 28, w: 22, h: 28 }; };
   Barba.prototype.hit = function (st, d, dir, kb, id, atk) {
     if (this.state === 'grab' && !(atk && atk.around)) return false;
     return genericHit(this, st, d, dir, kb, id, atk);
@@ -408,6 +412,7 @@
       case 'leap':
         if (play && !st.c6grab && p.alive && p.inv <= 0 && (p.state === 'normal' || p.state === 'attack' || p.state === 'shoot') &&
             TC.overlap({ x: this.x - 6, y: this.y - 14, w: 12, h: 14 }, p.hurtBox())) {
+          stat(st, 'grabs');
           this.state = 'grab'; this.t = 0; st.c6grab = this; this.shakes = 0; this.lastAtk = p.atkId; this.lastFace = p.face;
           TC.audio.sfx('c6sack');
           st.floatText(p.x, p.y - 44, TC.t('c6.grab'), '#c0d8a0');
@@ -472,7 +477,7 @@
   };
   Barba.prototype.light = function (L, cx, cy) {
     if (this.dying) return;
-    L.add(this.x - cx, this.y - 10 - cy, this.state === 'leapPrep' || this.state === 'grab' ? 14 : 8, '#d0f080', 0.5);
+    L.add(this.x - cx, this.y - 14 - cy, this.state === 'leapPrep' || this.state === 'grab' ? 26 : 20, '#c8e0a0', 0.55);
   };
 
   /* ================= JOGADOR DE BOLÃO POSSUÍDO =================
@@ -632,7 +637,7 @@
     opt = opt || {};
     this.arena = opt.arena;
     this.isBoss = true;
-    this.hp = this.maxHp = Math.round(TC.diff().bossHp * 1.8);
+    this.hp = this.maxHp = Pelz.maxHpFor();
     this.form = opt.vogt ? 'vogt' : 'pelz';
     this.setForm(this.form);
     this.score = 12000;
@@ -645,6 +650,7 @@
     this.rollAng = 0;
     this.face = -1;
   }
+  Pelz.maxHpFor = function () { return Math.round(TC.diff().bossHp * byDiff(2.4, 2.4, 1.9)); };
   Pelz.prototype.setForm = function (f) {
     this.form = f;
     if (f === 'pelz') { this.name = 'boss6.name'; this.bar = { name: '#d8f0b8', back: '#101a0c', fill: '#6a9a4a', hi: '#c0e8a0' }; }
@@ -675,8 +681,15 @@
     var s = this.state;
     if (s === 'intro' || s === 'transform' || s === 'dying' || s === 'downed' || s === 'sackHold' || s === 'burning' && this.t < 4) return false;
     if (s === 'roll') { if (id !== this.lastHit) { this.lastHit = id; TC.audio.sfx('c6tuft'); st.spark(this.x, this.y - 16); } return false; }
+    // o mestre-escola às vezes dá um passo para trás e o golpe passa no vazio
+    if (this.form === 'vogt' && s === 'stalk' && (this.dodgeCD || 0) <= 0 && TC.rnd() < byDiff(0.12, 0.22, 0.35)) {
+      this.dodgeCD = 90; this.set('dodge'); this.vx = dir * 3.4; TC.audio.sfx('whoosh');
+      st.floatText(this.x, this.y - 88, TC.t('c6.dodge'), '#f0ece0');
+      return false;
+    }
+    if (s === 'dodge') return false;
     var dd = d;
-    if (this.form === 'pelz' && !this.vuln()) dd = d * 0.5;          // o musgo amortece os golpes
+    if (this.form === 'pelz' && !this.vuln()) dd = d * 0.55;         // o musgo amortece os golpes
     if (this.form === 'pelz') dd = Math.min(dd, Math.max(0.25, this.hp - this.maxHp * 0.45));
     var ok = genericHit(this, st, dd, dir, kb, id, atk);
     if (ok) {
@@ -685,7 +698,7 @@
       else for (var j = 0; j < 3; j++) st.parts.add({ x: this.x + dir * 6, y: this.y - TC.rnd.range(30, 60), vx: dir * TC.rnd.range(0.3, 1.2), vy: TC.rnd.range(-1, 0), life: 26, color: '#e8e8e0', size: 1, fade: true });
       if (!this.vuln()) {
         this.stagger += d;
-        if (this.stagger >= 14 && s !== 'stagger') { this.stagger = 0; this.set('stagger'); this.vx = dir * 1.6; }
+        if (this.stagger >= 20 && s !== 'stagger' && (s === 'stalk' || s === 'recover')) { this.stagger = 0; this.set('stagger'); this.vx = dir * 1.6; }
       }
       if (this.form === 'pelz' && this.hp <= this.maxHp * 0.5 + 0.01) this.startTransform(st);
     }
@@ -731,6 +744,7 @@
   };
   Pelz.prototype.capture = function (st) {
     var p = st.player;
+    stat(st, 'sacks');
     st.c6sack = { mash: 0, need: byDiff(5, 7, 10), t: 0 };
     p.setState('cine'); p.pose = 'idle'; p.inSack = true; p.vx = 0; p.vy = 0;
     this.set('sackHold');
@@ -759,6 +773,7 @@
     var spd = (vogt ? 1.2 : 1) * D.speed;
     var play = st.mode === 'play';
     var dx = p.x - this.x;
+    if (this.dodgeCD > 0) this.dodgeCD--;
     this.projs = this.projs.filter(function (pj) { return pj.alive; });
     this.marks = this.marks.filter(function (m) { return m.alive; });
     switch (this.state) {
@@ -776,6 +791,7 @@
         if (t > frames(vogt ? 48 : 64, D.cool) && play && st.mayAttack(this)) {
           var n = ++this.attacks;
           var close = Math.abs(dx) < 56;
+          if (TC.params.c6atk) { this.set(TC.params.c6atk); break; }
           if (!vogt) {
             if (close) this.set(n % 2 ? 'switchPrep' : 'sackPrep');
             else this.set(['chainPrep', 'rollPrep', 'markPrep', 'sackPrep', 'chainPrep', 'rollPrep'][n % 6]);
@@ -821,14 +837,14 @@
         p.x = TC.clamp(this.x + this.face * 20, this.arena.x0 + 8, this.arena.x0 + W - 8); p.y = G; p.vx = 0;
         if (S.t > 4 && (p.atkBuf === 8 || p.jumpBuf === 7)) { S.mash++; this.sackShake = 8; TC.audio.sfx('c6tuft'); st.spark(p.x + TC.rnd.range(-6, 6), p.y - 18); }
         if (this.sackShake > 0) this.sackShake--;
-        if (S.t % 45 === 44 && p.hp > 1) { p.hp = Math.max(1, Math.round((p.hp - 0.25) * 4) / 4); TC.audio.sfx('hurt'); }
+        if (S.t % 60 === 59 && p.hp > 1) { p.hp = Math.max(1, Math.round((p.hp - 0.25) * 4) / 4); TC.audio.sfx('hurt'); }
         if (S.mash >= S.need) {
           this.releaseSack(st, true);
           this.set('dizzy');
           st.floatText(this.x, this.y - 80, TC.t('c6.torn'), '#ffe090');
           TC.audio.sfx('break'); TC.fx.shake(3, 10);
           for (var q = 0; q < 14; q++) st.parts.add({ x: p.x, y: p.y - 16, vx: TC.rnd.range(-2, 2), vy: TC.rnd.range(-3, -0.5), ay: 0.15, life: 40, color: TC.rnd.pick(['#8a7044', '#a08858', '#6a5430']), size: 2, fade: true });
-        } else if (S.t > 330) {
+        } else if (S.t > 270) {
           // não se soltou a tempo: é arremessado para fora
           this.releaseSack(st, false);
           p.damage(st, 2, this.face, true);
@@ -885,6 +901,7 @@
       case 'burning':
         // bateu na fornalha da estufa: o musgo seco pega fogo
         if (t === 1) {
+          stat(st, 'burns');
           var dmg = Math.round(this.maxHp * 0.12);
           this.hp = Math.max(1, this.hp - dmg);
           this.flash = 10;
@@ -967,11 +984,13 @@
         if (t === 1) { st.floatText(this.x, this.y - 88, TC.t('c6.list'), '#f0ece0'); TC.audio.sfx('c6chalk'); }
         if (t > frames(36, D.windup)) {
           var names = ['SCHMITT 1898', 'WEBER 1931', 'BECKER 1977', 'KESSLER 1997', 'BECKER 1997'];
-          var nn = byDiff(3, 4, 5), cx0 = TC.clamp(p.x, this.arena.x0 + 30, this.arena.x0 + W - 30);
+          // cinco lugares no pátio; os nomes caem nos mais perto do Arno (sempre sobra lugar livre)
+          var nn = byDiff(2, 3, 4), ax0 = this.arena.x0;
+          var slots = [32, 80, 128, 176, 224].map(function (sx) { return ax0 + sx; });
+          slots.sort(function (a, b) { return Math.abs(a - p.x) - Math.abs(b - p.x); });
           for (var q2 = 0; q2 < nn; q2++) {
-            var off2 = q2 === 0 ? 0 : (q2 % 2 ? 1 : -1) * Math.ceil(q2 / 2) * 62;
-            var nx = TC.clamp(cx0 + off2, this.arena.x0 + 30, this.arena.x0 + W - 30);
-            var fn = new FallingName(this, nx, G, names[(q2 + this.attacks) % names.length], frames(56, D.windup) + q2 * 12);
+            var fn = new FallingName(this, slots[q2], G, names[(q2 + this.attacks) % names.length], frames(56, D.windup) + q2 * 12);
+            fn.row = Math.round((slots[q2] - ax0 - 32) / 48) % 2;
             this.marks.push(fn); st.deco.push(fn);
           }
           this.set('listWait');
@@ -987,7 +1006,12 @@
         break;
       case 'stagger':
         this.x += this.vx; this.vx *= 0.9;
-        if (t > 46) this.set('stalk');
+        if (t > 40) this.set('stalk');
+        break;
+      case 'dodge':
+        this.x += this.vx; this.vx *= 0.86;
+        if (t % 3 === 0) st.parts.add({ x: this.x, y: this.y - 40, life: 14, color: '#e8e8e0', size: 2, fade: true });
+        if (t > 22) this.set('stalk');
         break;
       case 'dizzy':
         if (t % 18 === 0) for (var s3 = 0; s3 < 3; s3++) st.parts.add({ x: this.x + TC.rnd.range(-6, 6), y: this.y - 78, vx: Math.cos(t * 0.3 + s3 * 2) * 0.6, vy: -0.4, life: 24, color: '#ffe080', size: 1, layer: 1 });
@@ -1029,6 +1053,7 @@
         case 'chalkThrow': return t < 14 ? V.throw[0] : V.idle[0];
         case 'markPrep': case 'markWait': case 'listWait': return V.point[0];
         case 'stagger': case 'dizzy': case 'rollDizzy': return V.hurt[0];
+        case 'dodge': return V.walk[1];
         case 'dying': return V.hurt[0];
         case 'downed': return V.kneel[0];
       }
@@ -1084,7 +1109,7 @@
     }
     if (this.state === 'sackHold') {
       var hs = this.hand(), S = art().kidSackImg, fr = S[this.sackShake > 0 ? 1 + ((this.t >> 1) % 2) : 0];
-      var sx = Math.round(this.x + this.face * 20 - cx), sy = Math.round(this.y - cy + 1);
+      var sx = Math.round(this.x + this.face * 20 - cx + (this.sackShake > 0 ? ((this.t >> 1) % 2 ? 1 : -1) : 0)), sy = Math.round(this.y - cy - 8 + Math.sin(this.t * 0.12) * 1.5);
       c.drawImage(this.face < 0 ? TC.flip(fr) : fr, sx - fr.ox, sy - fr.oy);
       c.fillStyle = '#2a1a10';
       TC.thickLine(c, Math.round(hs.x - cx), Math.round(hs.y - cy), sx, sy - 30, 1.5);
@@ -1166,9 +1191,14 @@
     var left = this.delay - this.t;
     if (!this.struck) {
       var blink = left < 24 ? (this.t >> 1) % 2 : left < 50 ? (this.t >> 2) % 2 : 0;
-      c.fillStyle = blink ? '#ff9070' : '#f0f0e8';
-      for (var k = -5; k <= 5; k++) { c.fillRect(x + k, y - 3 + Math.round(k * 0.3), 1, 1); c.fillRect(x + k, y - 3 - Math.round(k * 0.3), 1, 1); }
-      c.fillRect(x - 6, y - 1, 13, 1);
+      // coluna de pó de giz avisando onde o golpe vai cair
+      var k0 = TC.clamp(this.t / this.delay, 0, 1);
+      c.globalAlpha = 0.12 + 0.22 * k0 + (blink ? 0.12 : 0);
+      c.fillStyle = '#e8e8ff';
+      c.fillRect(x - 5, y - 70, 11, 68);
+      c.globalAlpha = 1;
+      c.fillStyle = blink ? '#ff9070' : '#f8f8f0';
+      for (var k = -7; k <= 7; k++) { c.fillRect(x + k, y - 3 + Math.round(k * 0.3), 2, 1); c.fillRect(x + k, y - 3 - Math.round(k * 0.3), 2, 1); }
     } else {
       var a = 1 - (this.t - this.delay) / 24;
       c.globalAlpha = Math.max(0, a);
@@ -1221,7 +1251,7 @@
         this.struck = true; this.y = this.gy - 4;
         TC.audio.sfx('c6strike');
         var p = st.player;
-        if (st.mode === 'play' && Math.abs(p.x - this.x) < this.w / 2 + 3 && p.y > this.gy - 40) p.damage(st, 1, p.x < this.x ? -1 : 1);
+        if (st.mode === 'play' && Math.abs(p.x - this.x) < this.w / 2 - 4 && p.y > this.gy - 40) p.damage(st, 1, p.x < this.x ? -1 : 1);
         for (var i = 0; i < 18; i++) st.parts.add({ x: this.x + TC.rnd.range(-this.w / 2, this.w / 2), y: this.gy - 4, vx: TC.rnd.range(-1, 1), vy: TC.rnd.range(-2, -0.3), ay: 0.1, life: 26, color: TC.rnd.pick(['#ffffff', '#e8e8e0']), size: 1, fade: true });
       }
     }
@@ -1230,15 +1260,29 @@
   FallingName.prototype.draw = function (c, cx, cy) {
     var x = Math.round(this.x - cx);
     if (!this.struck) {
-      var k = TC.clamp(this.t / this.delay, 0, 1);
-      c.fillStyle = 'rgba(10,10,20,' + (0.25 + 0.35 * k).toFixed(2) + ')';
-      TC.fillEllipse(c, x, Math.round(this.gy - cy - 1), Math.round(this.w / 2 * (0.5 + k * 0.5)), 2);
-      if (this.t > this.delay) TC.font.draw(c, this.txt, x, Math.round(this.y - cy - 8), '#ffffff', { align: 'center', outline: '#1a1a2a' });
+      var k = TC.clamp(this.t / this.delay, 0, 1), gy = Math.round(this.gy - cy), hw = Math.round(this.w / 2 * (0.6 + k * 0.4));
+      var blink = this.delay - this.t < 20 && (this.t >> 1) % 2;
+      // a sombra do nome no chão, riscada de giz
+      c.fillStyle = 'rgba(0,0,0,0.45)';
+      TC.fillEllipse(c, x, gy - 1, hw, 2);
+      c.fillStyle = blink ? '#ff9070' : '#e8e8e0';
+      for (var q = -hw; q <= hw; q += 3) c.fillRect(x + q, gy - 1 + (Math.abs(q) > hw - 3 ? 0 : (q / 3 | 0) % 2), 2, 1);
+      if (this.t <= this.delay) {
+        c.globalAlpha = 0.15 + 0.3 * k;
+        TC.font.draw(c, this.txt, x, gy - 60 - (this.row || 0) * 12, '#e8e8ff', { align: 'center' });
+        c.globalAlpha = 1;
+      } else TC.font.draw(c, this.txt, x, Math.round(this.y - cy - 8), '#ffffff', { align: 'center', outline: '#1a1a2a' });
     } else {
       c.globalAlpha = Math.max(0, 1 - (this.t - this.delay) / 60);
       TC.font.draw(c, this.txt, x, Math.round(this.gy - cy - 10), '#e8e8e0', { align: 'center', outline: '#1a1a2a' });
       c.globalAlpha = 1;
     }
+  };
+
+  FallingName.prototype.light = function (L, cx, cy) {
+    if (this.struck) return;
+    L.add(this.x - cx, this.gy - 6 - cy, this.w / 2 + 8, '#e0e0ff', 0.55);
+    if (this.t > this.delay) L.add(this.x - cx, this.y - 12 - cy, 24, '#ffffff', 0.6);
   };
 
   /* o saco com as crianças, largado num canto do pátio durante a luta */

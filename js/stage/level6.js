@@ -70,7 +70,7 @@
     var por = C6.porteira();
     ground(por, 8 * TS - por.width / 2, 0);
     L.signs.push({ x: 8 * TS, y: GY, key: 'sign6.porteira' });
-    ground(C6.roadCross(), 3 * TS, 1, { candle: false });
+    ground(C6.roadCross(), 13 * TS - 4, 1, { candle: false });
     ground(C6.fence(220), 12 * TS, -1);
     var est1 = C6.estufa(3, false), e1 = ground(est1, 16 * TS, -1);
     glow(e1, est1.furnaceX, est1.furnaceY, 70, '#ff9040', 1.0, true);
@@ -88,7 +88,7 @@
 
     // --- 2. o milharal na cerração ---
     for (x = Z.corn * TS; x < Z.venda * TS; x += 256) {
-      back(C6.cornRow(256, 70, x, { stalk: '#26321e', leaf: '#2e3e24', leafL: '#3a4a2c', tassel: '#8a7a48', ear: '#6a6038' }), x, GY + 1 - 86, -2);
+      back(C6.cornRow(256, 70, x, { stalk: '#283044', leaf: '#2e364a', leafL: '#384054', tassel: '#5a5a66', ear: '#44465a' }), x, GY + 1 - 86, -2);
       back(C6.cornRow(256, 56, x + 7), x, GY + 1 - 56, -1);
     }
     [70, 84, 104].forEach(function (tx) {
@@ -102,7 +102,7 @@
     // pés de milho em primeiro plano (paralaxe), esparsos para não esconder a briga
     for (i = 0; i < 9; i++) {
       var fc = C6.cornRow(70, 54, 300 + i, { stalk: '#06080a', leaf: '#0a0e0c', leafL: '#0e1410', tassel: '#2a2618', ear: '#1a1810' });
-      L.front.push({ cv: fc, x: Math.round(Z.corn * TS * 1.25 + 120 + i * 190 + r.int(0, 60)), y: 224 - 46 });
+      L.front.push({ cv: fc, x: Math.round(1130 + i * 150 + r.int(0, 40)), y: 224 - 46 });
     }
 
     // --- 3. a venda do Seu Arnoldo e a cancha de bolão ---
@@ -145,6 +145,7 @@
     var cls = C6.classroom(clsW, boardX), clo = back(cls, Z.inside * TS, 0, -3);
     glow(clo, cls.lampX, cls.lampY + 4, 70, '#ffc070', 0.85, true);
     cls.windows.forEach(function (wx) { (clo.lights = clo.lights || []).push({ dx: wx, dy: 70, r: 40, col: '#7080c0', a: 0.5 }); });
+    clo.lights.push({ dx: boardX + 48, dy: 66, r: 64, col: '#b0c0b0', a: 0.55 });
     L._boardX = Z.inside * TS + boardX + 48; L._boardY = 44;
     var deskXs = [234, 237, 240, 243];
     deskXs.forEach(function (tx) { ground(C6.desk(), tx * TS, 1); });
@@ -186,7 +187,7 @@
 
     /* ---------- inimigos avulsos ---------- */
     function sp(t, tx, y, opt) { L.spawns.push({ t: t, x: tx * TS, y: y, opt: opt || {} }); }
-    sp('c6scare', 14, GY, { pole: true });
+    sp('c6scare', 15, GY, { pole: true });
     sp('c6barba', 33, 132, { hang: true }); sp('c6barba', 37, 128, { hang: true });
     sp('crow', 40, 70);
     sp('c6scare', 68, GY, { pole: true }); sp('crow', 86, 60); sp('c6scare', 92, GY, { pole: true });
@@ -358,7 +359,7 @@
       L.ballsAt.forEach(function (bx) { if (bx > startX - 20) st.deco.push(new E.C6BallPickup(bx, GY)); });
       // o Ewald esperando junto do caminhão
       if (st.cp === 0) {
-        var ew = new E.Actor(C3.ewald, 78, GY, 1); ew.lightCol = '#ffd8a0';
+        var ew = new E.Actor(C3.ewald, 34, GY, 1); ew.lightCol = '#ffd8a0';
         st.deco.push(ew); st.c6ewald = ew;
       }
       // a sala de aula: as crianças rezando e o vulto no quadro-negro
@@ -445,7 +446,7 @@
       var g = null;
       // sair de cima dos X de giz e da sombra dos nomes
       var danger = [];
-      st.deco.forEach(function (d) { if (d.c6mark && d.alive && !d.struck) danger.push({ x: d.x, r: d.w ? d.w / 2 + 8 : 18 }); });
+      st.deco.forEach(function (d) { if (d.c6mark && d.alive && !d.struck) danger.push({ x: d.x, r: d.w ? d.w / 2 : 18 }); });
       if (danger.length) {
         var bad = function (x) { for (var k = 0; k < danger.length; k++) if (Math.abs(x - danger[k].x) < danger[k].r) return true; return false; };
         if (bad(p.x)) {
@@ -490,7 +491,7 @@
     };
     L.debugInfo = function (st) {
       var b = st.boss;
-      return { ball: st.ball, diary: st.diaryDone, school: st.schoolDone, form: b ? b.form : null, vogtArena: !!L.bossArena.vogt };
+      return { ball: st.ball, diary: st.diaryDone, school: st.schoolDone, form: b ? b.form : null, vogtArena: !!L.bossArena.vogt, stats: st.c6stats || {} };
     };
 
     /* ---------- eventos da fase ---------- */
@@ -498,7 +499,7 @@
       var p = st.player;
       if (p.state !== 'shoot') p.throwing = false;
       // a casa de pedra: o diário
-      if (!st.diaryDone && st.mode === 'play' && !st.arena && p.x > L._houseDoor - 26 && p.x < L._houseDoor + 60 && p.onGround && p.state === 'normal') {
+      if (!st.diaryDone && st.mode === 'play' && !st.arena && p.x > L._houseDoor - 26 && p.x < L._houseDoor + 200 && p.onGround && p.state === 'normal') {
         st.diaryDone = true;
         st.cine = new TC.Script(diarySeq(st));
       }
@@ -512,6 +513,8 @@
         var want = (p.x > Z.inside * TS - 8 && p.x < Z.yard * TS && !st.schoolDone) ? 'c6school' : L.music;
         if (TC.audio.musicName() !== want) TC.audio.music(want, 1.2);
       }
+      // a primeira bola de musgo: a dica da fornalha
+      if (st.boss && st.boss.form === 'pelz' && st.boss.state === 'rollPrep' && !st.c6furnHint) { st.c6furnHint = true; st.hint = { key: 'hint.c6furnace', t: 300 }; }
       // o Ewald acena e volta para a cabine quando o Arno se afasta
       if (st.c6ewald && p.x > 300 && st.c6ewald.alive) {
         st.c6ewald.alpha -= 0.02;
@@ -587,7 +590,9 @@
       if (cv.eyes && (t >> 5) % 5 !== 4) { c.fillStyle = '#f8f0d8'; c.fillRect(px + cv.eyes.x, py + cv.eyes.y, 2, 1); c.fillRect(px + cv.eyes.x + 6, py + cv.eyes.y, 2, 1); }
       // moldura
       c.fillStyle = '#6a4a28'; c.fillRect(px - 2, py - 2, pw + 4, 2); c.fillRect(px - 2, py + ph, pw + 4, 2); c.fillRect(px - 2, py, 2, ph); c.fillRect(px + pw, py, 2, ph);
-      TC.font.draw(c, TC.t('d6.cap' + (b.panel || 0)), 128, py + ph + 10, '#e8d4a8', { align: 'center', shadow: '#000' });
+      var cap = TC.t('d6.cap' + (b.panel || 0)), cw = TC.font.measure(cap) + 10;
+      c.fillStyle = 'rgba(26,14,6,0.75)'; c.fillRect(128 - cw / 2, py + ph - 14, cw, 12);
+      TC.font.draw(c, cap, 128, py + ph - 12, '#f0dcb0', { align: 'center' });
       c.globalAlpha = 1;
     }
 
@@ -655,8 +660,8 @@
       TC.fx.tween('letterbox', 22, 40);
       st.ambientOverride = '#34304e';
       TC.audio.stopMusic(0.8);
-      var half = Math.round(TC.diff().bossHp * 1.8) * 0.5;
-      var startVogt = !!a.vogt && (a.bossHpLeft == null || a.bossHpLeft <= half + 0.5);
+      var half = TC.ENEMIES.c6pelz.maxHpFor() * 0.5;
+      var startVogt = (!!a.vogt && a.bossHpLeft != null && a.bossHpLeft <= half + 0.5) || !!TC.params.c6vogt;
       var boss = st.spawnEnemy('c6pelz', a.x0 + 176, GY, { arena: a, vogt: startVogt });
       if (TC.params.bosshp) boss.hp = parseInt(TC.params.bosshp, 10);
       if (a.bossHpLeft) boss.hp = TC.clamp(a.bossHpLeft, 1, boss.maxHp);
@@ -691,7 +696,7 @@
       boss.set('stalk');
       p.setState('normal');
       st.mode = 'play';
-      st.hint = { key: startVogt ? 'hint.boss6b' : 'hint.boss6', t: 380 };
+      st.hint = { key: startVogt ? 'hint.boss6b' : 'hint.boss6', t: 260 };
       yield* co.wait(60);
       if (st.banner && st.banner.kind === 'fight') st.banner = null;
     };
@@ -704,6 +709,7 @@
       var p = st.player, a = boss.arena;
       st.mode = 'cine';
       st.banner = null;
+      st.bossBarFill = 0;
       st.killAllMinions();
       st.deco = st.deco.filter(function (d) { return !d.c6proj; });
       TC.audio.stopMusic(0.6);
@@ -735,6 +741,7 @@
       }
       p.pose = 'idle';
       TC.fx.tween('letterbox', 0, 30);
+      yield* co.tween(st, 'bossBarFill', 1, 30);
       TC.audio.music('boss6b', 0.3);
       boss.set('stalk');
       p.setState('normal');
