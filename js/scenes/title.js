@@ -29,7 +29,8 @@
       { label: function () { return TC.t('menu.continue'); }, act: function () { self.continueGame(); }, disabled: !this.save },
       { label: function () { return TC.t('menu.chapters'); }, act: function () { self.state = 'chapters'; self.chapMenu.sel = 0; } },
       { label: function () { return TC.t('menu.options'); }, act: function () { self.state = 'options'; self.opt.sel = 0; } },
-      { label: function () { return TC.t('menu.controls'); }, act: function () { self.state = 'controls'; } }
+      { label: function () { return TC.t('menu.controls'); }, act: function () { self.state = 'controls'; } },
+      { label: function () { return TC.t('menu.about'); }, act: function () { TC.openAbout(); } }
     ], { startConfirms: true });
     // escolha da dificuldade antes de começar o novo jogo
     this.diffMenu = new TC.Menu(TC.DIFFS.map(function (k) {
@@ -91,6 +92,29 @@
     var S = n > 1 && TC.chapterReady(n) ? TC['Ch' + n + 'IntroScene'] : null;
     if (S) return new S();
     return new TC.IntroScene();
+  };
+
+  /* "Sobre" abre sobre.html numa aba nova. O navegador só abre abas logo após um gesto:
+     tecla e clique já valem; o toque só vale ao soltar o dedo; sem gesto (controle), abre na mesma aba. */
+  TC.openAbout = function () {
+    var url = 'sobre.html?lang=' + (TC.opts.lang || 'pt');
+    function open() {
+      var w = null;
+      try { w = window.open(url, '_blank'); } catch (e) { /* bloqueado */ }
+      if (!w) location.href = url;
+    }
+    var ua = navigator.userActivation;
+    if (!ua || ua.isActive) { open(); return; }
+    if (TC.input.device() !== 'touch') { location.href = url; return; }
+    var done = false;
+    var up = function () {
+      if (done) return;
+      done = true;
+      window.removeEventListener('pointerup', up, true);
+      open();
+    };
+    window.addEventListener('pointerup', up, true);
+    setTimeout(up, 1500);
   };
 
   TitleScene.prototype.enter = function () {
@@ -247,8 +271,10 @@
           TC.font.draw(c, ln, 128, dy0 + k * 11, '#c8c8e8', { align: 'center', shadow: '#000' });
         });
       } else if (this.state === 'menu' || this.state === 'leaving') {
-        TC.ui.box(c, 72, 126, 112, 78, 'menu', 0.85);
-        this.main.draw(c, 128, 134, { align: 'center' });
+        // a caixa cresce para cima conforme o número de itens
+        var mh = 8 + this.main.items.length * 14, my = 204 - mh;
+        TC.ui.box(c, 72, my, 112, mh, 'menu', 0.85);
+        this.main.draw(c, 128, my + 8, { align: 'center' });
         TC.font.draw(c, TC.t('title.copy'), 128, 210, '#6a70a0', { align: 'center', shadow: '#000' });
       } else if (this.state === 'logo') {
         if ((t >> 5) % 2 === 0) TC.font.draw(c, TC.t('boot.press'), 128, 160, '#f0e0c0', { align: 'center', shadow: '#000' });

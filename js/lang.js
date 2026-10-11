@@ -12,6 +12,7 @@
     'menu.continue': 'CONTINUAR',
     'menu.options': 'OPÇÕES',
     'menu.controls': 'CONTROLES',
+    'menu.about': 'SOBRE',
     'title.sub': 'CAPÍTULO 2 — A TRILHA DAS FITAS',
     'title.copy': '© 2026  TEEWALD CITY',
 
@@ -423,6 +424,7 @@
     'menu.continue': 'CONTINUE',
     'menu.options': 'OPTIONS',
     'menu.controls': 'CONTROLS',
+    'menu.about': 'ABOUT',
     'title.sub': 'CHAPTER 2 — THE RIBBON TRAIL',
     'title.copy': '© 2026  TEEWALD CITY',
 

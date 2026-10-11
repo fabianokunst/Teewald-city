@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05060f">
+<meta name="color-scheme" content="dark">
+<title>Sobre — Teewald City</title>
+<meta name="description" content="Sobre Teewald City: créditos e links de Fabiano Kunst, autor do jogo.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16' fill='%2305060f'/%3E%3Crect x='9' y='2' width='4' height='4' fill='%23e8e4c0'/%3E%3Crect x='7' y='7' width='2' height='8' fill='%233a2a20'/%3E%3Crect x='3' y='6' width='10' height='2' fill='%23183020'/%3E%3Crect x='2' y='5' width='3' height='2' fill='%23183020'/%3E%3Crect x='11' y='5' width='3' height='2' fill='%23183020'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/sobre.css">
+</head>
+<body>
+<!-- céu, lua, serras e folhas: a mesma arte do jogo, desenhada por js/sobre.js -->
+<canvas id="sky" aria-hidden="true"></canvas>
+
+<div class="page">
+  <nav class="top">
+    <a class="btn back" href="index.html"><i class="cur" aria-hidden="true"></i><span data-t="back">Voltar ao jogo</span></a>
+    <div class="lang" role="group" aria-label="Idioma / Language">
+      <button type="button" class="btn" data-lang="pt" aria-pressed="true">PT</button>
+      <button type="button" class="btn" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="logo" role="img" aria-label="Teewald City"><span class="logo-txt">TEEWALD CITY</span></div>
+    <p class="kicker"><span class="pix" data-pix="kicker" data-col="#ffd890">SOBRE</span></p>
+  </header>
+
+  <main>
+    <section class="box author">
+      <p class="eyebrow" data-t="by">Jogo desenvolvido por</p>
+      <h1 class="name"><span class="pix" data-big="FABIANO KUNST">Fabiano Kunst</span></h1>
+      <p class="role" data-t="role">UX/UI/CX Designer · Web · 3D · Ilustração</p>
+      <p class="place" data-t="place">Santa Maria do Herval, RS — Brasil</p>
+      <div class="orn" aria-hidden="true"><i data-leaf="0"></i></div>
+      <p class="bio" data-t="bio">Designer desde 2008, com foco em experiência do cliente, UX/UI, web design, ilustração digital e modelagem 3D. É UX/UI/CX Designer Sênior no Grupo Herval, fundador da agência FKweb e bacharel em Artes Visuais pela Feevale.</p>
+    </section>
+
+    <section class="box box-dialog links" aria-labelledby="links-h">
+      <h2 id="links-h"><span class="pix" data-pix="links" data-col="#ffd890">LINKS</span></h2>
+      <ul class="menu">
+        <li><a href="https://fabianokunst.fkweb.com.br/" target="_blank" rel="noopener"><i class="cur" aria-hidden="true"></i><span class="n" data-t="site">Site pessoal</span><span class="h">fabianokunst.fkweb.com.br</span></a></li>
+        <li><a href="https://www.instagram.com/fabianokunstart/" target="_blank" rel="noopener"><i class="cur" aria-hidden="true"></i><span class="n">Instagram</span><span class="h">@fabianokunstart</span></a></li>
+        <li><a href="https://www.linkedin.com/in/fabianokunst/" target="_blank" rel="noopener"><i class="cur" aria-hidden="true"></i><span class="n">LinkedIn</span><span class="h">in/fabianokunst</span></a></li>
+        <li><a href="https://www.behance.net/fabianokunst" target="_blank" rel="noopener"><i class="cur" aria-hidden="true"></i><span class="n">Behance</span><span class="h">behance.net/fabianokunst</span></a></li>
+        <li><a href="https://fabianokunst.artstation.com/" target="_blank" rel="noopener"><i class="cur" aria-hidden="true"></i><span class="n">ArtStation</span><span class="h">fabianokunst.artstation.com</span></a></li>
+        <li><a href="https://fkweb.com.br/" target="_blank" rel="noopener"><i class="cur" aria-hidden="true"></i><span class="n">FKweb</span><span class="h" data-t="fkweb">fkweb.com.br · agência de sites</span></a></li>
+        <li><a href="https://wa.me/5551992545434" target="_blank" rel="noopener"><i class="cur" aria-hidden="true"></i><span class="n">WhatsApp</span><span class="h">+55 51 99254-5434</span></a></li>
+        <li><a href="mailto:fabianoeu89@yahoo.com.br"><i class="cur" aria-hidden="true"></i><span class="n" data-t="mail">E-mail</span><span class="h">fabianoeu89@yahoo.com.br</span></a></li>
+        <li><a href="https://fabianokunst.fkweb.com.br/files/fabiano_kunst_resume.pdf" target="_blank" rel="noopener"><i class="cur" aria-hidden="true"></i><span class="n" data-t="cv">Currículo</span><span class="h">PDF</span></a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="end">
+    <p><span class="pix" data-pix="thanks" data-col="#f0e0c0">OBRIGADO POR JOGAR!</span></p>
+    <p class="copy">© 2026 Teewald City<span class="hint"> · <span data-t="hint">ESC volta ao jogo</span></span></p>
+  </footer>
+</div>
+
+<script src="js/core.js"></script>
+<script src="js/gfx.js"></script>
+<script src="js/font.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/art_env.js"></script>
+<script src="js/sobre.js"></script>
+</body>
+</html>

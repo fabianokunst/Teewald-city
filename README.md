@@ -240,7 +240,7 @@ A **fase 2** tem cerca de 4.800 pixels de comprimento. O caminho é este:
   <img src="docs/img/c2-sociedade-de-tiro.png" width="49%" alt="A rua da Sociedade de Tiro de Teewald, fundada em 1898">
   <img src="docs/img/c2-pavilhao.png" width="49%" alt="Luta contra uma colona possuída no pavilhão da 2ª Festa da Batata de Teewald, 1997">
   <img src="docs/img/c2-atafona.png" width="49%" alt="A atafona dos Weber, com a roda-d'água e um lobisomem se aproximando">
-  <img src="docs/img/c2-serraria-colono.png" width="49%" alt="Um colono possuído com forcado na Serraria Kessler">
+  <img src="docs/img/c2-serraria-colono.png" width="49%" alt="Uma colona possuída com forcado na Serraria Kessler">
   <img src="docs/img/c2-ervateira.png" width="49%" alt="O carijó aceso na ervateira dos Becker, com um lobisomem e um colono">
 </p>
 
