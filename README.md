@@ -1,7 +1,7 @@
 # Teewald City
 
 <p align="center">
-  <img src="docs/img/anim-titulo.gif" width="512" alt="Tela-título: o logotipo de Teewald City entra girando sobre um voo em Mode 7 pela cidade iluminada à noite">
+  <img src="docs/img/anim-titulo.gif" width="512" alt="Tela-título: o logotipo de Teewald City entra girando sobre um voo em Mode 7 pela cidade à noite, com as casas de enxaimel, a igreja e os postes erguidos em 3D">
 </p>
 
 <p align="center">
@@ -80,6 +80,7 @@ O ponto de partida foi uma pasta de capturas de tela de um jogo 3D (`ref/`, que 
 | 9/10, noite | Capítulo 3, suporte completo a joystick e este README com os prints, feitos em sessões paralelas no mesmo repositório. |
 | 10/10 | Capítulos 4 a 7, até o fim da história. O capítulo 4 foi feito na sessão principal, e os capítulos 5, 6 e 7 por três agentes em paralelo, seguindo um roteiro técnico comum. Depois a sessão principal revisou e testou o jogo inteiro em sequência. |
 | 11/10 | Página Sobre, com os créditos e os links do autor, aberta pelo menu do título. |
+| 11/10 | Tela-título refeita: as casas saíram de cima das ruas e a cidade ganhou volume, com casas, igreja, postes e árvores em 3D sobre o plano Mode 7. |
 
 ### Ouvindo quem joga
 
@@ -115,10 +116,10 @@ Arno acorda caído numa rua de Teewald. A cidade continua linda, mas está vazia
 
 ### A tela-título
 
-Na tela-título há um voo em "Mode 7" sobre o mapa da cidade iluminada, e o logotipo entra girando e crescendo. O menu tem Novo Jogo, Continuar (que lembra o capítulo, as fitas e as balas), Capítulos, Opções, Controles e Sobre.
+Na tela-título a câmera dá a volta na cidade num voo em "Mode 7", e o logotipo entra girando e crescendo. O chão (ruas, praça, arroio, ponte, roças e mata) é o plano Mode 7, e por cima dele a cidade é erguida em 3D: as casas de enxaimel com telhado de duas águas, chaminé e janelas acesas, a igreja branca com a torre e a cruz, os postes, as araucárias, as árvores de outono e o cemitério com o muro, os túmulos e as velas. As casas ficam recuadas da rua, com a fachada virada para ela. O menu tem Novo Jogo, Continuar (que lembra o capítulo, as fitas e as balas), Capítulos, Opções, Controles e Sobre.
 
 <p align="center">
-  <img src="docs/img/titulo.png" width="49%" alt="Logotipo TEEWALD CITY sobre o mapa da cidade em Mode 7">
+  <img src="docs/img/titulo.png" width="49%" alt="Logotipo TEEWALD sobre a cidade em 3D: casas de enxaimel, a torre da igreja, o arroio e as roças">
   <img src="docs/img/titulo-menu.png" width="49%" alt="Menu principal com a lua cheia ao fundo e o item Sobre selecionado">
 </p>
 
@@ -796,7 +797,8 @@ As casas de enxaimel são **geradas a partir de uma semente**, que decide o núm
 
 ### Mode 7 e estrada pseudo-3D
 
-- A tela-título usa um **plano em perspectiva no estilo Mode 7**: cada linha da tela é uma fatia rotacionada e escalada de um mapa da cidade de 512×512, com o arroio, a estrada da serra, as ruas, a ponte, a praça, a igreja, os telhados, o cemitério e as copas das araucárias. O mapa também é desenhado por código.
+- A tela-título usa um **plano em perspectiva no estilo Mode 7**: cada linha da tela é uma fatia rotacionada e escalada de um mapa da cidade de 512×512, com o arroio, a estrada da serra, as ruas, a ponte, a praça, as roças, as hortas, as sombras ao luar e a mata. O mapa também é desenhado por código. As casas são postas ao longo das ruas com uma grade de ocupação, para nenhuma cair na rua, no arroio ou na praça.
+- Por cima do plano, uns 400 **objetos 3D** (casas, igreja, torre, postes, araucárias, árvores, túmulos) são projetados com a mesma câmera e pintados de trás para a frente, em polígonos convexos rasterizados direto no buffer de pixels, sem suavização. Cada face recebe a luz da lua conforme a sua normal e a mesma neblina em faixas do chão. De perto aparecem o enxaimel, as janelas, a porta e as fiadas de telha; de longe sobram só as janelas acesas, como pontinhos. O brilho dos postes e das velas só aparece quando nenhuma casa está na frente. Tudo isso custa cerca de 1 ms por quadro.
 - A cabine da abertura usa uma **estrada pseudo-3D** no estilo *Top Gear* / *Out Run*: curvas, subidas e descidas, placas e árvores escaladas e desenhadas do mais longe para o mais perto, a luz dos faróis perto e a neblina longe.
 
 ### Sprites a partir de texto
@@ -992,7 +994,7 @@ js/lang_ch4.js ... lang_ch7.js textos dos capítulos 4 a 7 (português e inglês
 js/music_ch4.js ... music_ch7.js músicas e efeitos sonoros dos capítulos 4 a 7
 js/art_cab.js       cabine do caminhão, volante, placas de estrada
 js/road.js          estrada pseudo-3D
-js/mode7.js         plano em perspectiva "Mode 7" e mapa da cidade
+js/mode7.js         plano em perspectiva "Mode 7", cidade em 3D por cima dele e mapa da cidade
 js/main.js          laço de 60 Hz, troca de cenas, escala da tela e pós-processamento
 js/scenes/          boot, título, abertura, final, capítulos 2 a 7 (chapter2.js ... chapter7.js: prólogos e finais) e depuração
 js/stage/           entidades, jogador, inimigos (enemies2.js ... enemies7.js: os dos capítulos 2 a 7), layout das fases (level1.js ... level7.js) e cena da fase

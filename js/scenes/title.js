@@ -230,16 +230,14 @@
     c.drawImage(this.ridge2, -off2, HORIZON - 26); c.drawImage(this.ridge2, 512 - off2, HORIZON - 26);
     var off = Math.round((ang / TC.TAU) * 512) % 512;
     c.drawImage(this.ridge, -off, HORIZON - 30); c.drawImage(this.ridge, 512 - off, HORIZON - 30);
-    // plano Mode 7
-    var plane = this.m7.render(cam);
+    // plano Mode 7 com a cidade em 3D por cima
+    var plane = this.m7.render(cam, this.map.objs);
     c.drawImage(plane, 0, 0);
-    // luzes da cidade sobre o plano
-    var lamps = this.map.lamps;
-    for (var i = 0; i < lamps.length; i++) {
-      var p = this.m7.project(cam, lamps[i][0], lamps[i][1]);
-      if (!p || p.y < HORIZON || p.y > TC.H) continue;
-      var r = TC.clamp(p.s * 7, 2, 16);
-      TC.Lighting.glow(c, p.x, p.y, r, '#ffb050', 0.55);
+    // luzes dos postes e das velas do cemitério (só as que nenhuma casa esconde)
+    var lights = this.m7.lights;
+    for (var i = 0; i < lights.length; i++) {
+      var L = lights[i];
+      TC.Lighting.glow(c, L.x, L.y, L.r, L.col, L.flick ? L.a * (0.75 + 0.25 * Math.sin(t * 0.31 + i * 2.1)) : L.a);
     }
     // neblina no horizonte
     for (var y = 0; y < 14; y++) {
