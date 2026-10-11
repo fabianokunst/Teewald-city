@@ -79,6 +79,7 @@ O ponto de partida foi uma pasta de capturas de tela de um jogo 3D (`ref/`, que 
 | 9/10, madrugada | Capítulo 2, com a lenda do Mão-Comprida, as sete fitas e o revólver. |
 | 9/10, noite | Capítulo 3, suporte completo a joystick e este README com os prints, feitos em sessões paralelas no mesmo repositório. |
 | 10/10 | Capítulos 4 a 7, até o fim da história. O capítulo 4 foi feito na sessão principal, e os capítulos 5, 6 e 7 por três agentes em paralelo, seguindo um roteiro técnico comum. Depois a sessão principal revisou e testou o jogo inteiro em sequência. |
+| 11/10 | Página Sobre, com os créditos e os links do autor, aberta pelo menu do título. |
 
 ### Ouvindo quem joga
 
@@ -114,11 +115,17 @@ Arno acorda caído numa rua de Teewald. A cidade continua linda, mas está vazia
 
 ### A tela-título
 
-Na tela-título há um voo em "Mode 7" sobre o mapa da cidade iluminada, e o logotipo entra girando e crescendo. O menu tem Novo Jogo, Continuar (que lembra o capítulo, as fitas e as balas), Capítulos, Opções e Controles.
+Na tela-título há um voo em "Mode 7" sobre o mapa da cidade iluminada, e o logotipo entra girando e crescendo. O menu tem Novo Jogo, Continuar (que lembra o capítulo, as fitas e as balas), Capítulos, Opções, Controles e Sobre.
 
 <p align="center">
   <img src="docs/img/titulo.png" width="49%" alt="Logotipo TEEWALD CITY sobre o mapa da cidade em Mode 7">
-  <img src="docs/img/titulo-menu.png" width="49%" alt="Menu principal com a lua cheia ao fundo">
+  <img src="docs/img/titulo-menu.png" width="49%" alt="Menu principal com a lua cheia ao fundo e o item Sobre selecionado">
+</p>
+
+O item **Sobre** abre numa aba nova a página [sobre.html](sobre.html), com os créditos e os links do autor, Fabiano Kunst: site, Instagram, LinkedIn, Behance, ArtStation, FKweb, WhatsApp, e-mail e currículo. É uma página HTML comum, mas no visual do jogo. O céu estrelado, a lua, a serra com araucárias, as luzes da cidade, as folhas de outono, o logotipo e a fonte em pixel são desenhados pelo mesmo código do jogo, e as janelas imitam as caixas dos menus. A página tem português e inglês e fecha com ESC (ou com o botão B do controle), voltando ao jogo.
+
+<p align="center">
+  <img src="docs/img/sobre.png" width="640" alt="Página Sobre: logotipo TEEWALD CITY sob a lua, janela com o nome Fabiano Kunst e janela de links, sobre a serra com araucárias">
 </p>
 
 ### A abertura
@@ -961,8 +968,11 @@ O arquivo `.nojekyll` desativa o processamento Jekyll do Pages. A pasta `ref/` (
 
 ```
 index.html          página e ordem de carregamento dos scripts
+sobre.html          página Sobre: créditos e links do autor (aberta pelo menu do título)
 manifest.webmanifest, icon.svg   instalação na tela de início do celular
 css/style.css       posição da tela, filtro CRT, visual do controle na tela
+css/sobre.css       visual da página Sobre (janelas e cores dos menus do jogo)
+js/sobre.js         página Sobre: céu, serra e folhas animados, logotipo e títulos na fonte do jogo
 js/core.js          utilidades, cores 15-bit, RNG, opções salvas, níveis de dificuldade
 js/gfx.js           canvas, buffers de pixel, sprites, rotação, ruído
 js/font.js          fonte bitmap com acentos do português e ícones dos botões
