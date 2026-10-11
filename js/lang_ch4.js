@@ -134,12 +134,7 @@
     'c4.f7': 'Aquela estrada sobe pro Morro dos Bugres. Ninguém sobe lá.',
     'c4.f8': 'Amanhã cedo a gente vai falar com a Dona Rosa. Ela conhece aquele morro melhor que ninguém.',
     'c4.r1': '...ksshh... 104,5... mais vacas amanhecem sem os olhos na Linha Becker... ksshh... o povo já fala em chupa-cabra...',
-    'end4.chapter': 'FIM DO CAPÍTULO 4',
-    'cred4.2': 'Capítulo 4 — O Último Turno',
-    'cred4.3': 'Lendas, costumes e lugares',
-    'cred4.4': 'a fábrica de calçados e o curtume,',
-    'cred4.5': 'o pesponto, o serão e o apito,',
-    'cred4.6': 'e as pespontadeiras de 1967.'
+    'end4.chapter': 'FIM DO CAPÍTULO 4'
   });
 
   Object.assign(L.en, {
@@ -232,11 +227,6 @@
     'c4.f7': 'That road climbs to the Morro dos Bugres. Nobody goes up there.',
     'c4.f8': 'First thing tomorrow we go talk to Dona Rosa. She knows that hill better than anyone.',
     'c4.r1': '...ksshh... 104.5... more cows found with their eyes gone on the Becker road... ksshh... folks are already saying chupacabra...',
-    'end4.chapter': 'END OF CHAPTER 4',
-    'cred4.2': 'Chapter 4 — The Last Shift',
-    'cred4.3': 'Legends, customs and places',
-    'cred4.4': 'the shoe factory and the tannery,',
-    'cred4.5': 'the stitching floor, the night shift and the whistle,',
-    'cred4.6': 'and the stitchers of 1967.'
+    'end4.chapter': 'END OF CHAPTER 4'
   });
 })();

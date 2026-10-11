@@ -141,7 +141,7 @@
         shirt: solid('#2e3e6a'), sleeve: solid('#2e3e6a'), sleeveB: solid('#1e2a4a'), skin: skin, skinB: skinB, outline: '#0e0a0c'
       };
       var fork = toolDrawer('fork');
-      var dress = solid('#2e3e6a'), dressD = solid('#1e2a4a'), apron = solid('#d8d0bc');
+      var dress = u32('#2e3e6a'), dressD = u32('#1e2a4a'), apron = solid('#d8d0bc');
       base.after = function (pb, info, pose) {
         var hx = info.hx, hy = info.hy;
         poly(pb, [[hx - 5, hy - 3], [hx + 5, hy - 3], [hx + 9, hy + 11], [hx - 9, hy + 11]], function (x) { return (x & 3) === 0 ? dressD : dress; });

@@ -180,8 +180,13 @@
     'cred7.g2': 'Oma Hedwig, Hilde Weber, Ingrid Weber,',
     'cred7.g3': 'Seu Helmut, Seu Gerhard, Seu Arnoldo,',
     'cred7.g4': 'Seu Kessler, Seu Erwin e a bandinha, a Lena.',
-    'cred7.code': 'Pixel art, música e efeitos',
-    'cred7.code2': 'gerados inteiramente em código',
+    'cred7.dev': 'Jogo desenvolvido por',
+    'cred7.dev2': 'Fabiano Kunst',
+    'cred7.fic1': 'Todos os personagens e situações deste jogo',
+    'cred7.fic2': 'são fictícios. Qualquer semelhança com',
+    'cred7.fic3': 'pessoas ou fatos reais é mera coincidência.',
+    'cred7.kg1': 'Em memória dos Kaingang,',
+    'cred7.kg2': 'que estavam aqui antes de todos.',
     'cred7.ded': 'Para quem ainda acende o fogo no inverno.',
     'cred7.thanks': 'Obrigado por jogar!'
   });
@@ -357,8 +362,13 @@
     'cred7.g2': 'Oma Hedwig, Hilde Weber, Ingrid Weber,',
     'cred7.g3': 'Mr. Helmut, Mr. Gerhard, Mr. Arnoldo,',
     'cred7.g4': 'Mr. Kessler, Mr. Erwin and the band, little Lena.',
-    'cred7.code': 'Pixel art, music and sound',
-    'cred7.code2': 'generated entirely in code',
+    'cred7.dev': 'Game developed by',
+    'cred7.dev2': 'Fabiano Kunst',
+    'cred7.fic1': 'All characters and events in this game',
+    'cred7.fic2': 'are fictitious. Any resemblance to real',
+    'cred7.fic3': 'people or events is purely coincidental.',
+    'cred7.kg1': 'In memory of the Kaingang,',
+    'cred7.kg2': 'who were here before anyone else.',
     'cred7.ded': 'For everyone who still lights the fire in winter.',
     'cred7.thanks': 'Thank you for playing!'
   });

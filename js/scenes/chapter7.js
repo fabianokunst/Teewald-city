@@ -483,8 +483,10 @@
       ['cred7.leg', 1, s], ['cred7.l1', 1, w], ['cred7.l2', 1, w], ['cred7.l3', 1, w], ['cred7.l4', 1, w], ['cred7.l5', 1, w], ['cred7.l6', 1, w], ['', 1], ['', 1],
       ['cred7.pla', 1, s], ['cred7.p1', 1, w], ['cred7.p2', 1, w], ['cred7.p3', 1, w], ['cred7.p4', 1, w], ['', 1], ['', 1],
       ['cred7.peo', 1, s], ['cred7.g1', 1, w], ['cred7.g2', 1, w], ['cred7.g3', 1, w], ['cred7.g4', 1, w], ['', 1], ['', 1],
-      ['cred7.code', 1, s], ['cred7.code2', 1, w], ['', 1], ['', 1],
+      ['cred7.dev', 1, s], ['cred7.dev2', 2, g], ['', 1], ['', 1], ['', 1],
+      ['cred7.fic1', 1, w], ['cred7.fic2', 1, w], ['cred7.fic3', 1, w], ['', 1], ['', 1],
       ['@score', 1, '#ffe060'], ['', 1], ['', 1],
+      ['cred7.kg1', 1, '#ffe0a0'], ['cred7.kg2', 1, '#ffe0a0'], ['', 1], ['', 1],
       ['cred7.ded', 1, '#e8d0b0'], ['', 1], ['', 1], ['', 1],
       ['cred7.thanks', 2, g]
     ];

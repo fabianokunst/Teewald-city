@@ -535,24 +535,6 @@
     var w = 0;
     while (w++ < 360 && !(w > 60 && (TC.input.pressed('confirm') || TC.input.pressed('start')))) yield;
     yield* co.tween(this, 'textA', 0, 60);
-    // créditos, com os vaga-lumes
-    this.phase = 'credits';
-    TC.audio.music('dawn');
-    this.credY = H + 10;
-    this.credLines = [
-      ['cred.1', 2, '#ffffff'], ['', 1], ['cred5.2', 1, '#ffd890'], ['', 1], ['', 1],
-      ['cred5.3', 1, '#a0a8d0'], ['cred5.4', 1, '#ffffff'], ['cred5.5', 1, '#ffffff'], ['cred5.6', 1, '#ffffff'], ['', 1], ['', 1],
-      ['cred5.7', 1, '#ffe0a0'], ['cred5.8', 1, '#ffe0a0'], ['', 1], ['', 1],
-      ['cred.3', 1, '#a0a8d0'], ['cred.4', 1, '#ffffff'], ['', 1], ['', 1],
-      ['@score', 1, '#ffe060'], ['', 1], ['', 1], ['cred.8', 2, '#ffd890']
-    ];
-    this.credH = this.credLines.length * 16 + 20;
-    while (this.credY > -this.credH + 70) {
-      this.credY -= TC.input.down('confirm') || TC.input.down('jump') ? 1.6 : 0.36;
-      yield;
-    }
-    yield* co.wait(60);
-    TC.audio.stopMusic(1.5);
     // a história continua: a Linha Esperança (capítulo 6)
     TC.game.fadeTo(function () { return TC.chapterReady(6) ? TC.chapterStart(6) : new TC.TitleScene(); }, 60);
     while (true) yield;
@@ -578,13 +560,11 @@
       f.x += f.vx + Math.sin(this.t * 0.03 + f.ph) * 0.2; f.y += f.vy;
       if (--f.life <= 0 || f.y > H + 10) this.flies.splice(k, 1);
     }
-    if (this.phase === 'credits' && this.t % 6 === 0 && this.flies.length < 120) this.flies.push({ x: TC.rnd.range(0, W), y: -4, vx: TC.rnd.range(-0.2, 0.2), vy: 0.2, ph: TC.rnd() * 6, sp: TC.rnd.range(0.05, 0.12), life: 1400 });
   };
   Ending5Scene.prototype.draw = function (c) {
     if (this.phase === 'sky') this.drawSky(c);
     else if (this.phase === 'curve') this.drawCurve(c);
-    else if (this.phase === 'tbc') this.drawTbc(c);
-    else this.drawCredits(c);
+    else this.drawTbc(c);
     this.dlg.draw(c);
   };
   Ending5Scene.prototype.drawFlies = function (c) {
@@ -685,24 +665,8 @@
       TC.font.draw(c, TC.t('end5.next'), 128, 116, '#c8a878', { align: 'center', max: Math.floor(this.tbcChars) });
       TC.font.draw(c, TC.t('end.tbc'), 128, 134, '#8088b0', { align: 'center', max: Math.max(0, Math.floor(this.tbcChars) - 20) });
     }
+    TC.font.draw(c, TC.t('hud.score') + '  ' + (this.opts.score || 0), 128, 170, '#ffe060', { align: 'center' });
     c.globalAlpha = 1;
-  };
-  Ending5Scene.prototype.drawCredits = function (c) {
-    for (var y = 0; y < H; y++) { c.fillStyle = TC.mix('#1a2a5a', '#e8a878', y / H); c.fillRect(0, y, W, 1); }
-    c.drawImage(this.hillsWarm, 0, 134);
-    var a0 = this.arau;
-    c.drawImage(a0[0], 30 - a0[0].baseX, H + 30 - a0[0].height);
-    c.drawImage(a0[2], 236 - a0[2].baseX, H + 40 - a0[2].height);
-    c.fillStyle = 'rgba(0,0,10,0.4)'; c.fillRect(0, 0, W, H);
-    this.drawFlies(c);
-    var yy0 = this.credY, self = this;
-    this.credLines.forEach(function (l, k) {
-      var yy = Math.round(yy0 + k * 16);
-      if (yy < -30 || yy > H + 10 || !l[0]) return;
-      var str = l[0] === '@score' ? (TC.t('hud.score') + '  ' + (self.opts.score || 0)) : TC.t(l[0]);
-      if (l[1] > 1) { var b = TC.ui.bigText(str, l[1], l[2], '#c08060', '#000000'); c.drawImage(b, 128 - Math.floor(b.width / 2), yy - 4); }
-      else TC.font.draw(c, str, 128, yy, l[2], { align: 'center', shadow: '#000' });
-    });
   };
   Ending5Scene.prototype.onHide = function () { };
   TC.Ending5Scene = Ending5Scene;

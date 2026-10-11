@@ -630,24 +630,6 @@
     var w = 0;
     while (w++ < 360 && !(w > 60 && (TC.input.pressed('confirm') || TC.input.pressed('start')))) yield;
     yield* co.tween(this, 'textA', 0, 60);
-
-    // créditos curtos
-    this.phase = 'credits';
-    TC.audio.music('c6home');
-    this.credY = H + 10;
-    this.credLines = [
-      ['cred.1', 2, '#ffffff'], ['', 1], ['cred6.2', 1, '#ffd890'], ['', 1], ['', 1],
-      ['cred6.3', 1, '#a0a8d0'], ['cred6.4', 1, '#e0e0f0'], ['cred6.5', 1, '#e0e0f0'], ['cred6.6', 1, '#e0e0f0'], ['', 1], ['', 1],
-      ['cred.3', 1, '#a0a8d0'], ['cred.4', 1, '#e0e0f0'], ['', 1], ['', 1],
-      ['@score', 1, '#ffe060'], ['', 1], ['', 1], ['cred.8', 2, '#ffd890']
-    ];
-    this.credH = this.credLines.length * 16 + 20;
-    while (this.credY > -this.credH + 70) {
-      this.credY -= TC.input.down('confirm') || TC.input.down('jump') ? 1.6 : 0.36;
-      yield;
-    }
-    yield* co.wait(60);
-    TC.audio.stopMusic(1.5);
     // a história continua: a noite das sete badaladas na Matriz (capítulo 7)
     TC.game.fadeTo(function () { return TC.chapterReady(7) ? TC.chapterStart(7) : new TC.TitleScene(); }, 60);
     while (true) yield;
@@ -670,8 +652,7 @@
   Ending6Scene.prototype.draw = function (c) {
     if (this.phase === 'yard') this.drawYard(c);
     else if (this.phase === 'valley') this.drawValley(c);
-    else if (this.phase === 'tbc') this.drawTbc(c);
-    else this.drawCredits(c);
+    else this.drawTbc(c);
     this.dlg.draw(c);
   };
 
@@ -761,26 +742,8 @@
     var big = TC.ui.bigText(TC.t('end6.chapter'), 2, '#ffffff', '#c06060', '#06050c');
     c.drawImage(big, 128 - Math.floor(big.width / 2), 84);
     if (this.tbcChars) TC.font.draw(c, TC.t('end6.next'), 128, 120, '#c8a878', { align: 'center', max: Math.floor(this.tbcChars) });
+    TC.font.draw(c, TC.t('hud.score') + '  ' + (this.opts.score || 0), 128, 170, '#ffe060', { align: 'center' });
     c.globalAlpha = 1;
-  };
-
-  Ending6Scene.prototype.drawCredits = function (c) {
-    var t = this.t;
-    for (var y = 0; y < H; y++) { c.fillStyle = TC.mix('#140408', '#4a1a28', y / H); c.fillRect(0, y, W, 1); }
-    A.drawTwinkles(c, this.tw, t, 0, 0);
-    c.drawImage(this.moonRed, 196 - this.moonRed.width / 2, 40 - this.moonRed.height / 2);
-    c.drawImage(this.valleyNear, 0, 134);
-    c.fillStyle = 'rgba(0,0,10,0.45)'; c.fillRect(0, 0, W, H);
-    var yy0 = this.credY, self = this;
-    this.credLines.forEach(function (l, k) {
-      var yy = Math.round(yy0 + k * 16);
-      if (yy < -30 || yy > H + 10 || !l[0]) return;
-      var str = l[0] === '@score' ? (TC.t('hud.score') + '  ' + (self.opts.score || 0)) : TC.t(l[0]);
-      if (l[1] > 1) {
-        var b = TC.ui.bigText(str, l[1], l[2], '#c06060', '#000000');
-        c.drawImage(b, 128 - Math.floor(b.width / 2), yy - 4);
-      } else TC.font.draw(c, str, 128, yy, l[2], { align: 'center', shadow: '#000' });
-    });
   };
   TC.Ending6Scene = Ending6Scene;
 })();

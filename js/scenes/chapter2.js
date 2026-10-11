@@ -498,24 +498,6 @@
     var w = 0;
     while (w++ < 420 && !(w > 60 && (TC.input.pressed('confirm') || TC.input.pressed('start')))) yield;
     yield* co.tween(this, 'textA', 0, 60);
-    // créditos curtos sobre a lenda
-    this.phase = 'credits';
-    TC.audio.music('lore');
-    this.credY = H + 10;
-    this.credLines = [
-      ['cred.1', 2, '#ffffff'], ['', 1], ['cred2.2', 1, '#ffd890'], ['', 1], ['', 1],
-      ['cred2.3', 1, '#a0a8d0'], ['cred2.4', 1, '#e0e0f0'], ['cred2.5', 1, '#e0e0f0'], ['cred2.6', 1, '#e0e0f0'], ['', 1], ['', 1],
-      ['cred.3', 1, '#a0a8d0'], ['cred.4', 1, '#e0e0f0'], ['', 1], ['', 1],
-      ['@score', 1, '#ffe060'], ['', 1], ['', 1], ['cred.8', 2, '#ffd890']
-    ];
-    this.credH = this.credLines.length * 16 + 20;
-    while (this.credY > -this.credH + 70) {
-      this.credY -= TC.input.down('confirm') || TC.input.down('jump') ? 1.6 : 0.36;
-      yield;
-    }
-    this.credDone = true;
-    while (!(TC.input.pressed('confirm') || TC.input.pressed('start'))) yield;
-    TC.audio.stopMusic(1.5);
     // a história continua: o Arno desce a escada do toco (capítulo 3)
     TC.game.fadeTo(function () { return TC.Ch3IntroScene ? new TC.Ch3IntroScene() : new TC.TitleScene(); }, 60);
     while (true) yield;
@@ -541,8 +523,7 @@
 
   Ending2Scene.prototype.draw = function (c) {
     if (this.phase === 'stump') this.drawStump(c);
-    else if (this.phase === 'tbc') this.drawTbc(c);
-    else this.drawCredits(c);
+    else this.drawTbc(c);
     this.dlg.draw(c);
   };
 
@@ -625,28 +606,8 @@
       TC.font.draw(c, TC.t('end2.next'), 128, 116, '#c8a878', { align: 'center', max: Math.floor(this.tbcChars) });
       TC.font.draw(c, TC.t('end.tbc'), 128, 134, '#8088b0', { align: 'center', max: Math.max(0, Math.floor(this.tbcChars) - 20) });
     }
+    TC.font.draw(c, TC.t('hud.score') + '  ' + (this.opts.score || 0), 128, 170, '#ffe060', { align: 'center' });
     c.globalAlpha = 1;
-  };
-
-  Ending2Scene.prototype.drawCredits = function (c) {
-    var t = this.t;
-    c.drawImage(this.sky, 0, 0);
-    A.drawTwinkles(c, this.tw, t, 0, 0);
-    c.drawImage(this.moonRed, 196 - this.moonRed.width / 2, 40 - this.moonRed.height / 2);
-    c.drawImage(this.hills, 0, 134);
-    c.fillStyle = 'rgba(0,0,10,0.45)';
-    c.fillRect(0, 0, W, H);
-    var y = this.credY, self = this;
-    this.credLines.forEach(function (l, k) {
-      var yy = Math.round(y + k * 16);
-      if (yy < -30 || yy > H + 10 || !l[0]) return;
-      var str = l[0] === '@score' ? (TC.t('hud.score') + '  ' + (self.opts.score || 0)) : TC.t(l[0]);
-      if (l[1] > 1) {
-        var b = TC.ui.bigText(str, l[1], l[2], '#8890d0', '#000000');
-        c.drawImage(b, 128 - Math.floor(b.width / 2), yy - 4);
-      } else TC.font.draw(c, str, 128, yy, l[2], { align: 'center', shadow: '#000' });
-    });
-    if (this.credDone && (t >> 5) % 2 === 0) TC.font.draw(c, TC.t('boot.press'), 128, 206, '#a0a8d0', { align: 'center', shadow: '#000' });
   };
   TC.Ending2Scene = Ending2Scene;
 })();

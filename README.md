@@ -183,12 +183,12 @@ Na praça da igreja, o ciclope verde de um olho só desce voando. Ele dá rasant
 
 ### O final
 
-O sino toca, Dona Frida aparece na porta da igreja e as cabeças-de-fogo vão acendendo nas colinas. Os créditos passam sobre o voo em Mode 7.
+O sino toca, Dona Frida aparece na porta da igreja e as cabeças-de-fogo vão acendendo nas colinas. O cartão de "Fim do capítulo" mostra a pontuação, e a história segue direto para o capítulo 2. Os créditos aparecem só no final do capítulo 7.
 
 <p align="center">
   <img src="docs/img/c1-final-frida.png" width="32%" alt="Dona Frida na porta da igreja: Eu te benzi quando tu era guri">
   <img src="docs/img/c1-final-colinas.png" width="32%" alt="As cabeças-de-fogo acendendo nas colinas atrás da igreja">
-  <img src="docs/img/c1-creditos.png" width="32%" alt="Créditos do capítulo 1 sobre a cidade em Mode 7">
+  <img src="docs/img/c1-fim.png" width="32%" alt="Cartão de fim do capítulo 1 com a pontuação">
 </p>
 
 ---
@@ -292,7 +292,7 @@ A amarração termina com a reza completa. O toco se abre, uma bandinha toca lá
 
 <p align="center">
   <img src="docs/img/c2-toco-aberto.png" width="49%" alt="O toco do Pinheiro Velho aberto, com uma escada iluminada e vozes de festa vindo de baixo">
-  <img src="docs/img/c2-lua-vermelha.png" width="49%" alt="Créditos do capítulo 2 sob a lua vermelha">
+  <img src="docs/img/c2-lua-vermelha.png" width="49%" alt="A lua fica vermelha sobre o toco aberto, e o Arno se assusta com a voz que o chama">
 </p>
 
 </details>
@@ -369,12 +369,12 @@ Na segunda metade da luta, ele manda a bandinha tocar mais ligeiro e chama danç
 
 <br>
 
-Derrotado, o Moço mostra o pé de bode e afunda no chão em fumaça de enxofre. O baile acorda e o Arno reencontra o pai. O relógio do pai parou às 23h47, a mesma hora em que o Arno perdeu o caminhão. Todos sobem a escada para ver o primeiro amanhecer de Teewald desde a Festa da Batata, e a Dona Frida espera com o chimarrão.
+Derrotado, o Moço mostra o pé de bode e afunda no chão em fumaça de enxofre. O baile acorda e o Arno reencontra o pai. O relógio do pai parou às 23h47, a mesma hora em que o Arno perdeu o caminhão. Todos sobem a escada para ver o primeiro amanhecer de Teewald desde a Festa da Batata, e a Dona Frida espera com o chimarrão. Depois do "Fim do capítulo", na curva da serra, o caminhão do Arno acende os faróis sozinho.
 
 <p align="center">
   <img src="docs/img/c3-ewald.png" width="32%" alt="Ewald Becker reconhece o filho: Arno? Mas tu tá um homem feito">
   <img src="docs/img/c3-amanhecer.png" width="32%" alt="O sol nasce sobre o toco do Pinheiro Velho: Olha, pai. O sol">
-  <img src="docs/img/c3-creditos.png" width="32%" alt="Créditos do capítulo 3 no céu do amanhecer">
+  <img src="docs/img/c3-estrada.png" width="32%" alt="Na curva da serra, o caminhão do Arno acende os faróis sozinho na cerração">
 </p>
 
 </details>
@@ -692,11 +692,13 @@ O Arno puxa a corda do sino que chamou o Antigo em 1852, o sol entra pelos vitra
 
 Na última cena, o Arno desce a serra dirigindo, com o pai de cabelo branco no banco do carona, ao contrário da abertura do capítulo 1.
 
+Depois do FIM vêm os créditos, os únicos do jogo. Eles listam os sete capítulos, as lendas, os lugares e a gente de Teewald. Depois vêm "Jogo desenvolvido por Fabiano Kunst", o aviso de que todos os personagens e situações são fictícios, a pontuação e a homenagem aos Kaingang.
+
 <p align="center">
   <img src="docs/img/c7-epilogo-caverna.png" width="49%" alt="Epílogo: no Morro dos Bugres, a placa velha arrancada e o fogo aceso na boca da caverna">
   <img src="docs/img/c7-epilogo-festa.png" width="49%" alt="Epílogo: a 3ª Festa da Batata, em 1998, com o pau-de-fita em volta da araucária nova">
   <img src="docs/img/c7-cabine.png" width="49%" alt="A última cena: o Arno dirige e o Ewald, de bigode branco, vai no banco do carona">
-  <img src="docs/img/c7-creditos.png" width="49%" alt="Créditos: Teewald City, uma história em sete capítulos">
+  <img src="docs/img/c7-creditos.png" width="49%" alt="Créditos finais: Jogo desenvolvido por Fabiano Kunst e o aviso de que os personagens e situações são fictícios">
 </p>
 
 <p align="center">
@@ -787,7 +789,7 @@ As casas de enxaimel são **geradas a partir de uma semente**, que decide o núm
 
 ### Mode 7 e estrada pseudo-3D
 
-- A tela-título e os créditos usam um **plano em perspectiva no estilo Mode 7**: cada linha da tela é uma fatia rotacionada e escalada de um mapa da cidade de 512×512, com o arroio, a estrada da serra, as ruas, a ponte, a praça, a igreja, os telhados, o cemitério e as copas das araucárias. O mapa também é desenhado por código.
+- A tela-título usa um **plano em perspectiva no estilo Mode 7**: cada linha da tela é uma fatia rotacionada e escalada de um mapa da cidade de 512×512, com o arroio, a estrada da serra, as ruas, a ponte, a praça, a igreja, os telhados, o cemitério e as copas das araucárias. O mapa também é desenhado por código.
 - A cabine da abertura usa uma **estrada pseudo-3D** no estilo *Top Gear* / *Out Run*: curvas, subidas e descidas, placas e árvores escaladas e desenhadas do mais longe para o mais perto, a luz dos faróis perto e a neblina longe.
 
 ### Sprites a partir de texto

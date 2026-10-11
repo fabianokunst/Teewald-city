@@ -11,11 +11,6 @@
     'mission6': 'Encontre as três crianças levadas pelo Pelznickel. No caminho, a casa de pedra da Oma Hedwig guarda o diário.',
     'end6.chapter': 'FIM DO CAPÍTULO 6',
     'end6.next': 'Capítulo 7: A Última Fita',
-    'cred6.2': 'Capítulo 6 — A Noite do Pelznickel',
-    'cred6.3': 'Lendas, costumes e lugares',
-    'cred6.4': 'o Pelznickel e a barba-de-velho,',
-    'cred6.5': 'o bolão de nove pinos e a venda,',
-    'cred6.6': 'a escola da linha e o Erlkönig.',
 
     'en.c6scare': 'ESPANTALHO',
     'en.c6barba': 'BARBA-DE-VELHO',
@@ -157,11 +152,6 @@
     'mission6': 'Find the three children taken by the Pelznickel. On the way, Oma Hedwig\'s stone house keeps her diary.',
     'end6.chapter': 'END OF CHAPTER 6',
     'end6.next': 'Chapter 7: The Last Ribbon',
-    'cred6.2': 'Chapter 6 — The Night of the Pelznickel',
-    'cred6.3': 'Legends, customs and places',
-    'cred6.4': 'the Pelznickel and the old man\'s beard,',
-    'cred6.5': 'nine-pin bowling and the country store,',
-    'cred6.6': 'the colony school and the Erlkönig.',
 
     'en.c6scare': 'SCARECROW',
     'en.c6barba': 'OLD MAN\'S BEARD',

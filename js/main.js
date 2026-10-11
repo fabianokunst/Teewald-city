@@ -249,7 +249,7 @@
       title: function () { return new TC.TitleScene(); },
       intro: function () { return new TC.IntroScene(); },
       stage: function () { return new TC.StageScene({ fromIntro: TC.params.wake === '1', chapter: +(TC.params.ch || 1) }); },
-      ending: function () { return new TC.EndingScene(); },
+      ending: function () { return new TC.EndingScene({ score: 12345 }); },
       ch2intro: function () { return new TC.Ch2IntroScene(); },
       ending2: function () { return new TC.Ending2Scene({ score: 12345 }); },
       ch3intro: function () { return new TC.Ch3IntroScene(); },

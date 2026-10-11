@@ -335,26 +335,8 @@
     var w = 0;
     while (w++ < 300 && !(w > 60 && (TC.input.pressed('confirm') || TC.input.pressed('start')))) yield;
     yield* co.tween(this, 'textA', 0, 60);
-
-    // créditos
-    this.phase = 'credits';
-    TC.audio.music('drive');
-    this.credY = H + 10;
-    this.credLines = [
-      ['cred.1', 2, '#ffffff'], ['', 1], ['cred4.2', 1, '#ffd890'], ['', 1], ['', 1],
-      ['cred4.3', 1, '#a0a8d0'], ['cred4.4', 1, '#ffffff'], ['cred4.5', 1, '#ffffff'], ['cred4.6', 1, '#ffffff'], ['', 1], ['', 1],
-      ['cred.3', 1, '#a0a8d0'], ['cred.4', 1, '#ffffff'], ['', 1], ['', 1],
-      ['@score', 1, '#ffe060'], ['', 1], ['', 1], ['cred.8', 2, '#ffd890']
-    ];
-    this.credH = this.credLines.length * 16 + 20;
-    while (this.credY > -this.credH + 70) {
-      this.credY -= TC.input.down('confirm') || TC.input.down('jump') ? 1.6 : 0.36;
-      yield;
-    }
-    yield* co.wait(60);
-    TC.audio.stopMusic(1.5);
-    TC.fx.fadeOut(60);
-    yield* co.wait(70);
+    TC.fx.bright = 0;
+    yield* co.wait(40);
 
     // na Linha Becker, o rádio da madrugada
     this.phase = 'radio';
@@ -387,7 +369,6 @@
     if (this.phase === 'hall') this.drawHall(c);
     else if (this.phase === 'yard') this.drawYard(c);
     else if (this.phase === 'tbc') this.drawTbc(c);
-    else if (this.phase === 'credits') this.drawCredits(c);
     else this.drawRadio(c);
     this.dlg.draw(c);
   };
@@ -450,20 +431,8 @@
     c.globalAlpha = TC.clamp(this.textA, 0, 1);
     var big = TC.ui.bigText(TC.t('end4.chapter'), 2, '#ffffff', '#ff90c0', '#06050c');
     c.drawImage(big, 128 - Math.floor(big.width / 2), 96);
+    TC.font.draw(c, TC.t('hud.score') + '  ' + (this.opts.score || 0), 128, 170, '#ffe060', { align: 'center' });
     c.globalAlpha = 1;
-  };
-  Ending4Scene.prototype.drawCredits = function (c) {
-    for (var y = 0; y < H; y++) { c.fillStyle = TC.mix('#060816', '#2a1a3a', y / H); c.fillRect(0, y, W, 1); }
-    var yy0 = this.credY, self = this;
-    this.credLines.forEach(function (l, k) {
-      var yy = Math.round(yy0 + k * 16);
-      if (yy < -30 || yy > H + 10 || !l[0]) return;
-      var str = l[0] === '@score' ? (TC.t('hud.score') + '  ' + (self.opts.score || 0)) : TC.t(l[0]);
-      if (l[1] > 1) {
-        var b = TC.ui.bigText(str, l[1], l[2], '#c06090', '#000000');
-        c.drawImage(b, 128 - Math.floor(b.width / 2), yy - 4);
-      } else TC.font.draw(c, str, 128, yy, l[2], { align: 'center', shadow: '#000' });
-    });
   };
   /* o potreiro da Linha Becker de madrugada: cerca de arame farpado e uma vaca parada no escuro */
   Ending4Scene.prototype.drawRadio = function (c) {
@@ -491,7 +460,7 @@
     c.globalAlpha = 1;
     if (this.tbcRoad) {
       c.globalAlpha = this.tbcRoad;
-      TC.font.draw(c, TC.t('end.tbc'), 128, 200, '#c8a878', { align: 'center', shadow: '#000' });
+      TC.font.draw(c, TC.t('end.tbc'), 128, 186, '#c8a878', { align: 'center', shadow: '#000' });
       c.globalAlpha = 1;
     }
   };

@@ -260,7 +260,7 @@
 
   /* moça de vestido (dançarina, a Rainha da Batata) */
   function dressAfter(dress, dressD, sash) {
-    var d = solid(dress), dd = solid(dressD);
+    var d = u32(dress), dd = u32(dressD);
     return function (pb, info, pose) {
       var hx = info.hx, hy = info.hy;
       poly(pb, [[hx - 5, hy - 4], [hx + 5, hy - 4], [hx + 10 + (pose.twirl || 0), hy + 12], [hx - 10 - (pose.twirl || 0), hy + 12]], function (x) { return (x & 3) === 0 ? dd : d; });

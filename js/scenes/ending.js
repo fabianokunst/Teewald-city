@@ -1,5 +1,5 @@
 'use strict';
-/* Teewald City — final do capítulo: a igreja, Dona Frida, "continua..." e créditos */
+/* Teewald City — final do capítulo: a igreja, Dona Frida e "continua..." */
 (function () {
   var A = TC.ART;
   var co = TC.co;
@@ -134,38 +134,9 @@
     var w = 0;
     while (w++ < 360 && !(w > 60 && (TC.input.pressed('confirm') || TC.input.pressed('start')))) yield;
     yield* co.tween(this, 'textA', 0, 60);
-    // créditos
-    this.phase = 'credits';
-    this.prepareCredits();
-    TC.audio.music('drive');
-    TC.fx.bright = 0;
-    TC.fx.fadeIn(80);
-    this.credY = H + 10;
-    while (this.credY > -this.credH + 70) {
-      this.credY -= TC.input.down('confirm') || TC.input.down('jump') ? 1.6 : 0.32;
-      yield;
-    }
-    this.credDone = true;
-    while (!(TC.input.pressed('confirm') || TC.input.pressed('start'))) yield;
-    TC.audio.stopMusic(1.5);
-    // a história continua direto no capítulo 2
+    // a história continua direto no capítulo 2 (os créditos ficam só para o final do capítulo 7)
     TC.game.fadeTo(function () { return TC.Ch2IntroScene ? new TC.Ch2IntroScene() : new TC.TitleScene(); }, 60);
     while (true) yield;
-  };
-
-  EndingScene.prototype.prepareCredits = function () {
-    this.map = A.townMap();
-    this.m7 = new TC.Mode7(this.map);
-    this.csky = A.sky(W, 100, [[0, '#020309'], [0.6, '#0a0d2a'], [1, '#262a58']], 12, 0.006);
-    this.cridge = A.hills(512, 40, { seed: 31, color: '#0c0e22', rim: '#2a3060', base: 0.55, amp: 0.7, trees: 60, treeMin: 5, treeMax: 11, period: 6 });
-    var lines = [
-      ['cred.1', 2, '#ffffff'], ['', 1], ['cred.2', 1, '#ffd890'], ['', 1], ['', 1],
-      ['cred.3', 1, '#a0a8d0'], ['cred.4', 1, '#e0e0f0'], ['', 1], ['', 1],
-      ['cred.5', 1, '#e0e0f0'], ['cred.6', 1, '#e0e0f0'], ['cred.7', 1, '#e0e0f0'], ['', 1], ['', 1],
-      ['@score', 1, '#ffe060'], ['', 1], ['', 1], ['cred.8', 2, '#ffd890']
-    ];
-    this.credLines = lines;
-    this.credH = lines.length * 16 + 20;
   };
 
   EndingScene.prototype.update = function () {
@@ -185,8 +156,7 @@
 
   EndingScene.prototype.draw = function (c) {
     if (this.phase === 'church') this.drawChurch(c);
-    else if (this.phase === 'tbc') this.drawTbc(c);
-    else this.drawCredits(c);
+    else this.drawTbc(c);
     this.dlg.draw(c);
   };
 
@@ -284,39 +254,8 @@
     var big = TC.ui.bigText(TC.t('end.chapter'), 2, '#ffffff', '#8890d0', '#06050c');
     c.drawImage(big, 128 - Math.floor(big.width / 2), 86);
     if (this.tbcChars) TC.font.draw(c, TC.t('end.tbc'), 128, 124, '#c8a878', { align: 'center', max: Math.floor(this.tbcChars) });
+    TC.font.draw(c, TC.t('hud.score') + '  ' + (this.opts.score || 0), 128, 170, '#ffe060', { align: 'center' });
     c.globalAlpha = 1;
-  };
-
-  EndingScene.prototype.drawCredits = function (c) {
-    var t = this.t;
-    var th = t * 0.0018;
-    var cam = { x: 256 - Math.sin(th) * 150, y: 256 + Math.cos(th) * 150, height: 46, horizon: 90, focal: 150, fog: '#14183c', fogDist: 520 };
-    cam.angle = Math.atan2(256 - cam.x, -(256 - cam.y));
-    c.drawImage(this.csky, 0, -6);
-    var ang = ((cam.angle % TC.TAU) + TC.TAU) % TC.TAU;
-    var off = Math.round((ang / TC.TAU) * 512) % 512;
-    c.drawImage(this.cridge, -off, 62); c.drawImage(this.cridge, 512 - off, 62);
-    c.drawImage(this.m7.render(cam), 0, 0);
-    var lamps = this.map.lamps;
-    for (var i = 0; i < lamps.length; i++) {
-      var p = this.m7.project(cam, lamps[i][0], lamps[i][1]);
-      if (!p || p.y < 90 || p.y > H) continue;
-      TC.Lighting.glow(c, p.x, p.y, TC.clamp(p.s * 7, 2, 16), '#ffb050', 0.55);
-    }
-    c.fillStyle = 'rgba(0,0,10,0.45)';
-    c.fillRect(0, 0, W, H);
-    var y = this.credY;
-    var self = this;
-    this.credLines.forEach(function (l, k) {
-      var yy = Math.round(y + k * 16);
-      if (yy < -30 || yy > H + 10 || !l[0]) return;
-      var str = l[0] === '@score' ? (TC.t('hud.score') + '  ' + (self.opts.score || 0)) : TC.t(l[0]);
-      if (l[1] > 1) {
-        var b = TC.ui.bigText(str, l[1], l[2], '#8890d0', '#000000');
-        c.drawImage(b, 128 - Math.floor(b.width / 2), yy - 4);
-      } else TC.font.draw(c, str, 128, yy, l[2], { align: 'center', shadow: '#000' });
-    });
-    if (this.credDone && (t >> 5) % 2 === 0) TC.font.draw(c, TC.t('boot.press'), 128, 206, '#a0a8d0', { align: 'center', shadow: '#000' });
   };
 
   TC.EndingScene = EndingScene;

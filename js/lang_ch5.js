@@ -142,14 +142,7 @@
     'e5.9': 'Linha Esperança. A primeira picada de 1852.',
     'e5.cap': 'O fogo do morro voltou a queimar.',
     'end5.chapter': 'FIM DO CAPÍTULO 5',
-    'end5.next': 'Capítulo 6: A Noite do Pelznickel',
-    'cred5.2': 'Capítulo 5 — A Noite Grande',
-    'cred5.3': 'Lendas, gente e lugares',
-    'cred5.4': 'a boiguaçu e a boitatá, a cobra de fogo,',
-    'cred5.5': 'o pinhão, a gralha-azul e o nó de pinho,',
-    'cred5.6': 'as casas subterrâneas dos Kaingang.',
-    'cred5.7': 'Em memória dos Kaingang,',
-    'cred5.8': 'que estavam aqui antes de todos.'
+    'end5.next': 'Capítulo 6: A Noite do Pelznickel'
   });
 
   Object.assign(L.en, {
@@ -284,13 +277,6 @@
     'e5.9': 'Linha Esperança. The first trail cut through the forest in 1852.',
     'e5.cap': 'The fire on the hill burns again.',
     'end5.chapter': 'END OF CHAPTER 5',
-    'end5.next': 'Chapter 6: The Night of the Pelznickel',
-    'cred5.2': 'Chapter 5 — The Great Night',
-    'cred5.3': 'Legends, people and places',
-    'cred5.4': 'the boiguaçu and the boitatá, the fire snake,',
-    'cred5.5': 'pine nuts, the azure jay and the pine-knot fire,',
-    'cred5.6': 'the underground houses of the Kaingang.',
-    'cred5.7': 'In memory of the Kaingang,',
-    'cred5.8': 'who were here before anyone else.'
+    'end5.next': 'Chapter 6: The Night of the Pelznickel'
   });
 })();
