@@ -81,13 +81,16 @@
     ar.face = f[2] > f[0] ? 1 : -1; ar.pose = 'run';
     var n = Math.round(Math.abs(f[2] - f[0]) / 0.9);
     var end = stopAt == null ? n : Math.round(n * stopAt);
-    for (var k = 0; k <= end; k++) {
+    // se parou no meio desse lance pra ler, retoma do degrau onde estava
+    var start = this.flightAt && this.flightAt.i === i ? this.flightAt.k + 1 : 0;
+    for (var k = start; k <= end; k++) {
       ar.x = f[0] + (f[2] - f[0]) * k / n;
       ar.y = f[1] + (f[3] - f[1]) * k / n;
       ar.anim++;
       if (k % 10 === 0) TC.audio.sfx('step');
       yield;
     }
+    this.flightAt = { i: i, k: end };
     ar.pose = 'idle';
   };
   Ch3IntroScene.prototype.run = function* () {
@@ -114,11 +117,12 @@
     yield* this.walkFlight(1, 0.5);
     yield* say(dlg, 'arno', 'p3.3');
     yield* this.walkFlight(1);
-    yield* this.walkFlight(2, 0.6);
+    yield* this.walkFlight(2);
+    // para em cima do degrau BECKER 1977, que fica no último lance
+    yield* this.walkFlight(3, 0.5);
     ar.pose = 'shock';
     TC.audio.sfx('heartbeat');
     yield* say(dlg, 'arno', 'p3.4', 'shock');
-    yield* this.walkFlight(2);
     yield* this.walkFlight(3);
     yield* co.wait(20);
     yield* say(dlg, 'arno', 'p3.5');
